@@ -1,2 +1,5 @@
 rootProject.name = 'DynamicJava'
+include 'app'
+include 'plugin'
+include 'plugin2'
 

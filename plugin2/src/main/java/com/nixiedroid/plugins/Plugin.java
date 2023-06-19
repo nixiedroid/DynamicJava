@@ -1,5 +1,6 @@
 package com.nixiedroid.plugins;
-public class Plugin extends com.nixiedroid.Stub {
+
+public class Plugin extends PluginStub {
       @Override
     public String getResult() {
        return  "Unreachable Result";

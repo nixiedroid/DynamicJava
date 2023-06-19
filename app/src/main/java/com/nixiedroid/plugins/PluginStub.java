@@ -1,6 +1,7 @@
-package com.nixiedroid;
+package com.nixiedroid.plugins;
 
-public class DefaultImplementation {
+
+public class PluginStub {
     public String getResult(){
         return "Default Result";
     }

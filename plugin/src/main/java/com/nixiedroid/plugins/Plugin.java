@@ -1,8 +1,8 @@
-package com.nixiedroid.plugins.first;
+package com.nixiedroid.plugins;
 
-public class Plugin implements com.nixiedroid.Plugin {
-   public String pluginName = "Internal PLugin Name";
-   public String getName(){
-       return pluginName;
-   }
+public class Plugin extends PluginStub {
+    @Override
+    public String getResult() {
+        return "Custom Result";
+    }
 }
