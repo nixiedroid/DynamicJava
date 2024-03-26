@@ -1,7 +1,7 @@
 package com.nixiedroid.plugins;
 
 public class Plugin {
-    public void getResult() {
-        System.out.println("Plugin 1 result");
-    }
+   public Plugin(){
+       System.out.println("Hello From Inside!");
+   }
 }

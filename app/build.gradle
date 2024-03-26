@@ -12,7 +12,7 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    runtimeOnly project (':plugin')
+    runtimeOnly project(':plugin')
    // runtimeOnly project (':plugin2')
 }
 
@@ -26,7 +26,8 @@ jar {
     manifest {
         attributes(
             'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
-            'Main-Class': 'com.nixiedroid.Main'
+            'Main-Class': 'com.nixiedroid.Main',
+                'Add-Opens': 'java.prefs/java.util.prefs'
         )
     }
 }
