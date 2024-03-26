@@ -1,14 +1,20 @@
 package com.nixiedroid;
 
-import com.nixiedroid.plugins.PluginLoader;
-import com.nixiedroid.plugins.PluginStub;
+import com.nixiedroid.reflection.samples.PrivateConstructorClass;
+
+import java.lang.reflect.Constructor;
 
 public class Main {
     public static void main(String[] args) {
-        PluginLoader loader = new PluginLoader();
-        PluginStub someCLass;
-        someCLass = loader.loadPluginFromFile("Plugin");
+        //Object plugin = PluginWrapper.loadPluginFromFile("Plugin");
         //someCLass = loader.loadPluginFromClassPath("com.nixiedroid.plugins.Plugin");
-        System.out.println(someCLass.getResult());
+        PrivateConstructorClass obj = null;
+        Constructor<PrivateConstructorClass> constructor;
+        try {
+            constructor = PrivateConstructorClass.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            obj =  constructor.newInstance();
+        } catch (Exception a_lot_of) {}
+        if (obj != null) obj.actionOne();
     }
 }

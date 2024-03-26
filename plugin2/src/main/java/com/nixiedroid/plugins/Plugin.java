@@ -1,8 +1,7 @@
 package com.nixiedroid.plugins;
 
-public class Plugin extends PluginStub {
-      @Override
-    public String getResult() {
-       return  "Unreachable Result";
+public class Plugin {
+    public void getResult() {
+        System.out.println("Plugin 2 result");
     }
 }
