@@ -8,4 +8,4 @@ Practical usage of this includes loading plugins into java app
 Oracle JDK v21 WinX64
 
 ### Notes
-see [](notes/index.md)
+see [NOTES MAP](notes/index.md)
