@@ -76,7 +76,7 @@ classes from outside module
 For example, this code 
 ```java
  try {
-            cl = Class.forName("java.util.prefs.Base64",
+        Class<?> cl = Class.forName("java.util.prefs.Base64",
                     false,ClassLoader.getSystemClassLoader());
             Field f = cl.getDeclaredField("intToBase64");
             f.setAccessible(true);
