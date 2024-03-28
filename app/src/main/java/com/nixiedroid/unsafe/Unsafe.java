@@ -54,7 +54,20 @@ public class Unsafe {
     public static void throwException(Throwable e) {
         getUnsafe().throwException(e);
     }
+    public static long getAddress(Object o){
+        return 1;
+    }
 
+    public static void moveToJavaBase(Class cl){
+        try {
+            final Field field = Class.class.getDeclaredField("module");
+            @SuppressWarnings("deprecation")
+            final long offset = getUnsafe().objectFieldOffset(field);
+            Unsafe.getUnsafe().putObject(cl, offset, Object.class.getModule());
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static <T> T createDummyInstance(Class<T> clazz) throws InstantiationException {
         return clazz.cast(getUnsafe().allocateInstance(clazz));

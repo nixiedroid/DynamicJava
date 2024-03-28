@@ -33,7 +33,7 @@ public class Modules {
     }
     private static void peekInaccessibleObject(){
         try {
-            Class<?> cl = Class.forName("java.util.prefs.Base64",
+            Class<?> cl = Class.forName( "java.util.prefs.Base64",
                     false,ClassLoader.getSystemClassLoader());
             Field f = cl.getDeclaredField("intToBase64");
             f.setAccessible(true);

@@ -50,7 +50,7 @@ class UnsafeTest {
     @Test
     void crashVM() {
         System.out.println("Lets pretend, JVM Successfully crashed");
-        assertNotEquals(5, 2 + 2);
+        assertTrue(true);
         //Unsafe.crashVM();
     }
 

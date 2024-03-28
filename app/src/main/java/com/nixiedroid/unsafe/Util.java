@@ -27,5 +27,13 @@ public class Util {
     public static String toString(byte data) {
         return String.format("%02x", data & 0xFF);
     }
+    public static boolean isStackGrowsUp(long address){
+        int x = 1;
+        if (address == 0){
+            return isStackGrowsUp(Unsafe.getAddress(x));
+        } else {
+            return Unsafe.getAddress(x) >= address;
+        }
+    }
 
 }

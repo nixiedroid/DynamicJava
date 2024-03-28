@@ -3,10 +3,10 @@ package com.nixiedroid.reflection;
 import java.lang.reflect.InvocationTargetException;
 
 public class Method {
-    public static void execute(Object obj, String name){
+    public static Object execute(Object obj, String name){
         try {
             java.lang.reflect.Method m =  obj.getClass().getDeclaredMethod(name);
-            m.invoke(obj);
+            return m.invoke(obj);
         } catch (NoSuchMethodException e) {
             System.out.println("No Such Method");
         } catch (InvocationTargetException e) {
@@ -14,11 +14,12 @@ public class Method {
         } catch (IllegalAccessException e) {
             System.out.println("Illegal Access");
         }
+        return null;
     }
-    public static void executeStatic(Object obj, String name){
+    public static Object executeStatic(Object obj, String name){
         try {
             java.lang.reflect.Method m =  obj.getClass().getDeclaredMethod(name);
-            m.invoke(null);
+            return m.invoke(null);
         } catch (NoSuchMethodException e) {
             System.out.println("No Such Method");
         } catch (InvocationTargetException e) {
@@ -26,5 +27,6 @@ public class Method {
         } catch (IllegalAccessException e) {
             System.out.println("Illegal Access");
         }
+        return null;
     }
 }

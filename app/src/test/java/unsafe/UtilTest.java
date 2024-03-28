@@ -6,17 +6,20 @@ import org.junit.jupiter.api.Test;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 class UtilTest {
 
-    @SuppressWarnings("ConstantValue")
     @Test
     void performGc() {
         Object o = new Object();
         WeakReference<Object> ref = new WeakReference<>(o);
+        assertNotNull(o);
+        assertNotNull(ref.get());
         o = null;
+        assertNull(o);
+        assertNotNull(ref.get());
         try {
             Method m = Util.class.getDeclaredMethod("performGcHalting");
             m.setAccessible(true);

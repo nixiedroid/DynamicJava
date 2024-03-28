@@ -5,32 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
+import unsafe.samples.TestClass;
 import static org.junit.jupiter.api.Assertions.*;
 
-class Person {
-    public static int staticInt = 96;
-    public final String finalString = "Tom";
-    public final int finalInt = 2;
-    public final boolean isLikesDogs = true;
-    public String surname;
-    public int age;
-    public int amountOfDogs = 3;
-    public int amountOfCats;
-    public boolean isLikesCats = true;
 
-    {
-        amountOfCats = 4;
-    }
-
-    public Person(int age, String surname) {
-        this.age = age;
-        this.surname = surname;
-    }
-    public int getSum() {
-        return age + amountOfCats + amountOfDogs + finalInt;
-    }
-}
 class UnsafeClassInstantiationTest {
     private  void createUtilityObjectReflection() {
         try {
@@ -50,63 +28,63 @@ class UnsafeClassInstantiationTest {
     }
     @Test
     public void createInstanceUsingDefaultConstructor() {
-        Person p = new Person(25, "Smith");
-        assertNotNull(p);
-        assertEquals("Tom", p.finalString);
-        assertEquals("Smith", p.surname);
-        assertEquals(25, p.age);
-        assertEquals(2, p.finalInt);
-        assertEquals(3, p.amountOfDogs);
-        assertEquals(4, p.amountOfCats);
-        assertTrue(p.isLikesDogs);
-        assertTrue(p.isLikesCats);
-        assertEquals(96, Person.staticInt);
-        assertEquals(34, p.getSum());
+        TestClass cl = new TestClass(25, "Smith");
+        assertNotNull(cl);
+        assertEquals("Tom", cl.finalString);
+        assertEquals("Smith", cl.unsetString);
+        assertEquals(25, cl.unsetInteger);
+        assertEquals(2, cl.finalInt);
+        assertEquals(3, cl.preSetInteger);
+        assertEquals(4, cl.preSetInteger2);
+        assertTrue(cl.finalBoolean);
+        assertTrue(cl.preSetBoolean);
+        assertEquals(96, TestClass.staticInt);
+        assertEquals(34, cl.getSum());
     }
 
     @Test
     public void createInstanceUsingReflection() {
-        Person p = null;
+        TestClass cl = null;
         try {
-            Constructor<Person> constructor = Person.class.getDeclaredConstructor(int.class, String.class);
-            p = constructor.newInstance(25, "Smith");
+            Constructor<TestClass> constructor = TestClass.class.getDeclaredConstructor(int.class, String.class);
+            cl = constructor.newInstance(25, "Smith");
         } catch (Exception e) {
             fail("Should not have thrown any exception: \n " + e);
         }
-        assertNotNull(p);
-        assertEquals("Tom", p.finalString);
-        assertEquals("Smith", p.surname);
-        assertEquals(25, p.age);
-        assertEquals(2, p.finalInt);
-        assertEquals(3, p.amountOfDogs);
-        assertEquals(4, p.amountOfCats);
-        assertTrue(p.isLikesDogs);
-        assertTrue(p.isLikesCats);
-        assertEquals(96, Person.staticInt);
-        assertEquals(34, p.getSum());
+        assertNotNull(cl);
+        assertEquals("Tom", cl.finalString);
+        assertEquals("Smith", cl.unsetString);
+        assertEquals(25, cl.unsetInteger);
+        assertEquals(2, cl.finalInt);
+        assertEquals(3, cl.preSetInteger);
+        assertEquals(4, cl.preSetInteger2);
+        assertTrue(cl.finalBoolean);
+        assertTrue(cl.preSetBoolean);
+        assertEquals(96, TestClass.staticInt);
+        assertEquals(34, cl.getSum());
     }
 
 
 
     @Test
     public void createInstanceWithoutConstructor() {
-        Person p = null;
+        TestClass cl = null;
         try {
-            p = Unsafe.createDummyInstance(Person.class);
+            cl = Unsafe.createDummyInstance(TestClass.class);
         } catch (Exception e) {
             fail("Should not have thrown any exception : \n " + e);
         }
-        assertNotNull(p);
-        assertEquals("Tom", p.finalString); //THIS
-        assertNull(p.surname); //
-        assertEquals(0, p.age);
-        assertEquals(2, p.finalInt);  //THIS
-        assertEquals(0, p.amountOfDogs);
-        assertEquals(0, p.amountOfCats);
-        assertTrue(p.isLikesDogs);  //THIS
-        assertFalse(p.isLikesCats);
-        assertEquals(96, Person.staticInt); //THIS. Obviously
-        assertEquals(2, p.getSum());
+        assertNotNull(cl);
+        assertEquals("Tom", cl.finalString); //THIS
+        assertNull(cl.unsetString); //
+        assertEquals(0, cl.unsetInteger);
+        assertEquals(2, cl.finalInt);  //THIS
+        assertEquals(0, cl.preSetInteger);
+        assertEquals(0, cl.preSetInteger2);
+        assertTrue(cl.finalBoolean);  //THIS
+        assertFalse(cl.preSetBoolean);
+        assertEquals(96, TestClass.staticInt); //THIS. Obviously
+        assertEquals(2, cl.getSum());
     }
 
 }
