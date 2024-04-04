@@ -1,6 +1,6 @@
 package com.nixiedroid.classloaders;
 
-public class Util {
+public class ClUtil {
     public static String getClassLoaderOf(Class cl) {
         String clLdrName;
         if (cl.getClassLoader() == null) {

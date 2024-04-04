@@ -2,9 +2,13 @@ package com.nixiedroid.unsafe.type;
 
 public final class Size {
     private final int size;
+    public final static Size INVALID_SIZE = new Size(0,false);
 
     public Size(int size) {
         if (size<0) throw new IllegalArgumentException("Size must be greater than 0");
+        this.size = size;
+    }
+    private Size(int size, boolean dummy){
         this.size = size;
     }
 

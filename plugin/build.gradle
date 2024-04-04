@@ -1,11 +1,11 @@
 plugins {
     id 'java-library'
 }
-
-group = 'com.nixiedroid.plugins'
-archivesBaseName = 'first'
-version = '1'
-
+java {
+    group = 'com.nixiedroid.plugins'
+    base.archivesName = 'first'
+    version = ''
+}
 repositories {
     mavenCentral()
 }
@@ -18,6 +18,4 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-artifacts {
-    archives jar
-}
+

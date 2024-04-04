@@ -3,4 +3,7 @@ include 'app'
 include 'plugin'
 include 'plugin2'
 include 'URLWrapper'
+include 'Hooks:java8'
+include 'Hooks:java9'
+include 'ModulesTraversal'
 

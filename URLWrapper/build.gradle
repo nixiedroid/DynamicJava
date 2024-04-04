@@ -1,10 +1,11 @@
 plugins {
     id 'java'
 }
-
-group = 'com.nixiedroid.urlwrapper'
-version = ''
-archivesBaseName = 'URLWrapper'
+java {
+    group = 'com.nixiedroid.urlwrapper'
+    version = ''
+    base.archivesName = 'URLWrapper'
+}
 
 repositories {
     mavenCentral()

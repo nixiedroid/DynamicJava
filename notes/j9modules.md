@@ -1,4 +1,82 @@
+### Modules and reflection
+
+Modules are preventing from modifying
+classes from outside module
+
+For example, this code
+
+```java
+ try{
+Class<?> cl = Class.forName("java.util.prefs.Base64",
+        false, ClassLoader.getSystemClassLoader());
+Field f = cl.getDeclaredField("intToBase64");
+            f.
+
+setAccessible(true);
+        }catch(
+Exception e){
+        throw new
+
+RuntimeException(e);
+        }
+```
+
+will throw exception
+
+```java
+java.lang.reflect.InaccessibleObjectException:
+Unable to
+make field
+private static final char[]
+java.util.prefs.Base64.intToBase64 accessible:
+module java.prefs 
+does not "opens java.util.prefs"
+        to unnamed module@63961c42
+```
+
+### Ways to allow module to be modified
+
+[Official docs](https://openjdk.org/jeps/261)
+
+1. Add java argument
+   ```sh
+   java  --add-opens java.prefs/java.util.prefs=ALL-UNNAMED -jar file.jar 
+   ```
+   Structure:
+   `--add-opens <source-module>/<package>=<target-module>(,<target-module>)*`
+   where `<source-module>` and <target-module> are
+   module names
+   and `<package>` is the name of a package.
+2. Add MANIFEST attribute:
+   (https://openjdk.org/jeps/261#Packaging:-Modular-JAR-files)
+    ```
+    Add-Opens: java.prefs/java.util.prefs
+   ```
+3. Use magic from misc.Unsafe
+   (Needs investigation)
+   see
+
+### Using misc.Unsafe to use exported code
+
+- Change module of specific _class_ to `java.base`
+    ```java
+   public static void moveToJavaBase(Class cl){
+        try {
+            final Field field = Class.class.getDeclaredField("module");
+            @SuppressWarnings("deprecation")
+            final long offset = getUnsafe().objectFieldOffset(field);
+            Unsafe.getUnsafe().putObject(cl, offset, Object.class.getModule());
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+  ```
+  fails if _class_ extends __unexported class__,
+  because works only when target _class_ is __already__
+  loaded
+
 ### List of modules in JAVA 21
+
 java.base@21.0.2
 java.compiler@21.0.2
 java.datatransfer@21.0.2
@@ -69,48 +147,3 @@ jdk.unsupported@21.0.2
 jdk.unsupported.desktop@21.0.2
 jdk.xml.dom@21.0.2
 jdk.zipfs@21.0.2
-### Modules and reflection
-Modules are preventing from modifying 
-classes from outside module
-
-For example, this code 
-```java
- try {
-        Class<?> cl = Class.forName("java.util.prefs.Base64",
-                    false,ClassLoader.getSystemClassLoader());
-            Field f = cl.getDeclaredField("intToBase64");
-            f.setAccessible(true);
-        } catch (Exception e){
-            throw new RuntimeException(e);
-        }
-```
-will throw exception
-```java
-java.lang.reflect.InaccessibleObjectException: 
-Unable to make field private static final char[] 
-java.util.prefs.Base64.intToBase64 accessible: 
-module java.prefs 
-does not "opens java.util.prefs"
-to unnamed module @63961c42
-```
-
-### Ways to allow module to be modified
-
-[Official docs](https://openjdk.org/jeps/261)
-
-1. Add java argument
-   ```sh
-   java  --add-opens java.prefs/java.util.prefs=ALL-UNNAMED -jar file.jar 
-   ```
-   Structure:
-   `--add-opens <source-module>/<package>=<target-module>(,<target-module>)*`
-   where `<source-module>` and <target-module> are module names 
-   and `<package>` is the name of a package. 
-2. Add MANIFEST attribute:
-    (https://openjdk.org/jeps/261#Packaging:-Modular-JAR-files)
-    ```
-    Add-Opens: java.prefs/java.util.prefs
-   ```
-3. Use magic from misc.Unsafe
-   (Needs investigation) 
-    see 

@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class UtilTest {
+class ClUtilTest {
 
     @Test
     void performGc() {

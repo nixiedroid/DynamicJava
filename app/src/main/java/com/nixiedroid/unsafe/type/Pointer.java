@@ -1,15 +1,25 @@
 package com.nixiedroid.unsafe.type;
 
-public final class Pointer {
-    private final long address;
-    public static final Pointer ZERO_POINTER = new Pointer(0,false);
+import com.nixiedroid.runtime.Info;
 
-    private Pointer(long address, boolean validate){
+public final class Pointer {
+    public static final Pointer ZERO_POINTER = new Pointer(0, false);
+    public static final int SIZE;
+
+    static {
+        if (Info.isCompressedOOPS()) SIZE = 4;
+        else SIZE = 8;
+    }
+
+    private final long address;
+
+    private Pointer(long address, boolean validate) {
         if (validate && address == 0) throw new NullPointerException("Pointer is ACTUALLY null");
         this.address = address;
     }
+
     public Pointer(long address) {
-        this(address,true);
+        this(address, true);
     }
 
     public static void validate(Pointer p) {

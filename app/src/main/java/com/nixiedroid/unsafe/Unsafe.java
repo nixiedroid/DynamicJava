@@ -34,7 +34,7 @@ public class Unsafe {
         throw new UnsupportedOperationException("Unable to create instance of utility class");
     }
 
-    static sun.misc.Unsafe getUnsafe() {
+    public static sun.misc.Unsafe getUnsafe() {
         return theUnsafestThingyInJava;
     }
 

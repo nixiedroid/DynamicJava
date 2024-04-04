@@ -1,24 +1,75 @@
 package com.nixiedroid.unsafe;
-@SuppressWarnings("Unused")
+
+import com.nixiedroid.unsafe.type.Pointer;
+
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.lang.reflect.Field;
+
+@SuppressWarnings("unused")
 public class Objects {
+    private static final Objects instance = new Objects();
+    @SuppressWarnings("FieldMayBeFinal")
+    private static VarHandle handler;
+    @SuppressWarnings("FieldMayBeFinal")
+    private static long dummyObjectOffset;
+    static {
+        getAddress();
+        getAddressNew();
+    }
+
+    private Object dummyObject;
+
+    private Objects() {
+    }
+
+    public static void getAddressNew() {
+        try {
+            MethodHandles.Lookup l = MethodHandles.lookup();
+            handler = l.findVarHandle(Objects.class, "dummyObject", Object.class);
+            System.out.println(handler.get(instance));
+            Field f = handler.getClass().getSuperclass().getDeclaredField("fieldOffset");
+            f.setAccessible(true); //Not exported module exception
+            System.out.println(f.get(handler));
+            f.setAccessible(false);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void getAddress() {
+        try {
+            dummyObjectOffset = Unsafe.getUnsafe()
+                    .objectFieldOffset(Objects.class.getDeclaredField("dummyObject"));
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //BOOLEAN
     public static boolean getBoolean(Object o, long offset) {
         return Unsafe.getUnsafe().getBoolean(o, offset);
     }
+
     public static void putBoolean(Object o, long offset, boolean x) {
         Unsafe.getUnsafe().putBoolean(o, offset, x);
     }
+
     //BYTE
     public static byte getByte(Object o, long offset) {
         return Unsafe.getUnsafe().getByte(o, offset);
     }
+
     public static void putByte(Object o, long offset, byte x) {
         Unsafe.getUnsafe().putByte(o, offset, x);
     }
+
     //INT
     public static int getInt(Object o, long offset) {
         return Unsafe.getUnsafe().getInt(o, offset);
     }
+
     public static void putInt(Object o, long offset, int x) {
         Unsafe.getUnsafe().putInt(o, offset, x);
     }
@@ -30,5 +81,16 @@ public class Objects {
 
     public static void putObject(Object o, long offset, Object x) {
         Unsafe.getUnsafe().putObject(o, offset, x);
+    }
+
+    public static Pointer ObjectToAddress(Object obj) {
+        instance.dummyObject = obj; //store address of obj to instance.obj
+        long pointer = Unsafe.getUnsafe().getLong(instance, dummyObjectOffset);
+        return new Pointer(pointer);
+    }
+
+    public static Object AddressToObject(Pointer p) {
+        Unsafe.getUnsafe().putLong(instance, dummyObjectOffset, p.address());
+        return instance.dummyObject;
     }
 }

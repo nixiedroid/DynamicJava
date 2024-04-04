@@ -9,6 +9,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Hooks" />
+            <option value="$PROJECT_DIR$/Hooks/java8" />
+            <option value="$PROJECT_DIR$/Hooks/java9" />
+            <option value="$PROJECT_DIR$/ModulesTraversal" />
             <option value="$PROJECT_DIR$/URLWrapper" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/plugin" />

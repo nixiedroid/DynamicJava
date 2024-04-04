@@ -1,6 +1,9 @@
 package com.nixiedroid.unsafe;
 
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("unused")
 public class Util {
@@ -35,5 +38,18 @@ public class Util {
             return Unsafe.getAddress(x) >= address;
         }
     }
-
+//    public static Set<String> getBrokenHashSet(){
+//        AtomicReference<HashSet<String>> ref = new AtomicReference<>();
+//        try {
+//            new HashSet<String>(null) {
+//                protected void finalize() {
+//                    ref.set(this);
+//                }
+//            };
+//        } catch (NullPointerException ignored) {}
+//        while (ref.get() == null) {
+//            System.gc();
+//        }
+//        return ref.get();
+//    }
 }

@@ -9,3 +9,5 @@ Oracle JDK v21 WinX64
 
 ### Notes
 see [NOTES MAP](notes/index.md)
+
+RETURN COMMUNISM TO JAVA!!

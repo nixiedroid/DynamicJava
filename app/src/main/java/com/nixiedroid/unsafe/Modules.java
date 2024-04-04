@@ -17,7 +17,7 @@ public class Modules {
 
     static {
         try {
-            moveMeToJavaBase();
+            //moveMeToJavaBase();
             final Method method = AccessibleObject.class.getDeclaredMethod("setAccessible0", boolean.class);
             method.setAccessible(true);
             METHODS[5] = Module.class
@@ -31,7 +31,7 @@ public class Modules {
 
     public static void ping() {
     }
-    private static void peekInaccessibleObject(){
+    public static void peekInaccessibleObject(){
         try {
             Class<?> cl = Class.forName( "java.util.prefs.Base64",
                     false,ClassLoader.getSystemClassLoader());

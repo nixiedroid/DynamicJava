@@ -38,7 +38,7 @@ public class Unsafe {
     }
 
 
-    public static void moveToJavaBase(Class cl){
+    public static <T> void moveToJavaBase(Class<T> cl){
         try {
             final Field field = Class.class.getDeclaredField("module");
             @SuppressWarnings("deprecation")
