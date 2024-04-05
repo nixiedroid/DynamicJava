@@ -12,14 +12,11 @@ import static com.nixiedroid.Stuff.print;
 public class Main {
     public static void main(String[] args) throws Exception {
         // Stuff.printAll();
-        Class<?> cl = null;
-        Object obj;
         String name = "com.nixiedroid.plugins.Plugin";
-        CryptedClassLoader classLoader = new CryptedClassLoader();
-        cl = classLoader.loadClass(name);
+        ClassLoader classLoader = new FileClassLoader();
+        Class<?> cl = classLoader.loadClass(name);
         Object plugin = cl.getDeclaredConstructor().newInstance();
         print("ClassLoader of plugin is " + cl.getClassLoader().getName());
-
     }
     private void encrypt(){
         File rawFile = new File("./Plugin.clazz");
@@ -32,5 +29,4 @@ public class Main {
             throw new RuntimeException(e);
         }
     }
-
 }
