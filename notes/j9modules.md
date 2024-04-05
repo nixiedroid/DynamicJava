@@ -147,3 +147,9 @@ jdk.unsupported@21.0.2
 jdk.unsupported.desktop@21.0.2
 jdk.xml.dom@21.0.2
 jdk.zipfs@21.0.2
+
+```
+System.out.println(jdk.internal.event.ThreadSleepEvent.isTurnedOn());
+java -cp ModulesTraversal.jar --add-opens java.base/jdk.internal.event=ALL-UNNAMED com.nixiedroid.Main
+
+```

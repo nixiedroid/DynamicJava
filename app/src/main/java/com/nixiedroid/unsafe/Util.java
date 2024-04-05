@@ -1,9 +1,6 @@
 package com.nixiedroid.unsafe;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("unused")
 public class Util {

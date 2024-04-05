@@ -5,7 +5,4 @@ module nixiedroid.dynamicJava {
     requires java.prefs;
     requires jdk.dynalink;
     exports com.nixiedroid.javaagent;
-    exports com.nixiedroid.unsafe;
-    exports com.nixiedroid.runtime;
-    exports com.nixiedroid.unsafe.type;
 }

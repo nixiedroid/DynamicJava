@@ -1,0 +1,43 @@
+plugins {
+    id 'application'
+}
+
+java {
+    group = 'com.nixiedroid'
+    version = 'unspecified'
+}
+
+def preMainDir = DEFAULT_BUILD_DIR_NAME + "/libs/" + project.name + ".jar"
+def preMainClass = "com.nixiedroid.Premain"
+
+application  {
+    mainClass = "com.nixiedroid.Main"
+    applicationDefaultJvmArgs = ["-javaagent:" + preMainDir]
+}
+
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": version,
+                "Main-Class": application.mainClass,
+                "Premain-class" : preMainClass
+        )
+    }
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation project(':plugin')
+    // runtimeOnly project (':plugin2')
+}
+
+test {
+    useJUnitPlatform()
+}

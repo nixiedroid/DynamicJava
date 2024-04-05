@@ -10,6 +10,7 @@ public class Logger {
     static {
         log = new Logger();
     }
+    public static final String TAG = "[URL Wrapper log init]: ";
     public static final Logger log;
 
     private final PrintStream logStream;
@@ -19,14 +20,14 @@ public class Logger {
             PrintStream temp = System.out;
             try {
                 temp = new PrintStream(new FileOutputStream("Wrapper.log", true), false);
-                System.out.println("[URL Wrapper log init]: Found urlWrapper.log=file");
-                temp.println("[URL Wrapper log init]: Found urlWrapper.log=file");
-                System.out.println("[URL Wrapper log init]: Initialised logger to Wrapper.log");
-                temp.println("[URL Wrapper log init]: Initialised logger to Wrapper.log (THIS file)");
+                System.out.println(TAG + "Found urlWrapper.log=file");
+                temp.println(TAG + "Found urlWrapper.log=file");
+                System.out.println(TAG + "Initialised logger to Wrapper.log");
+                temp.println(TAG + "Initialised logger to Wrapper.log (THIS file)");
             } catch (FileNotFoundException | SecurityException e) {
                 temp = System.out;
-                temp.println("[URL Wrapper log init]: Found urlWrapper.log=file");
-                temp.println("[URL Wrapper log init]: Unable to write to Wrapper.log. Using stdout");
+                temp.println(TAG + "Found urlWrapper.log=file");
+                temp.println(TAG + "Unable to write to Wrapper.log. Using stdout");
             } finally {
                 logStream = temp;
                 isLoggingEnabled = true;
@@ -35,12 +36,12 @@ public class Logger {
         if ("true".equals(System.getProperty("urlWrapper.log", "false"))) {
             logStream = System.out;
             isLoggingEnabled = true;
-            logStream.println("[URL Wrapper log init]: Found urlWrapper.log=true");
-            logStream.println("[URL Wrapper log init]: Initialised logger to stdout");
+            logStream.println(TAG + "Found urlWrapper.log=true");
+            logStream.println(TAG + "Initialised logger to stdout");
         } else {
             logStream = null;
             isLoggingEnabled = false;
-            System.out.println("Logging is disabled. Use -DurlWrapper.log = { true , file } to override ");
+            System.out.println(TAG + "Logging is disabled. Use -DurlWrapper.log = { true , file } to override ");
         }
     }
 

@@ -14,6 +14,9 @@ javaagent is a jar file containing:
    ```
    public static void premain(final String agentArgs, final Instrumentation inst) {}
    ```
-
+3. Java arg
+   ```
+   -javaagent:PATH_TO_JAR
+   ```
 Code inside `premain()` will be executed
 before `main()` class of application

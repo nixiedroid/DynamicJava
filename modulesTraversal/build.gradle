@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+
+java {
+    group = 'com.nixiedroid'
+    version = 'unspecified'
+}
+compileJava {
+    options.compilerArgs << '--add-exports' << 'java.base/jdk.internal.event=ALL-UNNAMED'
+    options.compilerArgs << '--add-exports' << 'java.base/jdk.internal.math=ALL-UNNAMED'
+}
+jar {
+    manifest {
+        attributes('Main-Class': 'com.nixiedroid.Main',
+                'Add-Opens': 'java.prefs/java.util.prefs',
+                // 'Premain-class': 'com.nixiedroid.javaagent.Premain',
+                //'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
+        )
+    }
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':app')
+    implementation 'org.jetbrains:annotations:24.0.0'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    //implementation 'org.burningwave:core:12.64.3'
+    //implementation 'io.github.toolfactory:jvm-driver:9.6.0'
+}
+
+test {
+    useJUnitPlatform()
+}
