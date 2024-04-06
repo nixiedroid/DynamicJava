@@ -47,15 +47,8 @@ public class CryptedClassLoader extends FileClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        String classname = name.substring(name.lastIndexOf('.') + 1);
-        byte[] classBytes = decrypt(readFile("/" + classname + ".enc"));
-        try {
-            validateClassMagic(classBytes);
-        } catch (ValidationException e) {
-            throw new ClassNotFoundException(e.getMessage());
-        }
-        return defineClass(name, classBytes, 0, classBytes.length); //Name must be equal to inside class
+        byte[] classBytes = decrypt(readFile(getFileName(name, ".enc")));
+        String realClassName = getRealClassName(classBytes);
+        return defineClass(realClassName, classBytes, 0, classBytes.length); //Name must be equal to inside class
     }
-
-
 }

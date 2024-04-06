@@ -1,6 +1,18 @@
+import proguard.gradle.ProGuardTask
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.guardsquare:proguard-gradle:7.4.2'
+    }
+}
+
 plugins {
     id 'application'
 }
+
 
 java {
     group = 'com.nixiedroid'
@@ -25,6 +37,10 @@ jar {
                 "Premain-class" : preMainClass
         )
     }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 repositories {
     mavenCentral()
@@ -34,8 +50,31 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // https://mvnrepository.com/artifact/org.apache.bcel/bcel
+    implementation 'org.apache.bcel:bcel:6.8.2'
+
     //implementation project(':plugin')
     // runtimeOnly project (':plugin2')
+
+}
+tasks.register('shrinkJar', ProGuardTask) {
+    configuration file('proguard-rules.pro')
+
+    injars(tasks.named('jar', Jar).flatMap { it.archiveFile })
+
+    // Automatically handle the Java version of this build.
+    if (System.getProperty('java.version').startsWith('1.')) {
+        // Before Java 9, the runtime classes were packaged in a single jar file.
+        libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+    } else {
+        // As of Java 9, the runtime classes are packaged in modular jmod files.
+        libraryjars "${System.getProperty('java.home')}/jmods/java.base.jmod", jarfilter: '!**.jar', filter: '!module-info.class'
+        //libraryjars "${System.getProperty('java.home')}/jmods/....."
+    }
+
+    verbose
+
+    outjars(layout.buildDirectory.file("libs/classloader-minified.jar"))
 }
 
 test {

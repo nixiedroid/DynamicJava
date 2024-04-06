@@ -33,7 +33,10 @@ public class Stuff {
                 .map(e -> e.getKey() + "\n\t" + String.join("\n\t", e.getValue()))
                 .forEach(Stuff::print);
     }
-
+    public static void printSystemPaths(){
+        print(System.getProperty("java.class.path"));
+        print(System.getProperty("jdk.module.path"));
+    }
     public static void print(String str) {
         System.out.println(str);
     }

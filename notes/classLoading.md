@@ -51,6 +51,38 @@ the class either, it throws
 `java.lang.NoClassDefFoundError` or
 `java.lang.ClassNotFoundException.`
 
+### Creating Custom ClassLoader
+
+To Create Our own classloader we need to implement
+at least two methods from Class Classloader:
+
+1. `public Class<?> loadClass(String name) throws ClassNotFoundException {}`
+2. `protected Class<?> findClass(String name) throws ClassNotFoundException {}`
+
+All Classes, that our class target is dependent
+are also loaded using custom classloader,
+so we must direct non-processing classes to
+higher-level
+classloader, like
+
+```java
+
+@Override
+public Class<?> loadClass(String name) throws ClassNotFoundException {
+    Class<?> cl = findLoadedClass(name);
+    if (cl != null) return cl;
+    if (name.startsWith(PKG_PREFIX)) {
+        cl = findClass(name);
+        if (cl != null) return cl;
+    }
+    return super.loadClass(name);
+}
+```
+
+Sadly, name of loadable class must be equal to
+name inside .class file
+
+
 
 
 
