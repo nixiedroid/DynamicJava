@@ -1,17 +1,17 @@
-package com.nixiedroid.urlWrapper;
+package com.nixiedroid.premain;
 
 import com.nixiedroid.runtime.Info;
+import com.nixiedroid.urlWrapper.Logger;
 import com.nixiedroid.urlWrapper.mock.URLHandlerMocker;
 
 import java.lang.instrument.Instrumentation;
 
-@SuppressWarnings("unused")
-public class Agent {
+public class Handler implements PremainHandler{
     private static final int JAVA_COMPILE_VERSION = 21;
-
-    public static void premain(String args, Instrumentation inst) {
+    @Override
+    public void handle(String args, Instrumentation inst) {
         verifyJavaVersion();
-        System.out.println(Agent.class.getClassLoader());
+        System.out.println(Handler.class.getClassLoader());
         Logger.log.info("Starting URL Hook");
         if ("false".equals(System.getProperty("urlWrapper.doRedirect", "false"))) {
             Logger.log.info("Logging urls only. Without redirect");

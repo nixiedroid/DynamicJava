@@ -1,18 +1,18 @@
-package com.nixiedroid.waytwo.magic.parts;
+package com.nixiedroid.parts;
 
-import com.nixiedroid.waytwo.magic.ClassRetriever;
-import com.nixiedroid.waytwo.magic.Context;
+import com.nixiedroid.ClassRetriever;
+import com.nixiedroid.Context;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
-public abstract class HookClass {
+public abstract class HookClassFromBytes {
     protected MethodHandle defineHookClassMethodHandle;
 
-    public abstract Class<?> apply(Class<?> clientClass, byte[] byteCode) throws Throwable;
+    public abstract Class<?> create(Class<?> clientClass, byte[] byteCode) throws Throwable;
 
-    public static class ForJava7 extends HookClass {
+    public static class ForJava7 extends HookClassFromBytes {
         protected sun.misc.Unsafe unsafe;
 
         public ForJava7() throws Throwable {
@@ -29,12 +29,11 @@ public abstract class HookClass {
         }
 
         @Override
-        public Class<?> apply(Class<?> clientClass, byte[] byteCode) throws Throwable {
+        public Class<?> create(Class<?> clientClass, byte[] byteCode) throws Throwable {
             return (Class<?>) defineHookClassMethodHandle.invokeWithArguments(unsafe, clientClass, byteCode, null);
         }
 
     }
-
 
     public static class ForJava9 extends ForJava7 {
 
@@ -49,8 +48,7 @@ public abstract class HookClass {
 
     }
 
-
-    public static class ForJava17 extends HookClass {
+    public static class ForJava17 extends HookClassFromBytes {
         protected MethodHandle privateLookupInMethodHandle;
         protected MethodHandles.Lookup lookup;
 
@@ -64,13 +62,13 @@ public abstract class HookClass {
 
 
         @Override
-        public Class<?> apply(Class<?> clientClass, byte[] byteCode) throws Throwable {
+        public Class<?> create(Class<?> clientClass, byte[] byteCode) throws Throwable {
             MethodHandles.Lookup pLookup = (MethodHandles.Lookup) privateLookupInMethodHandle.invokeWithArguments(clientClass, lookup);
             try {
                 return (Class<?>) defineHookClassMethodHandle.invokeWithArguments(pLookup, byteCode);
             } catch (LinkageError exc) {
                 try {
-                    return Class.forName(ClassRetriever.getClassName(byteCode));
+                    return Class.forName(ClassRetriever.getRealClassName(byteCode));
                 } catch (Throwable excTwo) {
                     throw exc;
                 }

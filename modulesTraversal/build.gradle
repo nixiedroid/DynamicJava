@@ -28,11 +28,13 @@ repositories {
 }
 
 dependencies {
-   // implementation project(':app')
+   // implementation project (':LongRead')
     implementation 'org.jetbrains:annotations:24.0.0'
+    implementation project(':core')
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.apache.bcel:bcel:6.8.2'
     //implementation 'org.burningwave:core:12.64.3'
     //implementation 'io.github.toolfactory:jvm-driver:9.6.0'
 }

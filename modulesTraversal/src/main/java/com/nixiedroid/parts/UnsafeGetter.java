@@ -1,4 +1,4 @@
-package com.nixiedroid.waytwo.magic.parts;
+package com.nixiedroid.parts;
 
 import sun.misc.Unsafe;
 

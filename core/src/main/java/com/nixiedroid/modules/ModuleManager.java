@@ -1,4 +1,4 @@
-package com.nixiedroid.wayone;
+package com.nixiedroid.modules;
 
 import java.lang.reflect.*;
 @SuppressWarnings("unused")
@@ -13,8 +13,6 @@ public class ModuleManager {
         getAccessibleModule();
     }
 
-    public static void poke() {
-    }
     private static void getUnsafe(){
         try {
             Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
@@ -78,6 +76,7 @@ public class ModuleManager {
             }
         }
     }
+    public static void poke(){}
 
     public static void breakEncapsulation(final Class<?> accessor, final Class<?> target, final boolean accessNamedModules) {
         if (!accessNamedModules) target.getModule().addExports(target.getPackageName(), accessor.getModule());

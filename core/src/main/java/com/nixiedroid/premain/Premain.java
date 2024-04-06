@@ -1,6 +1,7 @@
-package com.nixiedroid.javaagent;
+package com.nixiedroid.premain;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.InvocationTargetException;
 
 @SuppressWarnings("unused")
 public class Premain {
@@ -8,10 +9,21 @@ public class Premain {
     private static volatile boolean isPremainAvailable = false;
 
     public static void premain(final String agentArgs, final Instrumentation inst) {
-        System.out.println("Premain OK");
         globalInstrumentation = inst;
         isPremainAvailable = true;
-        listAllLoadedAppClasses();
+        PremainHandler handler = null;
+        try {
+            handler = (PremainHandler) Class
+                    .forName(Premain.class.getPackage()+"Handler")
+                    .getConstructor().newInstance();
+            handler.handle(agentArgs,inst);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            e.getTargetException().printStackTrace();
+            throw new RuntimeException();
+        } catch (NoSuchMethodException | ClassNotFoundException ignored) {}
+
     }
     private static void replaceClassloader() {
 
@@ -25,17 +37,5 @@ public class Premain {
         throw new IllegalStateException("PremainNotAvailable");
     }
 
-    public static void listAllLoadedClasses() {
-        for (Class cl : globalInstrumentation.getAllLoadedClasses()) {
-            System.out.println(cl.getName() + " is loaded via " + cl.getClassLoader());
-        }
-    }
 
-    public static void listAllLoadedAppClasses() {
-        for (Class cl : globalInstrumentation.getAllLoadedClasses()) {
-            if (cl.getClassLoader() != null) {
-                System.out.println(cl.getName() + " is loaded via " + cl.getClassLoader().getClass().getSimpleName());
-            }
-        }
-    }
 }

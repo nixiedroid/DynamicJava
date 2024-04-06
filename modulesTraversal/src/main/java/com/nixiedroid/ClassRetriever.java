@@ -1,7 +1,11 @@
-package com.nixiedroid.waytwo.magic;
+package com.nixiedroid;
 
-import com.nixiedroid.Info;
+import com.nixiedroid.runtime.Info;
+import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.JavaClass;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class ClassRetriever {
@@ -20,14 +24,12 @@ public class ClassRetriever {
         }
     }
     public static Object getHandler(Class<?> parent){
-        System.out.println( "Req: " + parent.getName());
         Class<?> cl = findHandler(parent);
 
         try {
             return cl.getConstructor().newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+           throw new RuntimeException(e);
         }
     }
 
@@ -35,15 +37,19 @@ public class ClassRetriever {
         for (int i = JAVA_VERSIONS_LEQ_CURRENT.length-1; i >= 0;i-- ){
             for (Class<?> aClass : classes) {
                 if (aClass.getSimpleName().equals(JAVA + JAVA_VERSIONS_LEQ_CURRENT[i])) {
-                    System.out.println("Res: " +  aClass.getName());
                     return aClass;
                 }
             }
         }
         throw new ClassNotFoundException(classes.toString());
     }
-    public static String getClassName(byte[] classBytes){
-        //ByteBuffer vs byte[]
-        return "";
+    public static String getRealClassName(byte[] classBytes) throws ClassNotFoundException {
+        try {
+            ClassParser classParser = new ClassParser(new ByteArrayInputStream(classBytes), "");
+            JavaClass jc = classParser.parse();
+            return jc.getClassName();
+        } catch (IOException e) {
+            throw new ClassNotFoundException(e.getMessage());
+        }
     }
 }

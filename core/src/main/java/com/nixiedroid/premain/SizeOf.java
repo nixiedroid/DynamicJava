@@ -1,4 +1,4 @@
-package com.nixiedroid.javaagent;
+package com.nixiedroid.premain;
 
 import com.nixiedroid.unsafe.type.Size;
 

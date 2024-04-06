@@ -1,7 +1,7 @@
-package com.nixiedroid.waytwo.magic.parts;
+package com.nixiedroid.parts.lookups;
 
-import com.nixiedroid.Info;
-import com.nixiedroid.waytwo.magic.Context;
+import com.nixiedroid.runtime.Info;
+import com.nixiedroid.Context;
 
 
 import java.lang.invoke.MethodHandles;

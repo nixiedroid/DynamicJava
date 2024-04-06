@@ -1,6 +1,6 @@
-package com.nixiedroid.waytwo.magic.parts;
+package com.nixiedroid.parts;
 
-import com.nixiedroid.waytwo.magic.Context;
+import com.nixiedroid.Context;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

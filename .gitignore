@@ -4,6 +4,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 LongRead
+LongRead.zip
+modulesTraversal/depends.txt
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
