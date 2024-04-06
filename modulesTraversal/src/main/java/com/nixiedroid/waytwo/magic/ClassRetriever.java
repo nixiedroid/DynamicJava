@@ -1,6 +1,6 @@
 package com.nixiedroid.waytwo.magic;
 
-import com.nixiedroid.runtime.Info;
+import com.nixiedroid.Info;
 
 import java.util.Arrays;
 

@@ -7,4 +7,5 @@ include 'hooks:java8'
 include 'hooks:java9'
 include 'modulesTraversal'
 include 'classloader'
+include 'LongRead'
 

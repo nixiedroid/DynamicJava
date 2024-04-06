@@ -1,0 +1,28 @@
+plugins {
+    id 'java-library'
+}
+
+
+
+java {
+    group = 'jdk.internal.loader'
+    version = 'unspecified'
+    sourceCompatibility = "1.9"
+    targetCompatibility = "1.9"
+}
+repositories {
+    mavenCentral()
+}
+compileJava {
+    classpath += files('classes/')
+}
+
+dependencies {
+    implementation fileTree('classes/')
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

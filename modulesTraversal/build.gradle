@@ -6,10 +6,13 @@ plugins {
 java {
     group = 'com.nixiedroid'
     version = 'unspecified'
+    //sourceCompatibility = "1.8"
+    //targetCompatibility = "1.8"
 }
 compileJava {
-    options.compilerArgs << '--add-exports' << 'java.base/jdk.internal.event=ALL-UNNAMED'
-    options.compilerArgs << '--add-exports' << 'java.base/jdk.internal.math=ALL-UNNAMED'
+   //options.compilerArgs << '--release' <<'9'
+   // options.compilerArgs << '--add-exports' << 'java.base/jdk.internal.event=ALL-UNNAMED'
+   // options.compilerArgs << '--add-exports' << 'java.base/jdk.internal.math=ALL-UNNAMED'
 }
 jar {
     manifest {
@@ -25,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(':app')
+   // implementation project(':app')
     implementation 'org.jetbrains:annotations:24.0.0'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
