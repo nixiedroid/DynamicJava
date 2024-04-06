@@ -12,7 +12,7 @@
             <option value="$PROJECT_DIR$/LongRead" />
             <option value="$PROJECT_DIR$/URLWrapper" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/classloader" />
+            <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/hooks" />
             <option value="$PROJECT_DIR$/hooks/java8" />
             <option value="$PROJECT_DIR$/hooks/java9" />

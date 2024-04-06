@@ -1,11 +1,12 @@
 rootProject.name = 'DynamicJava'
 include 'app'
+include 'core'
 include 'plugin'
 include 'plugin2'
-include 'URLWrapper'
 include 'hooks:java8'
 include 'hooks:java9'
 include 'modulesTraversal'
-include 'classloader'
+include 'URLWrapper'
 include 'LongRead'
+
 
