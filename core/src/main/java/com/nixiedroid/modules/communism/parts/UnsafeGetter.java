@@ -1,4 +1,4 @@
-package com.nixiedroid.parts;
+package com.nixiedroid.modules.communism.parts;
 
 import sun.misc.Unsafe;
 

@@ -1,4 +1,4 @@
-package com.nixiedroid;
+package com.nixiedroid.modules.communism;
 
 import com.nixiedroid.runtime.Info;
 import org.apache.bcel.classfile.ClassParser;

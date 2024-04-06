@@ -1,6 +1,6 @@
-package com.nixiedroid.parts;
+package com.nixiedroid.modules.communism.parts;
 
-import com.nixiedroid.Context;
+import com.nixiedroid.modules.communism.Context;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;

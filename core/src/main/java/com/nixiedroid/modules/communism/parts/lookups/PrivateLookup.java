@@ -1,6 +1,6 @@
-package com.nixiedroid.parts.lookups;
+package com.nixiedroid.modules.communism.parts.lookups;
 
-import com.nixiedroid.Context;
+import com.nixiedroid.modules.communism.Context;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

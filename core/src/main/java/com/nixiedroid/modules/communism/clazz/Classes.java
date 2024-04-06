@@ -1,4 +1,4 @@
-package com.nixiedroid.clazz;
+package com.nixiedroid.modules.clazz;
 
 public class Classes {
     public static <T> Class<T> retrieveFrom(Object object) {
@@ -11,7 +11,6 @@ public class Classes {
             classes = new Class[objects.length];
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i] != null) {
-
                     classes[i] = retrieveFrom(objects[i]);
                 }
             }

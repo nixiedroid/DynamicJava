@@ -1,7 +1,7 @@
-package com.nixiedroid.clazz;
+package com.nixiedroid.modules.communism.clazz;
 
-import com.nixiedroid.Context;
-
+import com.nixiedroid.modules.communism.Context;
+import com.nixiedroid.modules.clazz.Classes;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;

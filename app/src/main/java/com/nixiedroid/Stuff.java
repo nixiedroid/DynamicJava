@@ -3,12 +3,14 @@ package com.nixiedroid;
 import com.nixiedroid.classloaders.CryptedClassLoader;
 import com.nixiedroid.classloaders.DummyClassLoader;
 import com.nixiedroid.modules.ModuleManager;
+import com.nixiedroid.modules.communism.clazz.Modules;
 import com.nixiedroid.premain.Handler;
 import com.nixiedroid.runtime.Info;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,6 +82,20 @@ public class Stuff {
             Field field = cl.getDeclaredField("SIGNIFICAND_WIDTH");
             System.out.println(field.get(null));
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void communism(){
+        Modules modules = new Modules();
+        modules.exportAllToAll();
+    }
+    public static void accessInaccessible(){
+        try {
+            Class<?> cl = Class.forName("jdk.internal.misc.VM");
+            Method m =  cl.getMethod("initLevel");
+            int dat = (int) m.invoke(null);
+            System.out.println(dat);
+        } catch (Exception e){
             throw new RuntimeException(e);
         }
     }

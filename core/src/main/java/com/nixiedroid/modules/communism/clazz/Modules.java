@@ -1,7 +1,8 @@
-package com.nixiedroid.clazz;
+package com.nixiedroid.modules.communism.clazz;
 
-import com.nixiedroid.Context;
-
+import com.nixiedroid.modules.communism.Context;
+import com.nixiedroid.modules.communism.clazz.Methods;
+import com.nixiedroid.modules.communism.clazz.Fields;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,11 +10,11 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class Modules {
-    private Class<?> moduleClass;
-    private Set<?> allSet = new HashSet<>();
-    private Set<?> everyOneSet = new HashSet<>();
-    private Set<?> allUnnamedSet = new HashSet<>();
-    private Map<String, ?> nameToModule;
+    private final Class<?> moduleClass;
+    private final Set<?> allSet = new HashSet<>();
+    private final Set<?> everyOneSet = new HashSet<>();
+    private final Set<?> allUnnamedSet = new HashSet<>();
+    private final Map<String, ?> nameToModule;
 
     public Modules() {
         try {
@@ -29,12 +30,9 @@ public class Modules {
             );
             Object moduleLayer = Methods.invokeStaticDirect(moduleLayerClass, "boot");
             nameToModule = Fields.getDirect(moduleLayer, "nameToModule");
-            allSet = new HashSet<>();
             allSet.add(Fields.getStaticDirect(moduleClass, "ALL_UNNAMED_MODULE"));
             allSet.add(Fields.getStaticDirect(moduleClass, "EVERYONE_MODULE"));
-            everyOneSet = new HashSet<>();
             everyOneSet.add(Fields.getStaticDirect(moduleClass, "EVERYONE_MODULE"));
-            allUnnamedSet = new HashSet<>();
             allUnnamedSet.add(Fields.getStaticDirect(moduleClass, "ALL_UNNAMED_MODULE"));
         } catch (Throwable exc) {
             throw new RuntimeException(exc);
@@ -43,12 +41,13 @@ public class Modules {
 
     public void exportAllToAll() {
         try {
-            nameToModule.forEach((name, module) -> {
-                ((Set<String>)Methods.invokeDirect(module, "getPackages")).forEach(pkgName -> {
-                    exportToAll("exportedPackages", module, pkgName);
-                    exportToAll("openPackages", module, pkgName);
-                });
-            });
+            nameToModule.forEach((name, module)
+                    -> ((Set<String>)Methods.invokeDirect(module, "getPackages"))
+                    .forEach(pkgName -> {
+                exportToAll("exportedPackages", module, pkgName);
+                exportToAll("openPackages", module, pkgName);
+                            }
+            ));
         } catch (Throwable exc) {
            throw new RuntimeException(exc);
         }

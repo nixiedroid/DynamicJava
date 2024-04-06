@@ -1,7 +1,7 @@
-package com.nixiedroid.parts;
+package com.nixiedroid.modules.communism.parts;
 
-import com.nixiedroid.Const;
-import com.nixiedroid.Context;
+import com.nixiedroid.modules.communism.Const;
+import com.nixiedroid.modules.communism.Context;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

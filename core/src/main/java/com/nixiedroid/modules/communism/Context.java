@@ -1,10 +1,10 @@
-package com.nixiedroid;
+package com.nixiedroid.modules.communism;
 
-import com.nixiedroid.parts.*;
-import com.nixiedroid.parts.lookups.DeepLookup;
-import com.nixiedroid.parts.lookups.Lookup;
-import com.nixiedroid.parts.lookups.LookupSupplyFunction;
-import com.nixiedroid.parts.lookups.PrivateLookup;
+import com.nixiedroid.modules.communism.parts.*;
+import com.nixiedroid.modules.communism.parts.lookups.DeepLookup;
+import com.nixiedroid.modules.communism.parts.lookups.Lookup;
+import com.nixiedroid.modules.communism.parts.lookups.LookupSupplyFunction;
+import com.nixiedroid.modules.communism.parts.lookups.PrivateLookup;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

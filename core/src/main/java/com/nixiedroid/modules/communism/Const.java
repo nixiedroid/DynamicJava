@@ -1,4 +1,4 @@
-package com.nixiedroid;
+package com.nixiedroid.modules.communism;
 
 public class Const {
     public static final String ACCESSIBLE_BLOB = "/AccessibleSetterInvokerForJDK9.blob";

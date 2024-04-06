@@ -1,7 +1,7 @@
-package com.nixiedroid.parts;
+package com.nixiedroid.modules.communism.parts;
 
-import com.nixiedroid.ClassRetriever;
-import com.nixiedroid.Context;
+import com.nixiedroid.modules.communism.ClassRetriever;
+import com.nixiedroid.modules.communism.Context;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
