@@ -11,6 +11,8 @@ import com.nixiedroid.samples.Clazz;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -184,5 +186,51 @@ public class Stuff {
             System.out.println(f.getName() + " is " + f.getType());
         }
     }
+    private String getModifiers(int modifiers) {
+        StringBuilder sb = new StringBuilder("Modifiers:");
+        if ((modifiers & Modifier.PUBLIC) != 0) sb.append(" Public");
+        if ((modifiers & Modifier.PRIVATE) != 0) sb.append(" Private");
+        if ((modifiers & Modifier.PROTECTED) != 0) sb.append(" Protected");
+        if ((modifiers & Modifier.STATIC) != 0) sb.append(" Package");
+        if ((modifiers & Modifier.STATIC << 1) != 0) sb.append(" Module");
+        if ((modifiers & Modifier.STATIC << 2) != 0) sb.append(" Unconditional");
+        if ((modifiers & Modifier.STATIC << 3) != 0) sb.append(" Original");
+        if (modifiers == -1) sb.append(" Trusted");
+        return sb.toString();
+    }
+    private void accessHandle() {
+        var mt = MethodType.methodType(void.class, String.class);
+        var lookup = MethodHandles.lookup();
+        System.out.println(getModifiers(lookup.lookupModes()));
+        try {
+            var mhs = lookup.findStatic(Clazz.class, "sayStatic", mt);
+            var mhd = lookup.findVirtual(Clazz.class, "sayDynamic", mt);
 
+            var msp = Clazz.class.getDeclaredMethod("privSayStatic", String.class);
+            msp.setAccessible(true);
+            var mhsp = lookup.unreflect(msp);
+
+
+            var getter = lookup.findGetter(Clazz.class, "sInteger", int.class);
+            var varp = Clazz.class.getDeclaredField("sInteger");
+            for (Method m : Clazz.class.getDeclaredMethods()) {
+                System.out.println(m.getName());
+            }
+            varp.setAccessible(true);
+            // var varph = lookup.unreflectVarHandle(varp);
+
+
+            mhsp.invoke("hello");
+            mhs.invoke("hello");
+            mhd.invoke(new Clazz(), "hola");
+            //   System.out.println(varph.get(new Clazz()));
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

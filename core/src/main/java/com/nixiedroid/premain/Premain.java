@@ -6,12 +6,12 @@ import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class Premain {
-//    private static volatile Instrumentation globalInstrumentation;
-//    private static volatile boolean isPremainAvailable = false;
+    private static volatile Instrumentation globalInstrumentation;
+    private static volatile boolean isPremainAvailable = false;
 
     public static void premain(final String agentArgs, final Instrumentation inst) {
-//        globalInstrumentation = inst;
-//        isPremainAvailable = true;
+        globalInstrumentation = inst;
+        isPremainAvailable = true;
         Optional<PremainHandler> handlerNullable =  findHandlerClass(agentArgs, inst);
         if (handlerNullable.isPresent()) {
             PremainHandler handler = handlerNullable.get();
@@ -43,10 +43,9 @@ public class Premain {
 
 
     public static long sizeOf(final Object object) throws IllegalStateException {
-//        if (isPremainAvailable) {
-//            return globalInstrumentation.getObjectSize(object);
-//        }
-//        throw new IllegalStateException("PremainNotAvailable");
-        return 1;
+        if (isPremainAvailable) {
+            return globalInstrumentation.getObjectSize(object);
+        }
+        throw new IllegalStateException("PremainNotAvailable");
     }
 }
