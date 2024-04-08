@@ -1,6 +1,6 @@
 package com.nixiedroid.urlWrapper.mock;
 
-import com.nixiedroid.unsafe.Unsafe;
+import com.nixiedroid.unsafe.UnsafeWrapper;
 
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -11,11 +11,11 @@ public class URLHandlerMocker {
     }
     public static void init(){
         System.out.println(URLHandlerMocker.class.getModule());
-        Unsafe.moveToJavaBase(MockedHttpHandler.class);
-        Unsafe.moveToJavaBase(MockedHttpsHandler.class);
+        UnsafeWrapper.moveToJavaBase(MockedHttpHandler.class);
+        UnsafeWrapper.moveToJavaBase(MockedHttpsHandler.class);
         System.out.println(MockedHttpsHandler.class.getModule());
-        Unsafe.moveToJavaBase(URLHandlerMocker.class);
-        Unsafe.moveToJavaBase(MockedUrlHandlerFactory.class);
+        UnsafeWrapper.moveToJavaBase(URLHandlerMocker.class);
+        UnsafeWrapper.moveToJavaBase(MockedUrlHandlerFactory.class);
 
         System.out.println(URLHandlerMocker.class.getModule());
         unsetURLStreamHandlerFactory();

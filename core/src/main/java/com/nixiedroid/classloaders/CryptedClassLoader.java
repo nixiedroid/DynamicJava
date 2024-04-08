@@ -2,6 +2,7 @@ package com.nixiedroid.classloaders;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -22,6 +23,10 @@ public class CryptedClassLoader extends FileClassLoader {
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public CryptedClassLoader(String prefix, String extension) {
+        super(prefix, extension);
     }
 
     public static byte[] encrypt(byte[] data) {
@@ -46,9 +51,11 @@ public class CryptedClassLoader extends FileClassLoader {
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        byte[] classBytes = decrypt(readFile(getFileName(name, ".enc")));
-        String realClassName = getRealClassName(classBytes);
-        return defineClass(realClassName, classBytes, 0, classBytes.length); //Name must be equal to inside class
+    protected byte[] getClassBytes(String name) {
+        try {
+            return decrypt(readFile(getFileName(name, EXTENSION)));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

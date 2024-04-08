@@ -6,11 +6,11 @@ plugins {
 java {
     group = 'com.nixiedroid'
     version = '1'
-    base.archivesName = 'dynamicJava'
+    base.archivesName = 'app'
 }
 
-def preMainDir = DEFAULT_BUILD_DIR_NAME + "/libs/" + project.name + ".jar"
-def preMainClass = "com.nixiedroid.Premain"
+def preMainDir = DEFAULT_BUILD_DIR_NAME + "/libs/" + project.name + "-"+ project.version + ".jar"
+def preMainClass = "com.nixiedroid.premain.Premain"
 
 application  {
     mainClass = "com.nixiedroid.Main"
@@ -29,10 +29,11 @@ jar {
                // 'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
         )
     }
-//    from {
-//        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+   // from sourceSets.main.output
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 repositories {

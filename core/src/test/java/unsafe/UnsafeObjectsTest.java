@@ -1,6 +1,6 @@
 package unsafe;
 
-import com.nixiedroid.unsafe.Unsafe;
+import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UnsafeClassInstantiationTest {
     private  void createUtilityObjectReflection() {
         try {
-            Constructor<Unsafe> constructor = ( Unsafe.class).getDeclaredConstructor();
+            Constructor<UnsafeWrapper> constructor = ( UnsafeWrapper.class).getDeclaredConstructor();
             constructor.setAccessible(true);
             constructor.newInstance();
             constructor.setAccessible(false);
@@ -70,7 +70,7 @@ class UnsafeClassInstantiationTest {
     public void createInstanceWithoutConstructor() {
         TestClass cl = null;
         try {
-            cl = Unsafe.createDummyInstance(TestClass.class);
+            cl = UnsafeWrapper.createDummyInstance(TestClass.class);
         } catch (Exception e) {
             fail("Should not have thrown any exception : \n " + e);
         }

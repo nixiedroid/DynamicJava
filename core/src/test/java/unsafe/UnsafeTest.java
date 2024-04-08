@@ -1,6 +1,6 @@
 package unsafe;
 
-import com.nixiedroid.unsafe.Unsafe;
+import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
@@ -36,15 +36,15 @@ class UnsafeTest {
     @Test
     void throwException() {
         assertThrowsExactly(IllegalArgumentException.class,
-                () -> Unsafe.throwException(new IllegalArgumentException()));
+                () -> UnsafeWrapper.throwException(new IllegalArgumentException()));
         assertThrowsExactly(RuntimeException.class,
-                () -> Unsafe.throwException(new RuntimeException()));
+                () -> UnsafeWrapper.throwException(new RuntimeException()));
         assertThrowsExactly(Exception.class,
-                () -> Unsafe.throwException(new Exception()));
+                () -> UnsafeWrapper.throwException(new Exception()));
         assertThrowsExactly(Error.class,
-                () -> Unsafe.throwException(new Error()));
+                () -> UnsafeWrapper.throwException(new Error()));
         assertThrowsExactly(Throwable.class,
-                () -> Unsafe.throwException(new Throwable()));
+                () -> UnsafeWrapper.throwException(new Throwable()));
     }
 
     @Test

@@ -30,9 +30,9 @@ public class Util {
     public static boolean isStackGrowsUp(long address){
         int x = 1;
         if (address == 0){
-            return isStackGrowsUp(Unsafe.getAddress(x));
+            return isStackGrowsUp(UnsafeWrapper.getAddress(x));
         } else {
-            return Unsafe.getAddress(x) >= address;
+            return UnsafeWrapper.getAddress(x) >= address;
         }
     }
 //    public static Set<String> getBrokenHashSet(){

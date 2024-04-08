@@ -4,9 +4,11 @@ import com.nixiedroid.runtime.Info;
 import com.nixiedroid.urlWrapper.Logger;
 import com.nixiedroid.urlWrapper.mock.URLHandlerMocker;
 
+import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.security.ProtectionDomain;
 
-public class Handler implements PremainHandler{
+public class Handler extends PremainHandler {
     private static final int JAVA_COMPILE_VERSION = 21;
     @Override
     public void handle(String args, Instrumentation inst) {
@@ -18,6 +20,15 @@ public class Handler implements PremainHandler{
         }
         URLHandlerMocker.init();
     }
+
+    @Override
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        return classfileBuffer;
+    }
+
     private static void verifyJavaVersion(){
         if (Info.getVersion() != JAVA_COMPILE_VERSION) {
             Logger.log.info("Detected untested java version: " + Info.getVersion());

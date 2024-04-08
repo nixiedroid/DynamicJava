@@ -4,21 +4,27 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class FileClassLoader extends ClassLoader {
     private static final byte[] MAGIC = new byte[]{(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
-    protected final String PKG_PREFIX = "com.nixiedroid.plugins.";
+    protected final String PKG_PREFIX;
+    protected final String EXTENSION;
     protected ClassParser classParser;
 
     public FileClassLoader(ClassLoader parent) {
         super(parent); //Support for classloader replacement by THIS class
+        PKG_PREFIX = "com.nixiedroid.plugins";
+        EXTENSION = "clazz";
     }
 
-    public FileClassLoader() {
+    public FileClassLoader(final String prefix, final String extension) {
+        PKG_PREFIX = prefix;
+        EXTENSION = extension;
     }
 
-    protected static void validateClassMagic(byte[] bytes) throws ValidationException {
+    private static void validateClassMagic(byte[] bytes) throws ValidationException {
         if (bytes == null) throw new ValidationException("Class File is Null");
         if (bytes.length < 4) throw new ValidationException("Invalid Class File Length");
         for (int i = 0; i < 4; i++) {
@@ -26,21 +32,21 @@ public class FileClassLoader extends ClassLoader {
         }
     }
 
-    protected String getRealClassName(byte[] classBytes) throws ClassNotFoundException {
+    protected final String getRealClassName(byte[] classBytes) throws ClassNotFoundException {
         try {
             classParser = new ClassParser(new ByteArrayInputStream(classBytes), "");
             JavaClass jc = classParser.parse();
             return jc.getClassName();
         } catch (IOException e) {
-            throw new ClassNotFoundException(e.getMessage());
+            throw new ClassNotFoundException();
         }
     }
 
-    protected String getFileName(String className, String extension) throws ClassNotFoundException {
+    protected final String getFileName(String className, String extension) throws FileNotFoundException {
         int index = className.lastIndexOf('.') + 1;
-        if (index == className.length()) throw new ClassNotFoundException();
+        if (index == className.length()) throw new FileNotFoundException("Illegal Class Name");
         String classname = className.substring(index);
-        return "/" + classname + extension;
+        return "/" + classname + "." + extension;
     }
 
     @Override
@@ -49,31 +55,47 @@ public class FileClassLoader extends ClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
+    public final Class<?> loadClass(String name) throws ClassNotFoundException {
+        loadClassInputLogging(name);
         Class<?> cl = findLoadedClass(name);
         if (cl != null) return cl;
         if (name.startsWith(PKG_PREFIX)) {
+            loadClassProcessLogging(name);
             cl = findClass(name);
             if (cl != null) return cl;
         }
         return super.loadClass(name);
     }
 
+    protected void loadClassInputLogging(String name) {
+    }
+    protected void loadClassProcessLogging(String name) {
+    }
+
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        byte[] classBytes = readFile(getFileName(name,".clazz"));
+    protected final Class<?> findClass(String name) throws ClassNotFoundException {
+        byte[] classBytes = getClassBytes(name);
         String realClassName = getRealClassName(classBytes);
         return defineClass(realClassName, classBytes, 0, classBytes.length); //Name must be equal to inside class
     }
 
-    protected byte[] readFile(String name) throws ClassNotFoundException {
+    protected byte[] getClassBytes(String name) {
+        try {
+            return readFile(getFileName(name, EXTENSION));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected final byte[] readFile(String name) throws FileNotFoundException {
         byte[] fileBytes;
         try (var res = this.getClass().getResourceAsStream(name)) {
-            fileBytes = new byte[1];
+            fileBytes = null;
             if (res != null) fileBytes = res.readAllBytes();
+            if (fileBytes == null) throw new FileNotFoundException();
             return fileBytes;
         } catch (IOException e) {
-            throw new ClassNotFoundException(e.getMessage());
+            throw new FileNotFoundException(name);
         }
     }
 }
