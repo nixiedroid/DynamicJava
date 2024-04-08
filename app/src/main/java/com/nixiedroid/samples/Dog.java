@@ -1,6 +1,6 @@
-package classloading.samples;
+package com.nixiedroid.samples;
 
-import classloading.samples.interfaces.Walking;
+import com.nixiedroid.samples.interfaces.Walking;
 
 public class Dog implements Walking
 {

@@ -7,6 +7,7 @@ import com.nixiedroid.modules.ModuleManager;
 import com.nixiedroid.modules.util.Modules;
 import com.nixiedroid.premain.Handler;
 import com.nixiedroid.runtime.Info;
+import com.nixiedroid.samples.Clazz;
 
 import java.io.File;
 import java.io.IOException;
@@ -181,47 +182,6 @@ public class Stuff {
         Field[] fields = cactus.getDeclaredFields();
         for (Field f: fields) {
             System.out.println(f.getName() + " is " + f.getType());
-        }
-    }
-    public static class Clazz{
-        boolean sBoolean;
-        Boolean oBoolean;
-        boolean[] aBoolean;
-        short sShort;
-        Short oShort;
-        short[] aShort;
-        char sChar;
-        Character oChar;
-        char[] aChar;
-        int sInteger = 4;
-        Integer oInteger;
-        int[] aInteger;
-        Object obj;
-        Object[] aObj;
-    }
-
-    static class Runn implements Runnable {
-        @Override
-        public void run() {
-            System.out.println("RUNNING...");
-            stuckOverflow(0);
-        }
-
-    }
-
-    static class Fork implements Runnable {
-        @Override
-        public void run() {
-            new Thread(new Fork()).start();
-            new Thread(new Fork()).start();
-        }
-    }
-
-    static class Thr extends Thread {
-        @Override
-        public void run() {
-            System.out.println("THREADING...");
-            stuckOverflow(0);
         }
     }
 

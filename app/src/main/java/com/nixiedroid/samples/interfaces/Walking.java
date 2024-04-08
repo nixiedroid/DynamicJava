@@ -1,4 +1,4 @@
-package classloading.samples.interfaces;
+package com.nixiedroid.samples.interfaces;
 
 public interface Walking {
     //protected void walk(); -> not allowed
