@@ -1,5 +1,6 @@
 package com.nixiedroid;
 
+import com.nixiedroid.bytes.ByteArrayUtils;
 import com.nixiedroid.classloaders.CryptedClassLoader;
 import com.nixiedroid.classloaders.DummyClassLoader;
 import com.nixiedroid.classloaders.FileClassLoader;
@@ -7,10 +8,10 @@ import com.nixiedroid.modules.ModuleManager;
 import com.nixiedroid.modules.util.Modules;
 import com.nixiedroid.premain.Handler;
 import com.nixiedroid.runtime.Info;
+import com.nixiedroid.samples.Cats;
 import com.nixiedroid.samples.Clazz;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
@@ -42,7 +43,6 @@ public class Stuff {
         }
 
     }
-
     public static void printAll() throws Exception {
         print("\nMain OK");
         Handler.listAllLoadedAppClasses();
@@ -57,20 +57,16 @@ public class Stuff {
         print("Platform loaded packages:" + Arrays.toString(ClassLoader.getPlatformClassLoader().getDefinedPackages()));
         // epicText();
     }
-
     public static void epicText() {
         ModuleLayer.boot().modules().stream().collect(Collectors.groupingBy(m -> Optional.ofNullable(m.getClassLoader()).map(ClassLoader::getName).orElse("boot"), Collectors.mapping(Module::getName, Collectors.toCollection(TreeSet::new)))).entrySet().stream().sorted(Comparator.comparingInt(e -> List.of("boot", "platform", "app").indexOf(e.getKey()))).map(e -> e.getKey() + "\n\t" + String.join("\n\t", e.getValue())).forEach(Stuff::print);
     }
-
     public static void printSystemPaths() {
         print(System.getProperty("java.class.path"));
         print(System.getProperty("jdk.module.path"));
     }
-
     public static void print(String str) {
         System.out.println(str);
     }
-
     public static void loadPlugin() {
         String name = "com.nixiedroid.plugins.Plugin";
         ClassLoader classLoader = new CryptedClassLoader("com.nixiedroid.plugins", "enc");
@@ -83,7 +79,6 @@ public class Stuff {
         }
 
     }
-
     public static void encrypt() {
         File rawFile = new File("./Plugin.clazz");
         File encFile = new File("./Plugin.enc");
@@ -95,7 +90,6 @@ public class Stuff {
             throw new RuntimeException(e);
         }
     }
-
     public static void modulesTest() {
         String FLOAT_CONSTANTS_CLASS_NAME = "jdk.internal.math.FloatConsts";
         String THREAD_SLEEPING_EVENT_CLASS_NAME = "jdk.internal.event.ThreadSleepEvent";
@@ -113,7 +107,6 @@ public class Stuff {
             throw new RuntimeException(e);
         }
     }
-
     public static void communism() {
         try {
             Modules modules = new Modules();
@@ -122,7 +115,6 @@ public class Stuff {
             throw new RuntimeException(exc);
         }
     }
-
     public static void accessInaccessible() {
         try {
             Class<?> cl = Class.forName("jdk.internal.misc.VM");
@@ -133,7 +125,6 @@ public class Stuff {
             throw new RuntimeException(e);
         }
     }
-
     public static void countTo655536() {
         short i = 0;
         char k = 0;
@@ -149,7 +140,6 @@ public class Stuff {
     public static void aNEQa() {
         System.out.println("is " + Float.NaN + " equals to " + Float.NaN + " ?: " + (Float.NaN == Float.NaN));
     }
-
     public static void stuckOverflow(int counter) {
         counter++;
         try {
@@ -158,7 +148,32 @@ public class Stuff {
             System.out.println("End is " + counter);
         }
     }
+    public static void testByteArray() {
+        var h = new Cats.MoreCat(3, 4);
+        byte[] b;
+        try (
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutput out = new ObjectOutputStream(bos)
+        ) {
+            out.writeObject(h);
+            b = bos.toByteArray();
+            System.out.println(ByteArrayUtils.toString(b));
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        try (
+                ByteArrayInputStream bis = new ByteArrayInputStream(b);
+                ObjectInput in = new ObjectInputStream(bis)
+        ) {
+            Cats.MoreCat h2;
+            h2 = (Cats.MoreCat) in.readObject();
 
+            assert (3 == h2.getA());
+            assert (4 == h2.getB());
+        } catch (IOException | ClassNotFoundException e) {
+            throw new AssertionError(e);
+        }
+    }
     public static void internalUnsafeTest(){
         sun.misc.Unsafe unsafe = com.nixiedroid.unsafe.UnsafeWrapper.getUnsafe();
         //jdk.internal.misc.Unsafe
@@ -186,7 +201,7 @@ public class Stuff {
             System.out.println(f.getName() + " is " + f.getType());
         }
     }
-    private String getModifiers(int modifiers) {
+    public static String getModifiers(int modifiers) {
         StringBuilder sb = new StringBuilder("Modifiers:");
         if ((modifiers & Modifier.PUBLIC) != 0) sb.append(" Public");
         if ((modifiers & Modifier.PRIVATE) != 0) sb.append(" Private");
@@ -198,7 +213,7 @@ public class Stuff {
         if (modifiers == -1) sb.append(" Trusted");
         return sb.toString();
     }
-    private void accessHandle() {
+    public static void accessHandle() {
         var mt = MethodType.methodType(void.class, String.class);
         var lookup = MethodHandles.lookup();
         System.out.println(getModifiers(lookup.lookupModes()));

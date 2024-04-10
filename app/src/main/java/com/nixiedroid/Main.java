@@ -1,91 +1,89 @@
 package com.nixiedroid;
 
-import com.nixiedroid.premain.Premain;
-import com.nixiedroid.samples.Cats;
-import com.nixiedroid.samples.Cats.DoubleCat;
-import com.nixiedroid.unsafe.Memory;
-import com.nixiedroid.unsafe.UnsafeWrapper;
-import com.nixiedroid.unsafe.type.Pointer;
+import com.nixiedroid.bytes.ByteArrayUtils;
+import com.nixiedroid.bytes.Endiannes;
+import com.nixiedroid.classblob.BlobHeader;
+import com.nixiedroid.classblob.ClassHeader;
+import com.nixiedroid.classblob.ClassHeaderFlags;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashSet;
+import java.io.*;
+
 
 public class Main {
-    sun.misc.Unsafe unsafe = UnsafeWrapper.getUnsafe();
-
-    Main() {
-        //new ModuleManager2();
-        //Stuff.accessInaccessible();
-        unsafeCode();
-
+    Main() throws IOException {
+        generics();
+        bytes();
     }
 
-    public static void main(String[] args) throws Throwable {
+    /**
+     * @see jdk.internal.misc.MainMethodFinder;
+     */
+    @SuppressWarnings("JavadocReference")
+    public static void main(String[] args) throws Exception {
         new Main();
-
     }
 
-    private static long normalize(int value) {
-        if (value >= 0) return value;
-        return (~0L >>> 32) & value;
+    public void generics() {
+//        List list = new LinkedList();
+//        list.add(1);
+//        list.add("hello");
+//        list.stream().forEach(System.out::println);
+//        list.stream().forEach(o -> o = (Integer) o - 1);
+//        list.stream().forEach(System.out::println);
     }
 
-    private void unsafeCode() {
-
-
-        Cats.TripleCat cat = new Cats.TripleCat();
-        System.out.println(Premain.sizeOf(cat));
-        Pointer p = Memory.malloc((int) Premain.sizeOf(cat));
-        for (int i = 0; i <= sizeOf(cat); i++) {
-            byte b = unsafe.getByte(cat,i);
-            unsafe.putByte(p.address()+i,b);
-        }
-        Cats.TripleCat[] array = new Cats.TripleCat[1];
-        long baseOffset = unsafe.arrayBaseOffset(array.getClass());
-        unsafe.putAddress(normalize(unsafe.getInt(array,baseOffset)),p.address());
-        cat = array[0];
-        System.out.println(cat.a);
-
-    }
-    public long sizeOf(Object o) {
-        HashSet<Field> fields = new HashSet<Field>();
-        Class c = o.getClass();
-        while (c != Object.class) {
-            for (Field f : c.getDeclaredFields()) {
-                if ((f.getModifiers() & Modifier.STATIC) == 0) {
-                    fields.add(f);
-                }
-            }
-            c = c.getSuperclass();
-        }
-
-        // get offset
-        long maxSize = 0;
-        for (Field f : fields) {
-            long offset = unsafe.objectFieldOffset(f);
-            if (offset > maxSize) {
-                maxSize = offset;
-            }
-        }
-
-        return ((maxSize/8) + 1) * 8;   // padding
+    public void bytes() {
+        short i = (short) 0xfff0;
+        System.out.println(i);
+        byte[] data = ByteArrayUtils.i().toBytes(i,Endiannes.LITTLE);
+        System.out.println(ByteArrayUtils.toString(data));
+        int ii = ByteArrayUtils.chunk.toInt16L(data);
+        System.out.printf("%04X\n", (ii & 0xFFFF));
+        System.out.println(i & 0xFFFF);
+        var in = (long) 1234567890L;
+        System.out.println(in);
+        var inwt = ByteArrayUtils.i().fromBytes(ByteArrayUtils.i().toBytes(in,Endiannes.LITTLE),Endiannes.LITTLE);
+        System.out.println(inwt +" " + inwt.getClass().getName());
     }
 
-    long toAddress(Object obj) {
-        Object[] array = new Object[]{obj};
-        long baseOffset = unsafe.arrayBaseOffset(Object[].class);
-        return normalize(unsafe.getInt(array, baseOffset));
-    }
 
-    Object fromAddress(long address) {
-        Object[] array = new Object[]{null};
-        long baseOffset = unsafe.arrayBaseOffset(Object[].class);
-        unsafe.putLong(array, baseOffset, address);
-        return array[0];
+    public void classBlob() throws IOException {
+        FileOutputStream fos = new FileOutputStream("out.bin");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        BlobHeader header = new BlobHeader(1, 1);
+        ClassHeader clh = new ClassHeader(new ClassHeaderFlags(0x12345678), 0x100200);
+        header.serialize(baos);
+        clh.serialize(baos);
+        System.out.println(ByteArrayUtils.toString(baos.toByteArray()));
+        baos.writeTo(fos);
+        fos.flush();
+        fos.close();
+
+        FileInputStream fis = new FileInputStream("out.bin");
+        ByteArrayInputStream bais = new ByteArrayInputStream(fis.readAllBytes());
+        header = new BlobHeader(3, 4);
+        header.deserialize(bais);
+        System.out.printf("%02x\n", bais.read());
+        System.out.printf("%02x\n", bais.read());
+        System.out.printf("%02x\n", bais.read());
+        System.out.printf("%02x\n", bais.read());
+        System.out.println(header);
+        fis.close();
     }
 
 
 }
+
+
+// jdk.internal.org.objectweb.asm
+//        CallSite fact = null;
+//        try {
+//            fact = java.lang.invoke.LambdaMetafactory.altMetafactory(
+//                    MethodHandles.lookup(), "test",
+//                    MethodType.methodType(int.class)
+//            );
+//        } catch (LambdaConversionException e) {
+//            throw new AssertionError(e);
+//        }
+//        System.out.println(fact.type());
+
