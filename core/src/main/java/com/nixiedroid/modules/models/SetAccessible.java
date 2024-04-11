@@ -33,7 +33,7 @@ public abstract class SetAccessible {
 
     }
 
-
+    @SuppressWarnings("unchecked")
     public static class ForJava9 extends SetAccessible {
         private BiConsumer<AccessibleObject, Boolean> setter;
 

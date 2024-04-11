@@ -1,4 +1,6 @@
-package com.nixiedroid.premain;
+package com.nixiedroid.premainImpl;
+
+import com.nixiedroid.premain.PremainHandler;
 
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;

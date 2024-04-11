@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Memory {
-    private static final HashMap<Pointer, Size> allocated;
+    private static final Map<Pointer, Size> allocated;
 
     static {
         allocated = new HashMap<>();

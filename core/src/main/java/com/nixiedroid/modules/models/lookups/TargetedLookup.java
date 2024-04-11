@@ -28,7 +28,7 @@ public abstract class TargetedLookup {
         }
 
     }
-
+    @SuppressWarnings("unchecked")
     public static class ForJava9 extends TargetedLookup {
 
         public ForJava9() throws Throwable {

@@ -4,6 +4,6 @@ include 'core'
 include 'plugin'
 include 'hooks:java8'
 include 'hooks:java9'
-include 'URLWrapper'
-
+include 'urlWrapper'
+include 'premain'
 

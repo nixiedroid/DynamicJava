@@ -1,27 +1,22 @@
 plugins {
     id 'java-library'
 }
-
 java {
-    group = 'com.nixiedroid'
-    version = 'unspecified'
+    group = 'com.nixiedroid.premain'
+    version = '1'
+    base.archivesName = 'premain'
     sourceCompatibility = "11"
     targetCompatibility = "11"
 }
+
 repositories {
     mavenCentral()
-}
-
-compileJava {
-    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'org.jetbrains:annotations:24.0.0'
-    implementation 'org.apache.bcel:bcel:6.8.2'
 }
 
 test {

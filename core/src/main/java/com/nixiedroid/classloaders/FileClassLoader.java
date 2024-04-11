@@ -6,6 +6,7 @@ import org.apache.bcel.classfile.JavaClass;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class FileClassLoader extends ClassLoader {
     private static final byte[] MAGIC = new byte[]{(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
@@ -89,7 +90,7 @@ public class FileClassLoader extends ClassLoader {
 
     protected final byte[] readFile(String name) throws FileNotFoundException {
         byte[] fileBytes;
-        try (var res = this.getClass().getResourceAsStream(name)) {
+        try (InputStream res = this.getClass().getResourceAsStream(name)) {
             fileBytes = null;
             if (res != null) fileBytes = res.readAllBytes();
             if (fileBytes == null) throw new FileNotFoundException();

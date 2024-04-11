@@ -6,7 +6,7 @@ import com.nixiedroid.classloaders.DummyClassLoader;
 import com.nixiedroid.classloaders.FileClassLoader;
 import com.nixiedroid.modules.ModuleManager;
 import com.nixiedroid.modules.util.Modules;
-import com.nixiedroid.premain.Handler;
+import com.nixiedroid.premainImpl.Handler;
 import com.nixiedroid.runtime.Info;
 import com.nixiedroid.samples.Cats;
 import com.nixiedroid.samples.Clazz;
@@ -174,6 +174,7 @@ public class Stuff {
             throw new AssertionError(e);
         }
     }
+    @SuppressWarnings("internal")
     public static void internalUnsafeTest(){
         sun.misc.Unsafe unsafe = com.nixiedroid.unsafe.UnsafeWrapper.getUnsafe();
         //jdk.internal.misc.Unsafe
@@ -194,7 +195,6 @@ public class Stuff {
         Class<Clazz> cactus = Clazz.class;
         System.out.println(cactus);
         System.out.println(Modifier.toString(cactus.getModifiers()));
-        System.out.println(cactus.accessFlags());
         System.out.println();
         Field[] fields = cactus.getDeclaredFields();
         for (Field f: fields) {

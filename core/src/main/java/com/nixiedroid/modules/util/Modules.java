@@ -33,7 +33,7 @@ public class Modules {
         allUnnamedSet.add(Fields.getStaticDirect(moduleClass, "ALL_UNNAMED_MODULE"));
 
     }
-
+    @SuppressWarnings("unchecked")
     public void exportAllToAll() throws Throwable {
         for (Map.Entry<String, ?> entry : nameToModule.entrySet()) {
             Object module = entry.getValue();
@@ -56,7 +56,7 @@ public class Modules {
             Methods.invokeStaticDirect(moduleClass, "addExportsToAll0", module, pkgName);
         }
     }
-
+    @SuppressWarnings("unchecked")
     void export(String fieldName, Object moduleFrom, String pkgName, Object moduleTo) throws Throwable {
         Map<String, Set<?>> pckgForModule = Fields.getDirect(moduleFrom, fieldName);
         if (pckgForModule == null) {

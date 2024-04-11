@@ -1,15 +1,24 @@
 plugins {
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
+shadowJar{
+    archiveClassifier.set('fat')
+    minimize {
+        exclude(dependency(':premain'))
+    }
+}
 
 java {
     group = 'com.nixiedroid'
     version = '1'
     base.archivesName = 'app'
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
 
-def preMainDir = DEFAULT_BUILD_DIR_NAME + "/libs/" + project.name + "-"+ project.version + ".jar"
+def preMainDir = DEFAULT_BUILD_DIR_NAME + "/libs/" + project.name + "-"+ project.version + "-" + shadowJar.archiveClassifier.get() + ".jar"
 def preMainClass = "com.nixiedroid.premain.Premain"
 
 application  {
@@ -18,9 +27,16 @@ application  {
 }
 
 compileJava{
-    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked" << "--release" << "11"
 }
 
+
+//https://docs.gradle.org/4.9/userguide/working_with_files.html#sec:reproducible_archives
+//Make gradle builds deterministic
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
 
 jar {
     manifest {
@@ -30,14 +46,8 @@ jar {
                 //'Add-Opens': 'java.prefs/java.util.prefs',
                 "Main-Class": application.mainClass,
                 "Premain-class" : preMainClass,
-               // 'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
         )
     }
-   // from sourceSets.main.output
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 repositories {
@@ -45,6 +55,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(":premain")
     implementation project(':core')
     implementation 'org.jetbrains:annotations:24.0.0'
     testImplementation platform('org.junit:junit-bom:5.9.1')

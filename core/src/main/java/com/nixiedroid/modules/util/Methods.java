@@ -25,7 +25,7 @@ public class Methods {
             return argumentList;
         }, arguments);
     }
-
+    @SuppressWarnings("unchecked")
     private static <T> T invokeDirect(Class<?> targetClass, Object target, String methodName, Supplier<List<Object>> listSupplier, Object... arguments) throws Throwable {
         Class<?>[] argsType = Classes.retrieveFrom(arguments);
         Method method = findDirectHandle(targetClass, methodName, argsType);

@@ -1,39 +1,51 @@
 plugins {
     id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+shadowJar{
+    outputs.upToDateWhen { false }
+    archiveClassifier.set('fat')
+    minimize {
+      exclude(dependency(':premain'))
+    }
+    dependencies {
+        exclude("META-INF/maven/**")
+        exclude("META-INF/*.txt")
+        exclude("*.blob")
+        exclude("*.enc")
+        exclude("*.clazz")
+    }
+
 }
 java {
     group = 'com.nixiedroid.urlwrapper'
     version = ''
     base.archivesName = 'URLWrapper'
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
 
 repositories {
     mavenCentral()
 }
 compileJava {
-    //options.compilerArgs << "-verbose -g:none"
-//    options.compilerArgs << "--add-exports=java.base/sun.net.www.protocol.https=nixiedroid.urlwrapper"
-//    options.compilerArgs << "--add-exports=java.base/sun.net.www.protocol.http=nixiedroid.urlwrapper"
-    options.compilerArgs << "--add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED"
+   options.compilerArgs << "--add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED"
     options.compilerArgs << "--add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED"
 }
 
 dependencies {
     implementation project(':core')
+    implementation project(':premain')
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-//jar {
-//    manifest {
-//        attributes('Premain-Class': 'com.nixiedroid.urlWrapper.Agent',
-//                'Can-Retransform-Classes': 'true')
-//    }
-//    from {
-//        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-//}
+jar {
+    manifest {
+        attributes('Premain-Class': 'com.nixiedroid.premain.Premain',
+                'Can-Retransform-Classes': 'true')
+    }
+}
 test {
     useJUnitPlatform()
     test.systemProperty 'urlWrapper.log', 'true'

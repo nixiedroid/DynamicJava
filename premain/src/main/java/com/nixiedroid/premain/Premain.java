@@ -20,10 +20,6 @@ public class Premain {
        }
     }
 
-    private static void replaceClassloader() {
-
-    }
-
     private static Optional<PremainHandler> findHandlerClass(final String agentArgs, final Instrumentation inst) {
         try {
             return Optional.of((PremainHandler) Class.forName(getHandlerName())
@@ -38,7 +34,7 @@ public class Premain {
         }
     }
     private static String getHandlerName(){
-        return Premain.class.getPackage().getName() + ".Handler";
+        return Premain.class.getPackage().getName() + "Impl.Handler";
     }
 
 

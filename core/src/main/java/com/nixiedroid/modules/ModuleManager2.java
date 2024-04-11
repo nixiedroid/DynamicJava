@@ -60,15 +60,15 @@ public class ModuleManager2 {
         return brokenLookup.findStaticVarHandle(sun.misc.Unsafe.class, "theInternalUnsafe", intUnsafeClass).get();
     }
     private MethodHandle getDynamicFieldOffset() throws Throwable {
-        var mt = MethodType.methodType(long.class, Field.class);
+        MethodType mt = MethodType.methodType(long.class, Field.class);
         return brokenLookup.findVirtual(internalUnsafe.getClass(), "objectFieldOffset", mt);
     }
     private MethodHandle getStaticFieldOffset() throws Throwable {
-        var mt = MethodType.methodType(long.class, Field.class);
+        MethodType mt = MethodType.methodType(long.class, Field.class);
         return brokenLookup.findVirtual(internalUnsafe.getClass(), "staticFieldOffset", mt);
     }
     private MethodHandle getForname0() throws NoSuchMethodException, IllegalAccessException {
-        var forName0mt = MethodType.methodType(Class.class, String.class, boolean.class, ClassLoader.class, Class.class);
+        MethodType forName0mt = MethodType.methodType(Class.class, String.class, boolean.class, ClassLoader.class, Class.class);
         return brokenLookup.findStatic(Class.class, "forName0", forName0mt);
     }
     private MethodHandle declaredFieldsUnsafe() throws NoSuchMethodException, IllegalAccessException {
@@ -77,7 +77,7 @@ public class ModuleManager2 {
     @SuppressWarnings("unchecked")
     private Map<String, Module> getNameToModule() throws Throwable {
        // Class<?> moduleLayerClass = forName0("java.lang.ModuleLayer");
-        var boot = ModuleLayer.boot();
+        ModuleLayer boot = ModuleLayer.boot();
         return (Map<String, Module>) getFieldData(boot,getField(boot.getClass(),"nameToModule"));
     }
     private Field getField(Class<?> clazz, String fieldName) throws Throwable {
@@ -126,8 +126,8 @@ public class ModuleManager2 {
         }
         pckgForModule.put(pkgName, allSet);
         if (fieldName.startsWith("exported")) {
-            var mt = MethodType.methodType(void.class,Module.class, String.class);
-            var mh = brokenLookup.findStatic(Module.class, "addExportsToAll0", mt);
+            MethodType mt = MethodType.methodType(void.class,Module.class, String.class);
+            MethodHandle mh = brokenLookup.findStatic(Module.class, "addExportsToAll0", mt);
             mh.invoke(module, pkgName);
         }
     }
@@ -173,8 +173,8 @@ public class ModuleManager2 {
         }
         moduleSet.add(moduleTo);
         if (fieldName.startsWith("exported")) {
-            var mt = MethodType.methodType(void.class,Module.class, String.class,Module.class);
-            var mh = brokenLookup.findStatic(Module.class, "addExports0", mt);
+            MethodType mt = MethodType.methodType(void.class,Module.class, String.class,Module.class);
+            MethodHandle mh = brokenLookup.findStatic(Module.class, "addExports0", mt);
             mh.invoke(moduleFrom, pkgName, moduleTo);
         }
     }

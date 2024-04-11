@@ -9,9 +9,6 @@ import java.lang.reflect.Field;
 @SuppressWarnings("unused")
 public class Objects {
     private static final Objects instance = new Objects();
-    @SuppressWarnings("FieldMayBeFinal")
-    private static VarHandle handler;
-    @SuppressWarnings("FieldMayBeFinal")
     private static long dummyObjectOffset;
     static {
         getAddress();
@@ -26,7 +23,7 @@ public class Objects {
     public static void getAddressNew() {
         try {
             MethodHandles.Lookup l = MethodHandles.lookup();
-            handler = l.findVarHandle(Objects.class, "dummyObject", Object.class);
+            VarHandle handler = l.findVarHandle(Objects.class, "dummyObject", Object.class);
             System.out.println(handler.get(instance));
             Field f = handler.getClass().getSuperclass().getDeclaredField("fieldOffset");
             f.setAccessible(true); //Not exported module exception
@@ -37,7 +34,6 @@ public class Objects {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private static void getAddress() {
         try {
             dummyObjectOffset = UnsafeWrapper.getUnsafe()
