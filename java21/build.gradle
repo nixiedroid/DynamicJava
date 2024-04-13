@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
 }
 
 java {
@@ -11,9 +11,9 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
-application  {
-    mainClass = "com.nixiedroid.Main"
-}
+//application  {
+//    mainClass = "com.nixiedroid.Main"
+//}
 
 repositories {
     mavenCentral()

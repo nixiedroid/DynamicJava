@@ -12,7 +12,7 @@ public class ClassRecord extends ByteSerializable{
     @Override
     Object deserialize(ByteArrayInputStream stream) throws IOException {
         ClassHeader header = new ClassHeader(stream);
-        stream.mark(0); //What is readAheadLimit??
+        stream.mark(0);
         if (stream.skip(header.getOffset()) != header.getOffset()) throw new IOException("Too few data");
         ClassFile classFile = new ClassFile(stream.readNBytes(header.getClassSize()));
         stream.reset();

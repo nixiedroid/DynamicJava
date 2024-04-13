@@ -5,11 +5,11 @@ import com.nixiedroid.modules.util.Modules;
 
 public class Asm {
     public Asm(){
-        try {
-            Modules.exportAllToAll();
-        } catch (Throwable e) {
-            Thrower.throwExceptionAndDie(e);
-        }
+//        try {
+//            Modules.exportAllToAll();
+//        } catch (Throwable e) {
+//            Thrower.throwExceptionAndDie(e);
+//        }
 
 
         Class<?> cl = null;

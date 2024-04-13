@@ -3,6 +3,8 @@ package com.nixiedroid.bytes;
 import com.nixiedroid.exceptions.Thrower;
 
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
@@ -90,6 +92,9 @@ public final class ByteArrayUtils {
             b[j] = (byte) (buffer[j] & 0xFF);
         }
         return b;
+    }
+    public static String StringFromBytes(byte[] bytes) { //ASCII TABLE
+       return new String(bytes, StandardCharsets.UTF_8);
     }
 
     public static byte[] reverse(final byte[] input) {

@@ -23,7 +23,7 @@ public class Main {
         generics();
 
         funcMethod();
-        //classBlob();
+        classBlob();
         new Asm();
     }
 
@@ -43,12 +43,18 @@ public class Main {
     }
 
     public void generics() {
-//        List list = new LinkedList();
-//        list.add(1);
-//        list.add("hello");
-//        list.stream().forEach(System.out::println);
-//        list.stream().forEach(o -> o = (Integer) o - 1);
-//        list.stream().forEach(System.out::println);
+//        CallSite fact = null;
+//        try {
+//            fact = java.lang.invoke.LambdaMetafactory.altMetafactory(
+//                    MethodHandles.lookup(), "test",
+//                    MethodType.methodType(int.class)
+//            );
+//        } catch (LambdaConversionException e) {
+//            throw new AssertionError(e);
+//        }
+//        System.out.println(fact.type());
+
+
     }
 
     public void classBlob() throws IOException {
@@ -79,19 +85,12 @@ public class Main {
         System.out.println("");
         System.out.println(header);
         fis.close();
+
+        ClassHeaderFlags flags = new ClassHeaderFlags(0xFF);
+        System.out.println(flags);
     }
 
 }
 
-// jdk.internal.org.objectweb.asm
-//        CallSite fact = null;
-//        try {
-//            fact = java.lang.invoke.LambdaMetafactory.altMetafactory(
-//                    MethodHandles.lookup(), "test",
-//                    MethodType.methodType(int.class)
-//            );
-//        } catch (LambdaConversionException e) {
-//            throw new AssertionError(e);
-//        }
-//        System.out.println(fact.type());
+
 
