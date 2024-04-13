@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public abstract class ByteSerializable<T> {
    abstract T deserialize(ByteArrayInputStream stream) throws IOException;
-   abstract void serialize(ByteArrayOutputStream stream)throws IOException;
+   abstract public void serialize(ByteArrayOutputStream stream)throws IOException;
     ByteSerializable(ByteArrayInputStream stream) throws IOException {
       deserialize(stream);
    }

@@ -3,25 +3,39 @@ package com.nixiedroid.classblob;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ClassesBlob extends ByteSerializable {
     BlobHeader blobHeader;
-    List<ClassRecord> classes  = new LinkedList<>();
+    List<ClassHeader> classHeaders;
+    List<ClassFile> classes;
+    public ClassesBlob(ByteArrayInputStream stream) throws IOException {
+        super(stream);
+    }
+
+    public ClassesBlob(BlobHeader blobHeader, List<ClassHeader> classHeaders, List<ClassFile> classes) {
+        this.blobHeader = blobHeader;
+        this.classHeaders = classHeaders;
+        this.classes = classes;
+    }
 
     @Override
     ClassesBlob deserialize(ByteArrayInputStream stream) throws IOException {
+        this.classHeaders = new LinkedList<>();
+        this.classes = new LinkedList<>();
         this.blobHeader = new BlobHeader(stream);
         for (int i = 0; i < this.blobHeader.getClassesCount(); i++) {
-            classes.add(new ClassRecord(stream));
+            this.classHeaders.add(new ClassHeader(stream));
         }
         return this;
     }
 
     @Override
-    void serialize(ByteArrayOutputStream stream) throws IOException {
-        for (int i = this.blobHeader.getClassesCount(); i  > 0; i++) {
-           classes.get(i).serialize(stream);
+    public void serialize(ByteArrayOutputStream stream) throws IOException {
+        this.blobHeader.serialize(stream);
+        for (ClassHeader h: this.classHeaders) {
+            h.serialize(stream);
         }
     }
 }
