@@ -85,51 +85,51 @@ public class Context  {
 
 
     public sun.misc.Unsafe getUnsafe() {
-        return unsafe.get();
+        return this.unsafe.get();
     }
 
     public MethodHandles.Lookup trustedLookup() {
-        return lookup.getTrustedLookup();
+        return this.lookup.getTrustedLookup();
     }
     public MethodHandle privateLookup() {
         return privateLookup.get();
     }
     public MethodHandles.Lookup targetedLookup(Class<?> clazz) throws Throwable {
-        return lookupSupply.apply(clazz);
+        return this.lookupSupply.apply(clazz);
     }
     public MethodHandles.Lookup lookupCtor(Class<?> clazz)throws Throwable{
-        return lookupCtor.apply(clazz);
+        return this.lookupCtor.apply(clazz);
     }
 
     public Field[] getFields(Class<?> cls, boolean publicOnly) throws Throwable {
-        return (Field[]) getFields.getFields().invokeWithArguments(cls,publicOnly);
+        return (Field[]) this.getFields.getFields().invokeWithArguments(cls,publicOnly);
     }
 
-    public Field getField(Class<?> cls, String name) {
-        return getField.getField(cls,name);
+    public Field getField(Class<?> cls, String name) throws Throwable {
+        return getField.apply(cls,name);
     }
     @SuppressWarnings("unchecked")
     public <T> T getFieldValue(Object target, Field f){
-        return (T) getFieldValue.accept(target,f);
+        return (T) this.getFieldValue.accept(target,f);
     }
     public void setFieldValue(Object target, Field field, Object value){
-        setFieldValue.accept(target,field,value);
+        this.setFieldValue.accept(target,field,value);
     }
 
-    public Object allocateInstance(Class<?> clazz) throws InstantiationException {
-        return allocateInstance.allocate(clazz);
+    public Object allocateInstance(Class<?> clazz) throws Throwable {
+        return this.allocateInstance.apply(clazz);
     }
 
     public Class<?> useHookClass(Class<?> clientClass, byte[] byteCode) throws Throwable {
-        return hookClass.create(clientClass,byteCode);
+        return this.hookClass.apply(clientClass,byteCode);
     }
 
     public void setAccessible(AccessibleObject obj, boolean flag) throws Throwable {
-            setAccessible.set(obj,flag);
+        this.setAccessible.accept(obj,flag);
     }
 
     public Class<?> getClassByName(String str, boolean bool, ClassLoader cld, Class<?> cl) throws Throwable {
-        return forName0.apply(str,bool,cld,cl);
+        return this.forName0.apply(str,bool,cld,cl);
     }
 
     private static class Holder {

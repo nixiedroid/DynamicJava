@@ -3,12 +3,11 @@ package java.lang;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.invoke.MethodType;
 import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
-public class ConsulterRetrieverForJDK9 implements Function<Class<?>, MethodHandles.Lookup> {
-	private static MethodHandle privateLookup;
+public class PrivateLookup implements Function<Class<?>, MethodHandles.Lookup> {
+	private static MethodHandle method;
 	public final static MethodHandles.Lookup lookup;
 	
 	static {
@@ -18,15 +17,15 @@ public class ConsulterRetrieverForJDK9 implements Function<Class<?>, MethodHandl
 	@Override
 	public Lookup apply(Class<?> cls) {
 		try {
-			return (MethodHandles.Lookup)privateLookup.invokeWithArguments(cls, lookup);
+			return (MethodHandles.Lookup)method.invokeWithArguments(cls, lookup);
 		} catch (Throwable exc) {
 			return throwExceptionWithReturn(exc);
 		}
 	}
 	
-	private static <T> T throwExceptionWithReturn(Throwable exc) {
+	private static <R> R throwExceptionWithReturn(Throwable exc) {
 		throwException(exc);
-		return null;
+		return null; //Actually, unreachabe
 	}
 
 	private static <E extends Throwable> void throwException(Throwable exc) throws E{

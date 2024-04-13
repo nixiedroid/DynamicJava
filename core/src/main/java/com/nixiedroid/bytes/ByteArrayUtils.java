@@ -1,5 +1,7 @@
 package com.nixiedroid.bytes;
 
+import com.nixiedroid.exceptions.Thrower;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.StringJoiner;
@@ -206,7 +208,7 @@ public final class ByteArrayUtils {
         //TO VALUES
         //SIGNED PART
         private chunk() {
-            throw new AssertionError("utility class");
+            Thrower.throwExceptionAndDie("Utility class");
         }
 
         public static short toInt16B(byte[] b) {
@@ -261,7 +263,7 @@ public final class ByteArrayUtils {
 
     public static final class ranged {
         private ranged() {
-            throw new AssertionError("utility class");
+            Thrower.throwExceptionAndDie("Utility class");
         }
 
         public static int toUInt8(byte[] b, int start) {
@@ -324,7 +326,7 @@ public final class ByteArrayUtils {
 
     public static final class fast {
         private fast() {
-            throw new AssertionError("utility class");
+            Thrower.throwExceptionAndDie("Utility class");
         }
 
         public static byte[] int16ToBytesB(short s) {

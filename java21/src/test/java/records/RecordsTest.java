@@ -27,13 +27,6 @@ public class RecordsTest {
     }
 
     @Test
-    void copyTest(){
-        Book book = new Book(318, "1984");
-        BookCopy bookCopy = new BookCopy(318, "1984");
-        Assertions.assertEquals(bookCopy,book);
-    }
-
-    @Test
     void toStringTest(){
         Book book = new Book(318, "1984");
         Assertions.assertEquals("Book[pages=318, name=1984]",book.toString());

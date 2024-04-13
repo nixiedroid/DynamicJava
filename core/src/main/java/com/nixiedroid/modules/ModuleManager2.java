@@ -27,26 +27,25 @@ public class ModuleManager2 {
     private final Set<Object> allSet = new HashSet<>();
 
     public ModuleManager2() throws Throwable {
-        brokenLookup = thisWillBreakSoon();
-        forName = getForname0();
-        unsafe = UnsafeWrapper.getUnsafe();
-        internalUnsafe = getInternalUnsafe();
-        objectFieldOffset = getDynamicFieldOffset();
-        staticFieldOffset = getStaticFieldOffset();
-        moduleClass = forName0("java.lang.Module");
-        getDeclaredFields0 = declaredFieldsUnsafe();
-        nameToModule = getNameToModule();
-        allSet.add(
-                getFieldData(moduleClass,getField(moduleClass,"ALL_UNNAMED_MODULE"))
+        this.brokenLookup = thisWillBreakSoon();
+        this.forName = getForname0();
+        this.unsafe = UnsafeWrapper.getUnsafe();
+        this.internalUnsafe = getInternalUnsafe();
+        this.objectFieldOffset = getDynamicFieldOffset();
+        this.staticFieldOffset = getStaticFieldOffset();
+        this.moduleClass = forName0("java.lang.Module");
+        this.getDeclaredFields0 = declaredFieldsUnsafe();
+        this.nameToModule = getNameToModule();
+        this.allSet.add(
+                getFieldData(this.moduleClass,getField(this.moduleClass,"ALL_UNNAMED_MODULE"))
         );
-        allSet.add(
-                getFieldData(moduleClass,getField(moduleClass,"EVERYONE_MODULE"))
+        this.allSet.add(
+                getFieldData(this.moduleClass,getField(this.moduleClass,"EVERYONE_MODULE"))
         );
-        exportAllToAll();
     }
 
     public Class<?> forName0(String name) throws Throwable {
-        return (Class<?>) forName.invoke(name, false, this.getClass().getClassLoader(), this.getClass());
+        return (Class<?>) this.forName.invoke(name, false, this.getClass().getClassLoader(), this.getClass());
     }
     private MethodHandles.Lookup thisWillBreakSoon() {
         int TRUSTED = -1;
@@ -57,22 +56,22 @@ public class ModuleManager2 {
     }
     private Object getInternalUnsafe() throws Throwable {
         Class<?> intUnsafeClass = forName0("jdk.internal.misc.Unsafe");
-        return brokenLookup.findStaticVarHandle(sun.misc.Unsafe.class, "theInternalUnsafe", intUnsafeClass).get();
+        return this.brokenLookup.findStaticVarHandle(sun.misc.Unsafe.class, "theInternalUnsafe", intUnsafeClass).get();
     }
     private MethodHandle getDynamicFieldOffset() throws Throwable {
         MethodType mt = MethodType.methodType(long.class, Field.class);
-        return brokenLookup.findVirtual(internalUnsafe.getClass(), "objectFieldOffset", mt);
+        return this.brokenLookup.findVirtual(this.internalUnsafe.getClass(), "objectFieldOffset", mt);
     }
     private MethodHandle getStaticFieldOffset() throws Throwable {
         MethodType mt = MethodType.methodType(long.class, Field.class);
-        return brokenLookup.findVirtual(internalUnsafe.getClass(), "staticFieldOffset", mt);
+        return this.brokenLookup.findVirtual(this.internalUnsafe.getClass(), "staticFieldOffset", mt);
     }
     private MethodHandle getForname0() throws NoSuchMethodException, IllegalAccessException {
         MethodType forName0mt = MethodType.methodType(Class.class, String.class, boolean.class, ClassLoader.class, Class.class);
-        return brokenLookup.findStatic(Class.class, "forName0", forName0mt);
+        return this.brokenLookup.findStatic(Class.class, "forName0", forName0mt);
     }
     private MethodHandle declaredFieldsUnsafe() throws NoSuchMethodException, IllegalAccessException {
-        return brokenLookup.findSpecial(Class.class, "getDeclaredFields0", MethodType.methodType(Field[].class, boolean.class), Class.class);
+        return this.brokenLookup.findSpecial(Class.class, "getDeclaredFields0", MethodType.methodType(Field[].class, boolean.class), Class.class);
     }
     @SuppressWarnings("unchecked")
     private Map<String, Module> getNameToModule() throws Throwable {
@@ -81,7 +80,7 @@ public class ModuleManager2 {
         return (Map<String, Module>) getFieldData(boot,getField(boot.getClass(),"nameToModule"));
     }
     private Field getField(Class<?> clazz, String fieldName) throws Throwable {
-        Field[] fields = (Field[]) getDeclaredFields0.invokeWithArguments(clazz, false);
+        Field[] fields = (Field[]) this.getDeclaredFields0.invokeWithArguments(clazz, false);
         for (Field field : fields) {
             if (field.getName().equals(fieldName)) {
                 return field;
@@ -92,23 +91,23 @@ public class ModuleManager2 {
     private Object getFieldData(Object obj, Field f) throws Throwable {
         Long offset;
         if (Modifier.isStatic(f.getModifiers())){
-             offset = (Long) staticFieldOffset.invoke(internalUnsafe, f);
+             offset = (Long) this.staticFieldOffset.invoke(this.internalUnsafe, f);
         } else {
-             offset = (Long) objectFieldOffset.invoke(internalUnsafe, f);
+             offset = (Long) this.objectFieldOffset.invoke(this.internalUnsafe, f);
         }
-        return unsafe.getObject(obj, offset);
+        return this.unsafe.getObject(obj, offset);
     }
     private void setFieldData(Object obj, Field f, Object data) throws Throwable {
         Long offset;
         if (Modifier.isStatic(f.getModifiers())){
-            offset = (Long) staticFieldOffset.invoke(internalUnsafe, f);
+            offset = (Long) this.staticFieldOffset.invoke(this.internalUnsafe, f);
         } else {
-            offset = (Long) objectFieldOffset.invoke(internalUnsafe, f);
+            offset = (Long) this.objectFieldOffset.invoke(this.internalUnsafe, f);
         }
-        unsafe.putObject(obj,offset,data);
+        this.unsafe.putObject(obj,offset,data);
     }
     public void exportAllToAll() throws Throwable {
-        for (Map.Entry<String, Module> entry : nameToModule.entrySet()) {
+        for (Map.Entry<String, Module> entry : this.nameToModule.entrySet()) {
             Module module = entry.getValue();
             for (String pkgName :  module.getPackages()) {
                 exportToAll("exportedPackages", module, pkgName);
@@ -124,10 +123,10 @@ public class ModuleManager2 {
             pckgForModule = new HashMap<>();
             setFieldData(module, getField(module.getClass(),fieldName), pckgForModule);
         }
-        pckgForModule.put(pkgName, allSet);
+        pckgForModule.put(pkgName, this.allSet);
         if (fieldName.startsWith("exported")) {
             MethodType mt = MethodType.methodType(void.class,Module.class, String.class);
-            MethodHandle mh = brokenLookup.findStatic(Module.class, "addExportsToAll0", mt);
+            MethodHandle mh = this.brokenLookup.findStatic(Module.class, "addExportsToAll0", mt);
             mh.invoke(module, pkgName);
         }
     }
@@ -137,7 +136,7 @@ public class ModuleManager2 {
         exportPackage(moduleFrom, moduleTo, packageNames);
     }
     private Module checkAndGetModule(String name) {
-        Module module = nameToModule.get(name);
+        Module module = this.nameToModule.get(name);
         if (module == null) {
             throw new RuntimeException(name);
         }
@@ -147,7 +146,7 @@ public class ModuleManager2 {
         Set<String> modulePackages = moduleFrom.getPackages();
         for (String pkgName : packageNames) {
             if (!modulePackages.contains(pkgName)) {
-                throw new RuntimeException(pkgName);
+                throw new IllegalArgumentException( moduleFrom + " does not contains " + pkgName);
             }
             export("exportedPackages", moduleFrom, pkgName, moduleTo);
             export("openPackages", moduleFrom, pkgName, moduleTo);
@@ -174,7 +173,7 @@ public class ModuleManager2 {
         moduleSet.add(moduleTo);
         if (fieldName.startsWith("exported")) {
             MethodType mt = MethodType.methodType(void.class,Module.class, String.class,Module.class);
-            MethodHandle mh = brokenLookup.findStatic(Module.class, "addExports0", mt);
+            MethodHandle mh = this.brokenLookup.findStatic(Module.class, "addExports0", mt);
             mh.invoke(moduleFrom, pkgName, moduleTo);
         }
     }

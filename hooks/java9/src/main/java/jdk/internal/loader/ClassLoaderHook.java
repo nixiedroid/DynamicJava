@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import java.lang.invoke.MethodHandle;
 
 
-public class ClassLoaderDelegateForJDK9 extends BuiltinClassLoader {
+public class ClassLoaderHook extends BuiltinClassLoader {
 
 	private ClassLoader classLoader;
 	private MethodHandle loadClassMethod;
@@ -17,8 +17,8 @@ public class ClassLoaderDelegateForJDK9 extends BuiltinClassLoader {
 		ClassLoader.registerAsParallelCapable();
 	}
 
-	ClassLoaderDelegateForJDK9(BuiltinClassLoader parent, ClassLoader classLoader, MethodHandle loadClassMethodHandle) {
-		super("ClassLoaderDelegateOf" + classLoader.toString(), parent, null);
+	ClassLoaderHook(BuiltinClassLoader parent, ClassLoader classLoader, MethodHandle loadClassMethodHandle) {
+		super("HookOf" + classLoader.toString(), parent, null);
 		this.classLoader = classLoader;
 		this.loadClassMethod = loadClassMethodHandle;
 	}

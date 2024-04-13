@@ -82,6 +82,17 @@ public Class<?> loadClass(String name) throws ClassNotFoundException {
 Sadly, name of loadable class must be equal to
 name inside .class file
 
+### Get class at runtime
+
+- `Class.forName(String className)`
+  Find class, loaded by current classloader (and
+  superclasses)
+- `Class.forName0(String name, boolean initialize, ClassLoader loader)`
+  Native internal method
+- `Class.forName(String name, boolean initialize, ClassLoader loader)`
+  Uses SecurityManager to verify ability to load
+  classes
+  SecurityManager is deprecated since java17, so igone it 
 
 
 

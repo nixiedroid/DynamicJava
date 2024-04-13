@@ -33,7 +33,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.function.BiConsumer;
 
 @SuppressWarnings("unchecked")
-public class AccessibleSetterInvokerForJDK9 implements BiConsumer<AccessibleObject, Boolean> {
+public class AccessibleObjectHook implements BiConsumer<AccessibleObject, Boolean> {
 	private static MethodHandle accessibleSetterMethodHandle;
 	private static MethodHandles.Lookup methodHandleRetriever;
 	

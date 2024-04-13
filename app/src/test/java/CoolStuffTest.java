@@ -192,12 +192,12 @@ public class CoolStuffTest {
         String THREAD_SLEEPING_EVENT_CLASS_NAME = "jdk.internal.event.ThreadSleepEvent";
         System.out.println(Info.getVersion());
         ModuleManager.poke();
+        ModuleManager.poke();
         System.out.println(Main.class.getModule());
         System.out.println(ModuleManager.class.getModule());
         try {
             Class<?> cl = Class.forName(FLOAT_CONSTANTS_CLASS_NAME);
-            System.out.println(cl.getModule());
-            ModuleManager.allowAccess(Main.class, cl, false);
+            ModuleManager.allowAccess(Main.class, FLOAT_CONSTANTS_CLASS_NAME, false);
             Field field = cl.getDeclaredField("SIGNIFICAND_WIDTH");
             System.out.println(field.get(null));
         } catch (ReflectiveOperationException e) {
@@ -206,8 +206,7 @@ public class CoolStuffTest {
     }
     public static void communism() {
         try {
-            Modules modules = new Modules();
-            modules.exportAllToAll();
+            Modules.exportAllToAll();
         } catch (Throwable exc) {
             throw new RuntimeException(exc);
         }

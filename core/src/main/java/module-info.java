@@ -5,6 +5,7 @@ module nixiedroid.dynamic.core {
     exports com.nixiedroid.runtime;
     exports com.nixiedroid.unsafe;
     exports com.nixiedroid.bytes;
+    exports com.nixiedroid.exceptions;
     requires java.instrument;
     requires java.management;
     requires jdk.management;

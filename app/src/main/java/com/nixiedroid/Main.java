@@ -1,10 +1,12 @@
 package com.nixiedroid;
 
+import com.nixiedroid.asm.Asm;
 import com.nixiedroid.bytes.ByteArrayUtils;
 import com.nixiedroid.classblob.BlobHeader;
 import com.nixiedroid.classblob.ClassHeader;
 import com.nixiedroid.classblob.ClassHeaderFlags;
 import com.nixiedroid.classloaders.ClassParser;
+import com.nixiedroid.exceptions.Thrower;
 
 import java.io.*;
 import java.util.function.Function;
@@ -22,6 +24,7 @@ public class Main {
 
         funcMethod();
         //classBlob();
+        new Asm();
     }
 
 

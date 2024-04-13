@@ -10,7 +10,7 @@ public class ClassRetriever {
     private static final String JAVA = "ForJava";
     private static final int JAVA_VERSION = Info.getVersion();
     private static final int[] JAVA_VERSIONS_LEQ_CURRENT =
-            Arrays.stream(JAVA_VERSIONS).filter(x -> x < JAVA_VERSION).toArray();
+            Arrays.stream(JAVA_VERSIONS).filter(x -> x <= JAVA_VERSION).toArray();
     private ClassRetriever(){}
     private static Class<?> findHandler(Class<?> parent) throws ClassNotFoundException {
         Class<?>[] classes = parent.getClasses();

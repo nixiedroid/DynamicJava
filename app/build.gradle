@@ -30,7 +30,8 @@ application  {
 }
 
 compileJava{
-    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked" << "--release" << "11"
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+    options.compilerArgs << "--add-exports=java.base/jdk.internal.org.objectweb.asm=nixiedroid.dynamic.app"
 }
 
 

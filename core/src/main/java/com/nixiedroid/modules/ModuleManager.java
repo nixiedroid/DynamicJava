@@ -1,11 +1,15 @@
 package com.nixiedroid.modules;
 
+import com.nixiedroid.exceptions.Thrower;
+
 import java.lang.reflect.*;
+
 @SuppressWarnings("unused")
 public class ModuleManager {
     private static sun.misc.Unsafe unsafe;
     private static Method setAccessible;
     private static Method setAccesibleModule;
+
     static {
         getUnsafe();
         moveMeToJavaBase();
@@ -13,7 +17,7 @@ public class ModuleManager {
         getAccessibleModule();
     }
 
-    private static void getUnsafe(){
+    private static void getUnsafe() {
         try {
             Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
@@ -43,7 +47,8 @@ public class ModuleManager {
             throw new RuntimeException(e);
         }
     }
-    private static void getAccessible(){
+
+    private static void getAccessible() {
         try {
             setAccessible = AccessibleObject.class.getDeclaredMethod("setAccessible0", boolean.class);
             setAccessible.setAccessible(true);
@@ -56,8 +61,7 @@ public class ModuleManager {
         try {
             setAccesibleModule = Module.class.getDeclaredMethod("implAddExportsOrOpens", String.class, Module.class, boolean.class, boolean.class);
             setAccessible.invoke(setAccesibleModule, true);
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             System.out.println("Could not expose implAddExportsOrOpens. Invocation Exception");
@@ -66,17 +70,21 @@ public class ModuleManager {
         }
     }
 
-    public static void allowAccess(final Class<?> accessor, final Class<?> target, final boolean accessNamedModules) {
-        if (!accessNamedModules) target.getModule().addOpens(target.getPackageName(), accessor.getModule());
-        else {
-            try {
-                setAccessible.invoke(target.getModule(), target.getPackageName(), accessor.getModule(), true, true);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e.getMessage());
+    public static void allowAccess(final Class<?> accessor, final String target, final boolean accessNamedModules) {
+        try {
+            Class<?> cl = Class.forName(target);
+            if (!accessNamedModules) {
+                cl.getModule().addOpens(cl.getPackageName(), accessor.getModule());
+            } else {
+                setAccessible.invoke(cl.getModule(), cl.getPackageName(), accessor.getModule(), true, true);
             }
+        } catch (ReflectiveOperationException e) {
+            Thrower.throwException(e);
         }
     }
-    public static void poke(){}
+
+    public static void poke() {
+    }
 
     public static void breakEncapsulation(final Class<?> accessor, final Class<?> target, final boolean accessNamedModules) {
         if (!accessNamedModules) target.getModule().addExports(target.getPackageName(), accessor.getModule());
@@ -84,7 +92,7 @@ public class ModuleManager {
             try {
                 setAccessible.invoke(target.getModule(), target.getPackageName(), accessor.getModule(), false, true);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e.getMessage());
+                Thrower.throwException(e);
             }
         }
     }
