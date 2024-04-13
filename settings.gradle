@@ -6,4 +6,5 @@ include 'hooks:java8'
 include 'hooks:java9'
 include 'urlWrapper'
 include 'premain'
+include 'java21'
 

@@ -7,6 +7,9 @@ java {
     base.archivesName = 'premain'
     sourceCompatibility = "11"
     targetCompatibility = "11"
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 repositories {

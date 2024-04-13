@@ -1,6 +1,7 @@
 package com.nixiedroid.classblob;
 
 import com.nixiedroid.bytes.ByteArrayUtils;
+import com.nixiedroid.bytes.Endiannes;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,35 +11,48 @@ public class BlobHeader extends ByteSerializable<BlobHeader> {
     private static final int magic = 0xCAFEB10B;
     private int ver_major;
     private int ver_minor;
+    private int classesCount;
+    public static final int SIZE = 12;
     private BlobHeader(){}
     public BlobHeader(int major, int minor){
         this.ver_minor = minor;
         this.ver_major = major;
     }
 
+    BlobHeader(ByteArrayInputStream stream) throws IOException {
+        super(stream);
+    }
+
+    public int getClassesCount() {
+        return this.classesCount;
+    }
+
+    public void setClassesCount(int classesCount) {
+        this.classesCount = classesCount;
+    }
 
     @Override
     public BlobHeader deserialize(ByteArrayInputStream stream) throws IOException {
         if (stream == null) throw new IOException("Input is null");
-        if (stream.available() < 8) throw new IOException("Input is too short");
-        int magic = ByteArrayUtils.chunk.toInt32B(stream.readNBytes(4));
+        if (stream.available() < SIZE) throw new IOException("Input is too short");
+        int magic = ByteArrayUtils.i().fromBytes(stream.readNBytes(4), Endiannes.BIG);
         if (magic!=BlobHeader.magic) throw new IOException("Invalid signature");
-        ver_major = ByteArrayUtils.chunk.toInt16L(stream.readNBytes(2));
-        ver_minor = ByteArrayUtils.chunk.toInt16L(stream.readNBytes(2));
-        if (ver_minor < 0 || ver_major < 0) throw new IOException("Invalid Header Version:"+ ver_major + "." + ver_minor );
+        this.ver_major = (short)ByteArrayUtils.i().fromBytes(stream.readNBytes(2));
+        this.ver_minor = (short)ByteArrayUtils.i().fromBytes(stream.readNBytes(2));
+        if (this.ver_minor < 0 || this.ver_major < 0) throw new IOException("Invalid Header Version:"+ ver_major + "." + ver_minor );
         return this;
     }
 
     @Override
     public void serialize(ByteArrayOutputStream stream) throws IOException {
         if (stream == null) throw new IOException();
-        stream.write(ByteArrayUtils.fast.int32ToBytesB(magic));
-        stream.write(ByteArrayUtils.fast.int16ToBytesL((short) ver_major));
-        stream.write(ByteArrayUtils.fast.int16ToBytesL((short) ver_minor));
+        stream.write(ByteArrayUtils.i().toBytes (magic,Endiannes.BIG));
+        stream.write(ByteArrayUtils.i().toBytes((short) ver_major));
+        stream.write(ByteArrayUtils.i().toBytes((short) ver_minor));
     }
 
     @Override
     public String toString() {
-        return "BLOB Header: Ver" + ver_major + "." + ver_minor;
+        return "BLOB Header: Ver " + this.ver_major + "." + this.ver_minor;
     }
 }

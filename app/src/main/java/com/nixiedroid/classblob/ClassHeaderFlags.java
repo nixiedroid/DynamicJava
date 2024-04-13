@@ -18,24 +18,13 @@ public class ClassHeaderFlags {
     }
 
     public static final int MAIN_CLASS = 0x01;
+    public static final int BOOTSTRAP_CLASS = 0x02;
 
     public String toString() {
         StringJoiner sj = new StringJoiner(" ");
 
         if ((flags & MAIN_CLASS) != 0)        sj.add("main");
-//        if ((mod & PROTECTED) != 0)     sj.add("protected");
-//        if ((mod & PRIVATE) != 0)       sj.add("private");
-//
-//        /* Canonical order */
-//        if ((mod & ABSTRACT) != 0)      sj.add("abstract");
-//        if ((mod & STATIC) != 0)        sj.add("static");
-//        if ((mod & FINAL) != 0)         sj.add("final");
-//        if ((mod & TRANSIENT) != 0)     sj.add("transient");
-//        if ((mod & VOLATILE) != 0)      sj.add("volatile");
-//        if ((mod & SYNCHRONIZED) != 0)  sj.add("synchronized");
-//        if ((mod & NATIVE) != 0)        sj.add("native");
-//        if ((mod & STRICT) != 0)        sj.add("strictfp");
-//        if ((mod & INTERFACE) != 0)     sj.add("interface");
+        if ((flags & BOOTSTRAP_CLASS) != 0)        sj.add("bootstrap");
 
         return sj.toString();
     }

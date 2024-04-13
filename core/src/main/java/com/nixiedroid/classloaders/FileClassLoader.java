@@ -1,7 +1,5 @@
 package com.nixiedroid.classloaders;
 
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.JavaClass;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -12,7 +10,6 @@ public class FileClassLoader extends ClassLoader {
     private static final byte[] MAGIC = new byte[]{(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
     protected final String PKG_PREFIX;
     protected final String EXTENSION;
-    protected ClassParser classParser;
 
     public FileClassLoader(ClassLoader parent) {
         super(parent); //Support for classloader replacement by THIS class
@@ -34,13 +31,14 @@ public class FileClassLoader extends ClassLoader {
     }
 
     protected final String getRealClassName(byte[] classBytes) throws ClassNotFoundException {
-        try {
-            classParser = new ClassParser(new ByteArrayInputStream(classBytes), "");
-            JavaClass jc = classParser.parse();
-            return jc.getClassName();
-        } catch (IOException e) {
-            throw new ClassNotFoundException();
-        }
+//        try {
+//            classParser = new ClassParser(new ByteArrayInputStream(classBytes), "");
+//            JavaClass jc = classParser.parse();
+//            return jc.getClassName();
+//        } catch (IOException e) {
+//            throw new ClassNotFoundException();
+//        }
+        return ClassParser.getClassName(classBytes);
     }
 
     protected final String getFileName(String className, String extension) throws FileNotFoundException {

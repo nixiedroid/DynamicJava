@@ -5,6 +5,11 @@ java {
     group = 'com.nixiedroid.plugins'
     base.archivesName = 'first'
     version = ''
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 repositories {
     mavenCentral()

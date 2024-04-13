@@ -23,6 +23,9 @@ java {
     base.archivesName = 'URLWrapper'
     sourceCompatibility = "11"
     targetCompatibility = "11"
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 repositories {
