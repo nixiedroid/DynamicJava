@@ -9,12 +9,12 @@ import java.util.List;
 public class ClassesBlob extends ByteSerializable {
     BlobHeader blobHeader;
     List<ClassHeader> classHeaders;
-    List<ClassFile> classes;
+    List<ClassBytes> classes;
     public ClassesBlob(ByteArrayInputStream stream) throws IOException {
         super(stream);
     }
 
-    public ClassesBlob(BlobHeader blobHeader, List<ClassHeader> classHeaders, List<ClassFile> classes) {
+    public ClassesBlob(BlobHeader blobHeader, List<ClassHeader> classHeaders, List<ClassBytes> classes) {
         this.blobHeader = blobHeader;
         this.classHeaders = classHeaders;
         this.classes = classes;
@@ -28,6 +28,13 @@ public class ClassesBlob extends ByteSerializable {
         for (int i = 0; i < this.blobHeader.getClassesCount(); i++) {
             this.classHeaders.add(new ClassHeader(stream));
         }
+        for (int i = 0; i < this.blobHeader.getClassesCount(); i++) {
+            int clSize = this.classHeaders.get(i).getClassSize();
+            int clOffset = this.classHeaders.get(i).getOffset();
+            byte[] classBytes = new byte[clSize];
+            if (stream.read(classBytes,clOffset,clSize)!=clSize) throw new IOException("Not enough data");
+            this.classes.add(new ClassBytes(classBytes));
+        }
         return this;
     }
 
@@ -36,6 +43,9 @@ public class ClassesBlob extends ByteSerializable {
         this.blobHeader.serialize(stream);
         for (ClassHeader h: this.classHeaders) {
             h.serialize(stream);
+        }
+        for (ClassBytes b: this.classes) {
+            stream.write(b.getClassBytes());
         }
     }
 }

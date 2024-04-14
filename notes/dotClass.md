@@ -43,6 +43,7 @@ Method calls:
   interface method
   The selection logic allows a non-abstract method
   declared in a superinterface to be selected
+  Called on Interface class
 - __invokeSpecial__
   JVM will look only in the exact place in the
   vtable for the requested method. This means that
@@ -51,6 +52,7 @@ Method calls:
     2. calls to a superclass method,
     3. calls to the constructor body (which is
        turned into a method called `<init>`)
+
 - __invokeDynamic__
   Invoke a dynamically-computed call site
   Used by lambda expressions

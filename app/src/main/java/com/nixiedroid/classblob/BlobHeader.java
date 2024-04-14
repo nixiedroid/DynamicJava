@@ -35,6 +35,7 @@ public class BlobHeader extends ByteSerializable<BlobHeader> {
         this.classesCount = classesCount;
     }
 
+
     @Override
     public BlobHeader deserialize(ByteArrayInputStream stream) throws IOException {
         if (stream == null) throw new IOException("Input is null");
