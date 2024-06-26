@@ -17,9 +17,6 @@ public abstract class PremainHandler implements ClassFileTransformer {
                                      ProtectionDomain protectionDomain,
                                      byte[] classfileBuffer)
             throws IllegalClassFormatException{
-        return classfileBuffer;
+        return null;
     };
-
-
-
 }

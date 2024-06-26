@@ -3,12 +3,15 @@ import com.nixiedroid.bytes.ByteArrayUtils;
 import com.nixiedroid.modules.ModuleManager;
 import com.nixiedroid.modules.util.Modules;
 import com.nixiedroid.runtime.Info;
-import samples.Cats;
-import samples.Clazz;
+import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import samples.Cats;
+import samples.Clazz;
+import samples.MHtestObj;
 
 import java.io.*;
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
@@ -37,6 +40,47 @@ public class CoolStuffTest {
         return sb.toString();
     }
 
+    static long hashCollisionGenerator(final long value, final int seed) {
+        final long longSeed = (seed & 0xFFFF_FFFFL);
+        final long lsh = longSeed << 32;
+        return lsh ^ value ^ longSeed;
+    }
+
+    public static void modulesTest() {
+        String FLOAT_CONSTANTS_CLASS_NAME = "jdk.internal.math.FloatConsts";
+        String THREAD_SLEEPING_EVENT_CLASS_NAME = "jdk.internal.event.ThreadSleepEvent";
+        System.out.println(Info.getVersion());
+        ModuleManager.poke();
+        ModuleManager.poke();
+        System.out.println(Main.class.getModule());
+        System.out.println(ModuleManager.class.getModule());
+        try {
+            Class<?> cl = Class.forName(FLOAT_CONSTANTS_CLASS_NAME);
+            //   ModuleManager.allowAccess(Main.class, FLOAT_CONSTANTS_CLASS_NAME, false);
+            Field field = cl.getDeclaredField("SIGNIFICAND_WIDTH");
+            System.out.println(field.get(null));
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void communism() {
+        try {
+            Modules.exportAllToAll();
+        } catch (Throwable exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
+    public static void stuckOverflow(int counter) {
+        counter++;
+        try {
+            stuckOverflow(counter);
+        } catch (StackOverflowError e) {
+            System.out.println("End is " + counter);
+        }
+    }
+
     @Test
     void epicText() {
         System.out.println(System.getProperty("java.class.path"));
@@ -60,43 +104,60 @@ public class CoolStuffTest {
 
     @Test
     @SuppressWarnings("internal")
-    void internalUnsafeTest() {
-        sun.misc.Unsafe unsafe = com.nixiedroid.unsafe.UnsafeWrapper.getUnsafe();
+    void internalUnsafeTest() throws Throwable {
+        Class<?> unsafeClass = sun.misc.Unsafe.class;
+        Class<?> intUnsafeClass = Class.forName("jdk.internal.misc.Unsafe");
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        lookup = MethodHandles.privateLookupIn(unsafeClass, lookup);
         //jdk.internal.misc.Unsafe
-        Object o;
+        Object intUnsafe;
         Clazz cat = new Clazz();
         try {
-            Field f = unsafe.getClass().getDeclaredField("theInternalUnsafe");
-            f.setAccessible(true);
-            o = f.get(null);
-            Method m = o.getClass().getMethod("objectFieldOffset", Field.class);
+            MethodHandle getter = lookup.findStaticGetter(unsafeClass, "theInternalUnsafe", intUnsafeClass);
+            intUnsafe = getter.invoke();
+            MethodHandle getInt = lookup.findVirtual(intUnsafeClass, "getInt", MethodType.methodType(int.class, Object.class, long.class));
+            MethodHandle oFieldOffset = lookup.findVirtual(intUnsafeClass, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
             Field catF = Clazz.class.getDeclaredField("sInteger");
-            Assertions.assertEquals(4, m.invoke(o, catF));
+            Assertions.assertEquals(4, getInt.invoke( intUnsafe, cat,oFieldOffset.invoke(intUnsafe, catF)));
         } catch (IllegalAccessException e) {
             System.out.println("Disallowed, but OK");
-        } catch (ReflectiveOperationException e){
+        } catch (ReflectiveOperationException e) {
             Assertions.fail(e);
         }
 
     }
 
     @Test
-    void longhashCodeCollisionTest(){
+    void longhashCodeCollisionTest() {
         for (int i = -10; i <= 10; i++) {
-            for (int j = -10; j <=10; j++) {
+            for (int j = -10; j <= 10; j++) {
                 Assertions.assertEquals(
                         Long.hashCode(i),
                         Long.hashCode(
-                                hashCollisionGenerator(i,j)
+                                hashCollisionGenerator(i, j)
                         ));
             }
         }
-
     }
-    static long hashCollisionGenerator(final long value, final int seed) {
-        final long longSeed = (seed & 0xFFFF_FFFFL);
-        final long lsh = longSeed << 32;
-        return lsh ^ value ^ longSeed;
+
+    @Test
+    void getterAndSetter() throws Throwable {
+        Class<?> clazz = MHtestObj.class;
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandles.Lookup privLookup = MethodHandles.privateLookupIn(clazz, lookup);
+        Object obj = UnsafeWrapper.getUnsafe().allocateInstance(clazz);
+        //lookup.findConstructor(clazz,MethodType.methodType(void.class)).invoke();
+        MethodHandle GpIntHandle = privLookup.findGetter(clazz, "pInt", int.class);
+        MethodHandle GprivIntHandle = privLookup.findGetter(clazz, "prInt", int.class);
+        MethodHandle SpIntHandle = privLookup.findSetter(clazz, "pInt", int.class);
+        MethodHandle SprivIntHandle = privLookup.findSetter(clazz, "prInt", int.class);
+        System.out.println(GpIntHandle.invoke(obj));
+        System.out.println(GprivIntHandle.invoke(obj));
+        SprivIntHandle.invoke(obj, 11);
+        SpIntHandle.invoke(obj, 321);
+        System.out.println(GpIntHandle.invoke(obj));
+        System.out.println(GprivIntHandle.invoke(obj));
     }
 
     @Test
@@ -170,54 +231,20 @@ public class CoolStuffTest {
             var mhd = lookup.findVirtual(Clazz.class, "sayDynamic", mt);
             var msp = Clazz.class.getDeclaredMethod("privSayStatic", String.class);
             msp.setAccessible(true);
-           // var mhsp = lookup.unreflect(msp);
-         //   var getter = lookup.findGetter(Clazz.class, "sInteger", int.class);
+            // var mhsp = lookup.unreflect(msp);
+            //   var getter = lookup.findGetter(Clazz.class, "sInteger", int.class);
             var varp = Clazz.class.getDeclaredField("sInteger");
             for (Method m : Clazz.class.getDeclaredMethods()) {
                 System.out.println(m.getName());
             }
             varp.setAccessible(true);
             // var varph = lookup.unreflectVarHandle(varp);
-          //  mhsp.invoke("hello");
+            //  mhsp.invoke("hello");
             mhs.invoke("hello");
             mhd.invoke(new Clazz(), "hola");
             //   System.out.println(varph.get(new Clazz()));
         } catch (Throwable e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public static void modulesTest() {
-        String FLOAT_CONSTANTS_CLASS_NAME = "jdk.internal.math.FloatConsts";
-        String THREAD_SLEEPING_EVENT_CLASS_NAME = "jdk.internal.event.ThreadSleepEvent";
-        System.out.println(Info.getVersion());
-        ModuleManager.poke();
-        ModuleManager.poke();
-        System.out.println(Main.class.getModule());
-        System.out.println(ModuleManager.class.getModule());
-        try {
-            Class<?> cl = Class.forName(FLOAT_CONSTANTS_CLASS_NAME);
-            ModuleManager.allowAccess(Main.class, FLOAT_CONSTANTS_CLASS_NAME, false);
-            Field field = cl.getDeclaredField("SIGNIFICAND_WIDTH");
-            System.out.println(field.get(null));
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static void communism() {
-        try {
-            Modules.exportAllToAll();
-        } catch (Throwable exc) {
-            throw new RuntimeException(exc);
-        }
-    }
-
-    public static void stuckOverflow(int counter) {
-        counter++;
-        try {
-            stuckOverflow(counter);
-        } catch (StackOverflowError e) {
-            System.out.println("End is " + counter);
         }
     }
 

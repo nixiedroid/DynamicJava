@@ -17,6 +17,7 @@ repositories {
 
 compileJava {
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+    options.compilerArgs << "--add-exports=java.base/jdk.internal.module=nixiedroid.dynamic.core"
 }
 
 dependencies {

@@ -19,6 +19,9 @@ public class Premain {
             inst.addTransformer(handler);
        }
     }
+    public static void agentmain(final String agentArgs, final Instrumentation inst){
+        premain(agentArgs,inst);
+    }
 
     private static Optional<PremainHandler> findHandlerClass(final String agentArgs, final Instrumentation inst) {
         try {

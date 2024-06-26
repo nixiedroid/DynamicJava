@@ -4,4 +4,5 @@ module nixiedroid.dynamic.app {
     requires java.sql;
     requires jdk.unsupported;
     requires nixiedroid.dynamic.premain;
+    requires java.desktop;
 }

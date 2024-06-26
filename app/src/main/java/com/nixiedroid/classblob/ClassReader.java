@@ -6,8 +6,8 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClassRedaer {
-    public ClassRedaer() throws IOException {
+public class ClassReader {
+    public ClassReader() throws IOException {
         FileOutputStream fos = new FileOutputStream("out.bin");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         BlobHeader header = new BlobHeader((short) 1, (short) 1);

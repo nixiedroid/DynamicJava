@@ -1,6 +1,7 @@
 package com.nixiedroid.modules;
 
 import com.nixiedroid.exceptions.Thrower;
+import jdk.internal.module.Modules;
 
 import java.lang.reflect.*;
 
@@ -70,20 +71,40 @@ public class ModuleManager {
         }
     }
 
-    public static void allowAccess(final Class<?> accessor, final String target, final boolean accessNamedModules) {
-        try {
-            Class<?> cl = Class.forName(target);
-            if (!accessNamedModules) {
-                cl.getModule().addOpens(cl.getPackageName(), accessor.getModule());
-            } else {
-                setAccessible.invoke(cl.getModule(), cl.getPackageName(), accessor.getModule(), true, true);
-            }
-        } catch (ReflectiveOperationException e) {
-            Thrower.throwException(e);
-        }
-    }
+//    public static void allowAccess(final Class<?> accessor, final String target, final boolean accessNamedModules) {
+//        try {
+//            Class<?> cl = Class.forName(target);
+//            if (!accessNamedModules) {
+//                cl.getModule().addOpens(cl.getPackageName(), accessor.getModule());
+//            } else {
+//                setAccessible.invoke(cl.getModule(), cl.getPackageName(), accessor.getModule(), true, true);
+//            }
+//        } catch (ReflectiveOperationException e) {
+//            Thrower.throwException(e);
+//        }
+//    }
 
     public static void poke() {
+    }
+    //From sun.launcher.LaunchHelper
+    static void addExportsOrOpens(String value, boolean open) {
+        for (String moduleAndPackage : value.split(" ")) {
+            String[] s = moduleAndPackage.trim().split("/");
+            if (s.length == 2) {
+                String mn = s[0];
+                String pn = s[1];
+                ModuleLayer.boot()
+                        .findModule(mn)
+                        .filter(m -> m.getDescriptor().packages().contains(pn))
+                        .ifPresent(m -> {
+                            if (open) {
+                                Modules.addOpensToAllUnnamed(m, pn);
+                            } else {
+                                Modules.addExportsToAllUnnamed(m, pn);
+                            }
+                        });
+            }
+        }
     }
 
     public static void breakEncapsulation(final Class<?> accessor, final Class<?> target, final boolean accessNamedModules) {
