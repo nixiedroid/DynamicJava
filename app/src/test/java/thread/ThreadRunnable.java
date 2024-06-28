@@ -1,6 +1,4 @@
-package com.nixiedroid.threads;
-
-import java.util.ArrayList;
+package thread;
 
 public interface ThreadRunnable  extends Runnable {
     default Thread start(){

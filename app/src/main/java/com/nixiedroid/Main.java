@@ -1,15 +1,14 @@
 package com.nixiedroid;
 
-import com.nixiedroid.threads.ThreadImpl;
-import com.nixiedroid.threads.ThreadMgr;
 
+import com.nixiedroid.classblob.ClassReader;
+import com.nixiedroid.function.Functions;
 
 public class Main {
 
     Main() throws Throwable {
-        //new ClassRedaer();
-        //new Functions();
-        new ThreadMgr();
+        new ClassReader();
+        new Functions();
     }
 
     //com.sun.tools.javac.launcher <executes *.java files. Not *.class

@@ -1,4 +1,4 @@
-package com.nixiedroid.threads;
+package thread;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

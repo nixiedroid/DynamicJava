@@ -1,4 +1,4 @@
-package com.nixiedroid.threads;
+package thread;
 
 public class ThreadMgr {
     private /*volatile*/ boolean isRunning = true;

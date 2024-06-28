@@ -1,4 +1,4 @@
-package com.nixiedroid.threads;
+package thread;
 
 public class ThreadImpl implements ThreadRunnable {
     private final ThreadContext ctx;
