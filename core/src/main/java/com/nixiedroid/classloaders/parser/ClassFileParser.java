@@ -1,8 +1,9 @@
-package com.nixiedroid.classloaders;
+package com.nixiedroid.classloaders.parser;
 
 import java.util.function.Function;
 
-public final class ClassParser implements Function<byte[],String> {
+
+public final class ClassFileParser implements Function<byte[], ClassFileParser.RawInfo> {
     //https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-4.html
     private static final byte CONSTANT_Class = 7;
     private static final byte CONSTANT_Fieldref = 9;
@@ -35,9 +36,9 @@ public final class ClassParser implements Function<byte[],String> {
 
 
 
-    private ClassParser() {
+    private ClassFileParser() {
     }
-    public static class RawInfo {
+    public static final class RawInfo {
         int modifiers;
         String name;
         String superClassName;
@@ -59,14 +60,12 @@ public final class ClassParser implements Function<byte[],String> {
         }
 
         public String getSuperClassName() {
-            return superClassName;
+            return this.superClassName;
         }
 
         public String[] getInterfaceNames() {
-            return interfaceNames;
+            return this.interfaceNames;
         }
-
-
     }
 
     private static String getName(final byte[] classBytes){
@@ -257,8 +256,11 @@ public final class ClassParser implements Function<byte[],String> {
             return value;
         }
         int cpInfoOffset = cpInfoOffsets[constantPoolEntryIndex];
-        return constantUtf8Values[constantPoolEntryIndex] = readUtf(classBytes, cpInfoOffset + 2, getUint16BE(classBytes, cpInfoOffset),
-                charBuffer);
+        return  constantUtf8Values[constantPoolEntryIndex] =
+                readUtf(classBytes,
+                        cpInfoOffset + 2,
+                        getUint16BE(classBytes, cpInfoOffset),
+                        charBuffer);
     }
 
     private static int getUint16BE(
@@ -286,27 +288,8 @@ public final class ClassParser implements Function<byte[],String> {
         return new String(charBuffer, 0, strLength);
     }
 
-    public static String getClassName(final byte[] clBytes) {
-        String rawName =  getName(clBytes);
-        assert  rawName!= null;
-        boolean isSlashExists =  rawName.contains("/");
-        String[] names = new String[3];
-        String rawPackageName;
-        if (isSlashExists){
-            rawPackageName = rawName.substring(0, rawName.lastIndexOf("/"));
-            names[0] = rawPackageName.replace("/", ".");
-            names[1] = rawName.substring(rawName.lastIndexOf("/") + 1);
-            names[2] = names[0] + "." + names[1];
-        } else {
-            names[0] = null;
-            names[1] = rawName;
-            names[2] = names[1];
-        }
-        return names[2];
-    }
-
     @Override
-    public String apply(byte[] bytes) {
-        return getClassName(bytes);
+    public RawInfo apply(byte[] bytes) {
+        return retrieveInfo(bytes);
     }
 }

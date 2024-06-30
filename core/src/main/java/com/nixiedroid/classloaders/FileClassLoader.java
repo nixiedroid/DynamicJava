@@ -1,6 +1,9 @@
 package com.nixiedroid.classloaders;
 
 
+import com.nixiedroid.classloaders.parser.ClassFileParser;
+import com.nixiedroid.classloaders.parser.JavaClassParser;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,14 +34,7 @@ public class FileClassLoader extends ClassLoader {
     }
 
     protected final String getRealClassName(byte[] classBytes) throws ClassNotFoundException {
-//        try {
-//            classParser = new ClassParser(new ByteArrayInputStream(classBytes), "");
-//            JavaClass jc = classParser.parse();
-//            return jc.getClassName();
-//        } catch (IOException e) {
-//            throw new ClassNotFoundException();
-//        }
-        return ClassParser.getClassName(classBytes);
+        return JavaClassParser.create(classBytes).getSimpleName();
     }
 
     protected final String getFileName(String className, String extension) throws FileNotFoundException {

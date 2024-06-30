@@ -1,6 +1,6 @@
 package com.nixiedroid.modules.util;
 
-import com.nixiedroid.classloaders.ClassParser;
+import com.nixiedroid.classloaders.parser.JavaClassParser;
 
 public class Classes {
     public static Class<?> retrieveFrom(Object object) {
@@ -21,14 +21,7 @@ public class Classes {
         }
         return classes;
     }
-    public static String getRealClassName(byte[] classBytes) throws ClassNotFoundException {
-//        try {
-//            ClassParser classParser = new ClassParser(new ByteArrayInputStream(classBytes), "");
-//            JavaClass jc = classParser.parse();
-//            return jc.getClassName();
-//        } catch (IOException e) {
-//            throw new ClassNotFoundException(e.getMessage());
-//        }
-        return ClassParser.getClassName(classBytes);
+    public static String getRealClassName(byte[] classBytes) {
+        return JavaClassParser.create(classBytes).getSimpleName();
     }
 }

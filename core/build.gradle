@@ -5,10 +5,10 @@ plugins {
 java {
     group = 'com.nixiedroid'
     version = 'unspecified'
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(11)
     }
 }
 repositories {
