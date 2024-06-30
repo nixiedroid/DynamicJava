@@ -1,13 +1,14 @@
 package com.nixiedroid;
 
 
-import com.nixiedroid.classblob.ClassReader;
 import com.nixiedroid.function.Functions;
 
-public class Main {
+@SuppressWarnings("UtilityClassWithoutPrivateConstructor")
+public final class Main {
 
-    Main() throws Throwable {
-        new ClassReader();
+    @SuppressWarnings("RedundantThrows")
+    Main() throws Throwable{
+        //new ClassReader();
         new Functions();
     }
 
@@ -17,7 +18,7 @@ public class Main {
     /**
      * @see jdk.internal.misc.MainMethodFinder;
      */
-    @SuppressWarnings("JavadocReference")
+    @SuppressWarnings({"JavadocReference", "InstantiationOfUtilityClass"})
     public static void main(String[] args)  {
         try {
             new Main();

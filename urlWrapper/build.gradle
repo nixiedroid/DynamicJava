@@ -21,10 +21,10 @@ java {
     group = 'com.nixiedroid.urlwrapper'
     version = ''
     base.archivesName = 'URLWrapper'
-    sourceCompatibility = "11"
-    targetCompatibility = "11"
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 

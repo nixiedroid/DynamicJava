@@ -5,10 +5,10 @@ java {
     group = 'com.nixiedroid.premain'
     version = '1'
     base.archivesName = 'premain'
-    sourceCompatibility = "11"
-    targetCompatibility = "11"
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 

@@ -2,7 +2,7 @@ package com.nixiedroid.interfaces;
 
 import java.util.Objects;
 import java.util.function.Consumer;
-
+@FunctionalInterface
 public interface ThrowableConsumer<A> {
     void accept(A var1) throws Throwable ;
 

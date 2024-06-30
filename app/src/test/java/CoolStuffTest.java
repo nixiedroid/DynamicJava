@@ -18,13 +18,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class CoolStuffTest {
-    public static void accessInaccessible() throws ReflectiveOperationException {
-        Class<?> cl = Class.forName("jdk.internal.misc.VM");
-        Method m = cl.getMethod("initLevel");
-        int dat = (int) m.invoke(null);
-        System.out.println(dat);
+
+    @Test
+    void ModulesIllegalAccess() {
+        Assertions.assertThrows(IllegalAccessException.class, () -> {
+            Class<?> cl = Class.forName("jdk.internal.misc.VM");
+            Method m = cl.getMethod("initLevel");
+            int dat = (int) m.invoke(null);
+            System.out.println(dat);
+        });
     }
 
     public static String getModifiers(int modifiers) {
@@ -45,10 +50,9 @@ public class CoolStuffTest {
         final long lsh = longSeed << 32;
         return lsh ^ value ^ longSeed;
     }
-
-    public static void modulesTest() {
+    @Test
+    public void modulesTest() {
         String FLOAT_CONSTANTS_CLASS_NAME = "jdk.internal.math.FloatConsts";
-        String THREAD_SLEEPING_EVENT_CLASS_NAME = "jdk.internal.event.ThreadSleepEvent";
         System.out.println(Info.getVersion());
         ModuleManager.poke();
         ModuleManager.poke();
@@ -60,18 +64,18 @@ public class CoolStuffTest {
             Field field = cl.getDeclaredField("SIGNIFICAND_WIDTH");
             System.out.println(field.get(null));
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            Assertions.fail("Should not have thrown any exception");
         }
     }
-
-    public static void communism() {
+    @Test
+    public void communism() {
         try {
             Modules.exportAllToAll();
         } catch (Throwable exc) {
-            throw new RuntimeException(exc);
+            Assertions.fail("Should not have thrown any exception");
         }
     }
-
+    @SuppressWarnings("unused")
     public static void stuckOverflow(int counter) {
         counter++;
         try {
@@ -80,6 +84,26 @@ public class CoolStuffTest {
             System.out.println("End is " + counter);
         }
     }
+
+    @Test
+    void throwExceptionQuiet() {
+        Exception e = new FileNotFoundException();
+        Assertions.assertThrows(e.getClass(), () -> new ExceptionMuffler().accept(e));
+    }
+
+    static class ExceptionMuffler implements Consumer<Throwable> {
+        @SuppressWarnings("unchecked")
+        private  <E extends Throwable> void quietlyThrow(Throwable e) throws E {
+            if (e != null) throw (E) e;
+        }
+
+        @Override
+        public void accept(Throwable throwable) {
+            quietlyThrow(throwable);
+        }
+    }
+
+
 
     @Test
     void epicText() {
@@ -118,7 +142,7 @@ public class CoolStuffTest {
             MethodHandle getInt = lookup.findVirtual(intUnsafeClass, "getInt", MethodType.methodType(int.class, Object.class, long.class));
             MethodHandle oFieldOffset = lookup.findVirtual(intUnsafeClass, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
             Field catF = Clazz.class.getDeclaredField("sInteger");
-            Assertions.assertEquals(4, getInt.invoke( intUnsafe, cat,oFieldOffset.invoke(intUnsafe, catF)));
+            Assertions.assertEquals(4, getInt.invoke(intUnsafe, cat, oFieldOffset.invoke(intUnsafe, catF)));
         } catch (IllegalAccessException e) {
             System.out.println("Disallowed, but OK");
         } catch (ReflectiveOperationException e) {
@@ -175,11 +199,7 @@ public class CoolStuffTest {
         System.out.printf("%x\n", a + 2);
     }
 
-    @Test
-    void ModulesIllegalAccess() {
-        Assertions.assertThrows(IllegalAccessException.class, () -> accessInaccessible());
 
-    }
 
     @Test
     void testJavaSerialization() {
@@ -205,7 +225,7 @@ public class CoolStuffTest {
             Assertions.assertEquals(3, h2.getA());
             Assertions.assertEquals(4, h2.getB());
         } catch (IOException | ClassNotFoundException e) {
-            throw new AssertionError(e);
+            Assertions.fail("Should not have thrown any exception");
         }
     }
 
@@ -244,7 +264,7 @@ public class CoolStuffTest {
             mhd.invoke(new Clazz(), "hola");
             //   System.out.println(varph.get(new Clazz()));
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            Assertions.fail("Should not have thrown any exception");
         }
     }
 
