@@ -28,7 +28,7 @@ public class ModuleManager2 {
 
     public ModuleManager2() throws Throwable {
         this.brokenLookup = thisWillBreakSoon();
-        this.forName = getForname0();
+        this.forName = getForName0();
         this.unsafe = UnsafeWrapper.getUnsafe();
         this.internalUnsafe = getInternalUnsafe();
         this.objectFieldOffset = getDynamicFieldOffset();
@@ -54,6 +54,9 @@ public class ModuleManager2 {
         UnsafeWrapper.getUnsafe().putInt(lookup, allowedModesFieldMemoryOffset, TRUSTED);
         return lookup;
     }
+    public MethodHandles.Lookup getBrokenLookup(){
+        return thisWillBreakSoon();
+    }
     private Object getInternalUnsafe() throws Throwable {
         Class<?> intUnsafeClass = forName0("jdk.internal.misc.Unsafe");
         return this.brokenLookup.findStaticVarHandle(sun.misc.Unsafe.class, "theInternalUnsafe", intUnsafeClass).get();
@@ -66,7 +69,7 @@ public class ModuleManager2 {
         MethodType mt = MethodType.methodType(long.class, Field.class);
         return this.brokenLookup.findVirtual(this.internalUnsafe.getClass(), "staticFieldOffset", mt);
     }
-    private MethodHandle getForname0() throws NoSuchMethodException, IllegalAccessException {
+    private MethodHandle getForName0() throws NoSuchMethodException, IllegalAccessException {
         MethodType forName0mt = MethodType.methodType(Class.class, String.class, boolean.class, ClassLoader.class, Class.class);
         return this.brokenLookup.findStatic(Class.class, "forName0", forName0mt);
     }
