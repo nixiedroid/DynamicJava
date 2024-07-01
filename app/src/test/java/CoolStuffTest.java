@@ -1,6 +1,8 @@
 import com.nixiedroid.Main;
 import com.nixiedroid.bytes.ByteArrayUtils;
 import com.nixiedroid.classloaders.parser.JavaClassParser;
+import com.nixiedroid.interfaces.ThrowableBiFunction;
+import com.nixiedroid.interfaces.ThrowableTerConsumer;
 import com.nixiedroid.modules.ModuleManager;
 import com.nixiedroid.modules.ModuleManager2;
 import com.nixiedroid.modules.util.Modules;
@@ -8,7 +10,6 @@ import com.nixiedroid.runtime.Info;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import samples.Cats;
 import samples.Clazz;
 import samples.MHtestObj;
@@ -22,7 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Consumer;
-
+@SuppressWarnings("unused")
 public class CoolStuffTest {
 
     @Test
@@ -78,8 +79,8 @@ public class CoolStuffTest {
             Assertions.fail("Should not have thrown any exception");
         }
     }
-    @SuppressWarnings("unused")
-    public static void stuckOverflow(int counter) {
+    @SuppressWarnings({"unused", "InfiniteRecursion"})
+    public void stuckOverflow(int counter) {
         counter++;
         try {
             stuckOverflow(counter);
@@ -181,12 +182,15 @@ public class CoolStuffTest {
         MethodHandle SprivIntHandle = privLookup.findSetter(clazz, "prInt", int.class);
         System.out.println(GpIntHandle.invoke(obj));
         System.out.println(GprivIntHandle.invoke(obj));
-        SprivIntHandle.invoke(obj, 11);
-        SpIntHandle.invoke(obj, 321);
+        final int ELEVEN =11;
+        SprivIntHandle.invoke(obj, ELEVEN);
+        final int THREE_TWO_ONE  =321;
+        SpIntHandle.invoke(obj, THREE_TWO_ONE);
         System.out.println(GpIntHandle.invoke(obj));
         System.out.println(GprivIntHandle.invoke(obj));
     }
 
+    @SuppressWarnings({"SimplifiableAssertion", "ComparisonToNaN"})
     @Test
     void jvmInternalsTest() {
         Assertions.assertNull(java.lang.ClassLoader.class.getClassLoader());
@@ -295,15 +299,11 @@ public class CoolStuffTest {
             var mhd = lookup.findVirtual(Clazz.class, "sayDynamic", mt);
             var msp = Clazz.class.getDeclaredMethod("privSayStatic", String.class);
             msp.setAccessible(true);
-            // var mhsp = lookup.unreflect(msp);
-            //   var getter = lookup.findGetter(Clazz.class, "sInteger", int.class);
             var varp = Clazz.class.getDeclaredField("sInteger");
             for (Method m : Clazz.class.getDeclaredMethods()) {
                 System.out.println(m.getName());
             }
             varp.setAccessible(true);
-            // var varph = lookup.unreflectVarHandle(varp);
-            //  mhsp.invoke("hello");
             mhs.invoke("hello");
             mhd.invoke(new Clazz(), "hola");
             //   System.out.println(varph.get(new Clazz()));
@@ -312,4 +312,81 @@ public class CoolStuffTest {
         }
     }
 
+    ThrowableBiFunction<Class<?>, String, Long> objectFieldOffset() throws Throwable {
+        final int TRUSTED = -1;
+
+        String sunArchDataModel = System.getProperty("sun.arch.data.model");
+        boolean is64Bit = sunArchDataModel.contains("64");
+        final long allowedModesFieldMemoryOffset = is64Bit ? 12L : 8L;
+
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
+        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        lookup = MethodHandles.privateLookupIn(Uclass, lookup);
+        Object U = lookup.findStaticGetter(Uclass,"theUnsafe",Uclass).invoke();
+
+        MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
+        MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
+        putInt.invoke(U,lookup,allowedModesFieldMemoryOffset,TRUSTED);
+
+        Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
+
+        MethodType oFieldOffsetType = MethodType.methodType(long.class, Class.class, String.class);
+        MethodHandle oFieldOffset = lookup.findVirtual(intUnsafeClass, "objectFieldOffset", oFieldOffsetType);
+        return (c, s) -> (Long) oFieldOffset.invoke(iU, c, s);
+    }
+
+    ThrowableBiFunction<Object, Long, Integer> getInt() throws Throwable {
+        final int TRUSTED = -1;
+
+        String sunArchDataModel = System.getProperty("sun.arch.data.model");
+        boolean is64Bit = sunArchDataModel.contains("64");
+        final long allowedModesFieldMemoryOffset = is64Bit ? 12L : 8L;
+
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
+        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        lookup = MethodHandles.privateLookupIn(Uclass, lookup);
+        Object U = lookup.findStaticGetter(Uclass,"theUnsafe",Uclass).invoke();
+
+        MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
+        MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
+        putInt.invoke(U,lookup,allowedModesFieldMemoryOffset,TRUSTED);
+
+        Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
+
+        MethodType getIntType = MethodType.methodType(int.class,Object.class,long.class);
+        MethodHandle getInt = lookup.findVirtual(intUnsafeClass, "getInt", getIntType);
+        return (o, offset) -> (Integer) getInt.invoke(iU,o,offset);
+    }
+
+    ThrowableTerConsumer<Object, Long,Integer> putInt() throws Throwable {
+        final int TRUSTED = -1;
+
+        String sunArchDataModel = System.getProperty("sun.arch.data.model");
+        boolean is64Bit = sunArchDataModel.contains("64");
+        final long allowedModesFieldMemoryOffset = is64Bit ? 12L : 8L;
+
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
+        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        lookup = MethodHandles.privateLookupIn(Uclass, lookup);
+        Object U = lookup.findStaticGetter(Uclass,"theUnsafe",Uclass).invoke();
+
+        MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
+        MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
+        putInt.invoke(U,lookup,allowedModesFieldMemoryOffset,TRUSTED);
+
+        Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
+
+        MethodHandle putIntInternal = lookup.findVirtual(intUnsafeClass, "putInt", putIntType);
+
+        return (o, offset, x) -> putIntInternal.invoke(iU,o,offset,x);
+    }
 }
