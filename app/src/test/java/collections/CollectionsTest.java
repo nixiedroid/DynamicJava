@@ -9,7 +9,7 @@ import java.util.*;
 public class CollectionsTest {
 
     @Test
-    void Test() throws ReflectiveOperationException {
+    void Test() {
         Set<Integer> exp = new LinkedHashSet<>(List.of(1,2,3,4,5,6,7,8,9));
         final Set<Integer> ints = new TreeSet<>(List.of(4, 5, 1, 6, 7, 9, 8, 5, 7, 3, 4, 2, 9));
         Assertions.assertEquals(ints,exp);

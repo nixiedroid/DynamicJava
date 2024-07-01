@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 
 
 class VolatileTest {
+    private static final long FIVE_SECONDS = 5L;
     private /*volatile*/ boolean isRunning = true;
     /**
      * Timeout Exception here is Required =)
      */
     @Test
     public void volatileTest() {
-        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(5L),this::executeTest);
+        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(FIVE_SECONDS),this::executeTest);
     }
 
     @SuppressWarnings({"StatementWithEmptyBody"})
