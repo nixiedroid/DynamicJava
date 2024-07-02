@@ -97,11 +97,13 @@ class SynchronisedTest {
         Thread drr =  new Thread(drill);
         Thread trr = new Thread(train);
         drr.start();trr.start();
-        try {
-            drr.join();
-            trr.join();
-        } catch (InterruptedException e) {
-        }
+        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(FIVE_SECONDS), () -> {
+            try {
+                drr.join();
+                trr.join();
+            } catch (InterruptedException ignored) {
+            }
+        });
 
     }
     private static final long FIVE_SECONDS = 5L;

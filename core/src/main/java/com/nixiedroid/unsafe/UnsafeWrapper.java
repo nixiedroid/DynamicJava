@@ -1,33 +1,37 @@
 package com.nixiedroid.unsafe;
 
-import java.lang.reflect.Constructor;
+import sun.misc.Unsafe;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("unused")
 public class UnsafeWrapper {
-    private static final sun.misc.Unsafe theUnsafestThingyInJava;
-
+    private static final sun.misc.Unsafe theUnsafe;
 
     static {
-              sun.misc.Unsafe unsafe;
+        sun.misc.Unsafe unsafe = null;
+        try {
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            lookup = MethodHandles.privateLookupIn(Uclass, lookup);
+            MethodHandle mh;
             try {
-                Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-                field.setAccessible(true);
-                unsafe = (sun.misc.Unsafe) field.get(null);
-                field.setAccessible(false);
+                mh = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass);
             } catch (NoSuchFieldException e) {
-                try {
-                    Constructor<sun.misc.Unsafe> unsafeConstructor = sun.misc.Unsafe.class.getDeclaredConstructor();
-                    unsafeConstructor.setAccessible(true);
-                    unsafe = unsafeConstructor.newInstance();
-                    unsafeConstructor.setAccessible(false);
-                } catch (Exception ex) {
-                    throw new RuntimeException(e + " : " + ex);
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+                mh = lookup.findConstructor(Uclass, MethodType.methodType(void.class));
             }
-            theUnsafestThingyInJava = unsafe;
+            try {
+                unsafe = (Unsafe) mh.invoke();
+            } catch (Throwable ignored) {
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new Error("Unsafe is removed" + e);
+        }
+        theUnsafe = unsafe;
     }
 
     private UnsafeWrapper() {
@@ -35,8 +39,9 @@ public class UnsafeWrapper {
     }
 
     public static sun.misc.Unsafe getUnsafe() {
-        return theUnsafestThingyInJava;
+        return theUnsafe;
     }
+
 
     /**
      * crash java VM, showing new awesome type of Exception
@@ -54,15 +59,15 @@ public class UnsafeWrapper {
     public static void throwException(Throwable e) {
         getUnsafe().throwException(e);
     }
-    public static long getAddress(Object o){
+
+    public static long getAddress(Object o) {
         return 1;
     }
 
-    public static void moveToJavaBase(Class<?> cl){
+    public static void moveToJavaBase(Class<?> cl) {
         try {
             final Field field = Class.class.getDeclaredField("module");
-            @SuppressWarnings("deprecation")
-            final long offset = getUnsafe().objectFieldOffset(field);
+            @SuppressWarnings("deprecation") final long offset = getUnsafe().objectFieldOffset(field);
             UnsafeWrapper.getUnsafe().putObject(cl, offset, Object.class.getModule());
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
@@ -73,4 +78,18 @@ public class UnsafeWrapper {
         return clazz.cast(getUnsafe().allocateInstance(clazz));
     }
 
+    public static class Hook {
+        public void whereAmI() {
+            System.out.println(this.getClass().getModule().getName());
+        }
+
+        public MethodHandles.Lookup getLookup(Class<?> cl) throws Throwable {
+            ClassLoader loader = ClassLoader.getSystemClassLoader();
+            Class<?> intUnsafeClass = loader.loadClass(cl.getName());
+            return MethodHandles.privateLookupIn(intUnsafeClass, MethodHandles.lookup());
+        }
+
+    }
+
 }
+
