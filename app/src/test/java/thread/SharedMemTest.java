@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 public class SharedMemTest {
 
+    private static final int FORTY_TWO = 42;
     private static int number = 7;
     private static boolean ready;
 
@@ -17,17 +18,10 @@ public class SharedMemTest {
      */
     @Test
     void RWTest() {
-
-
         new ReaderThread().start();
-
-
+        number = FORTY_TWO;
         ready = true;
     }
-
-
-
-
     private static class ReaderThread extends Thread {
         public void run() {
             while (!ready)
