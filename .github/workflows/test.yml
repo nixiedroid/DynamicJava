@@ -1,9 +1,5 @@
-name: build.yml
+name: test.yml
 on: push
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   info:
@@ -19,12 +15,6 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
 
-    permissions:
-      packages: write
-      contents: read
-      attestations: write
-      id-token: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'oracle' # See 'Supported distributions' for available options
-          java-version: '17'
+          java-version: '21'
 
       - name: Gradle test package
         run: java --version &&  chmod +x ./gradlew &&  ./gradlew && ./gradlew test
