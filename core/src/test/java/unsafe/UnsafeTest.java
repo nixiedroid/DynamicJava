@@ -1,10 +1,14 @@
 package unsafe;
 
+import com.nixiedroid.exceptions.Thrower;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Test;
+import sun.misc.Unsafe;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
+import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,21 +17,31 @@ class UnsafeTest {
     void unsafeInstanceTest() {
         sun.misc.Unsafe unsafe = null;
         assertThrowsExactly(SecurityException.class, sun.misc.Unsafe::getUnsafe);
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
         try {
-            Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            unsafe = (sun.misc.Unsafe) field.get(null);
-            field.setAccessible(false);
-        } catch (Exception e) {
+            Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
+            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(Uclass, MethodHandles.lookup());
+            MethodHandle mh = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass);
+            try {
+                unsafe = (Unsafe) mh.invoke();
+            } catch (Throwable e) {
+                fail("Should not have thrown any exception: \n " + e);
+            }
+        } catch (ReflectiveOperationException e) {
             fail("Should not have thrown any exception: \n " + e);
         }
         assertNotNull(unsafe);
+        unsafe = null;
         try {
-            Constructor<sun.misc.Unsafe> unsafeConstructor = sun.misc.Unsafe.class.getDeclaredConstructor();
-            unsafeConstructor.setAccessible(true);
-            unsafe = unsafeConstructor.newInstance();
-            unsafeConstructor.setAccessible(false);
-        } catch (Exception e) {
+            Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
+            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(Uclass, MethodHandles.lookup());
+            MethodHandle mh = lookup.findConstructor(Uclass, MethodType.methodType(void.class));
+            try {
+                unsafe = (Unsafe) mh.invoke();
+            } catch (Throwable e) {
+                fail("Should not have thrown any exception: \n " + e);
+            }
+        } catch (ReflectiveOperationException e) {
             fail("Should not have thrown any exception: \n " + e);
         }
         assertNotNull(unsafe);
@@ -45,6 +59,8 @@ class UnsafeTest {
                 () -> UnsafeWrapper.throwException(new Error()));
         assertThrowsExactly(Throwable.class,
                 () -> UnsafeWrapper.throwException(new Throwable()));
+        assertThrowsExactly(IOException.class,
+                () -> UnsafeWrapper.throwException(new IOException()));
     }
 
     @Test

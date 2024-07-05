@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import samples.Cats;
 import samples.Clazz;
 import samples.MHtestObj;
+import sun.misc.Unsafe;
 
 import java.io.*;
 import java.lang.invoke.MethodHandle;
@@ -247,6 +248,37 @@ public class CoolStuffTest {
         }
 
 
+    }
+
+    public static class Hook {
+        public void whereAmI() {
+            System.out.println(this.getClass().getModule().getName());
+        }
+
+        public MethodHandles.Lookup getLookup(Class<?> cl) throws Throwable {
+            ClassLoader loader = ClassLoader.getSystemClassLoader();
+            Class<?> intUnsafeClass = loader.loadClass(cl.getName());
+            return MethodHandles.privateLookupIn(intUnsafeClass, MethodHandles.lookup());
+        }
+
+    }
+    void HookClass() throws Throwable {
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        Unsafe U = UnsafeWrapper.getUnsafe();
+        Hook hook = new Hook();
+        Class<?> hookClass = hook.getClass();
+        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
+        UnsafeWrapper.moveToJavaBase(hookClass);
+        hook.whereAmI();
+        MethodHandles.Lookup l = hook.getLookup(intUnsafeClass);
+        System.out.println(l.lookupClass().getName());
+        MethodType mt = MethodType.methodType(intUnsafeClass);
+        MethodHandle mh = l.findStatic(intUnsafeClass,"getUnsafe",mt);
+        Object o  = mh.invoke();
+        mt = MethodType.methodType(long.class, Class.class, String.class);
+        mh = l.findVirtual(intUnsafeClass,"objectFieldOffset",mt);
+        Class<?> lClass = MethodHandles.Lookup.class;
+        System.out.println(mh.invoke(o,lClass,"allowedModes"));
     }
 
     @Test

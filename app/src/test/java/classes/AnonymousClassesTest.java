@@ -1,36 +1,62 @@
 package classes;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public  class AnonymousClassesTest {
+public class AnonymousClassesTest {
+    static int sq = 6;
+    int a = 8;
+    int aq = 4;
+
     @Test
-    void TestUnsafe(){
+    void testInnerClasses() {
         try {
-            String smU = "sun.misc.Unsafe";
-            String jimU = "jdk.internal.misc.Unsafe";
-            Class<?>  unsafeClass = Class.forName(smU);
-            Class<?>  theInternalUnsafeClass = Class.forName(jimU);
-            MethodHandles.Lookup  l = MethodHandles.privateLookupIn(unsafeClass,MethodHandles.lookup());
-            MethodHandle getU = l.findStaticGetter(unsafeClass,"theUnsafe", unsafeClass);
-            MethodHandle getInternalUnsafe = l.findStaticGetter(unsafeClass,"theInternalUnsafe", theInternalUnsafeClass);
-            Object U = getU.invoke();
-            Assertions.assertEquals(smU,U.getClass().getName());
-            Object iU = getInternalUnsafe.invoke();
-            Assertions.assertEquals(jimU,iU.getClass().getName());
-            //l.defineClass()
-            System.out.println(l.hasFullPrivilegeAccess());
-            //l.defineHiddenClass();
-        } catch (Throwable e) {
-            Assertions.fail("Sould not have thown any excetion");
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            Class<Canary> cClass = Canary.class;
+            cl.loadClass("classes.AnonymousClassesTest$Canary");
+            System.out.println(cClass.getName());
+            Class.forName("classes.AnonymousClassesTest$Canary");
+            new Canary2();
+        } catch (Throwable t) {
+            fail("Should not have thrown any exception: \n " + t);
         }
+        new Anon() {
+            @Override
+            public void getInfo() {
+                System.out.println(this.getClass().getName());
+                System.out.println(AnonymousClassesTest.this.a + " " + a);
+            }
+        };
     }
 
-}
-class Sample{
-    int a;
+    static class Canary {
+        static {
+
+            System.out.println("Hello from Inside" + sq);
+        }
+
+        int a = 4;
+    }
+
+    abstract static class Anon {
+        static {
+            System.out.println("Hello");
+        }
+
+        {
+            getInfo();
+        }
+
+        abstract public void getInfo();
+    }
+
+    class Canary2 {
+        int a = 4;
+
+        {
+            System.out.println("Super " + super.getClass().getName() + " " + this.a  + " " + AnonymousClassesTest.this.a);
+        }
+    }
 }
 

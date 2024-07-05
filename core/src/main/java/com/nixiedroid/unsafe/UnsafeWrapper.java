@@ -8,7 +8,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("unused")
-public class UnsafeWrapper {
+public final class UnsafeWrapper {
     private static final sun.misc.Unsafe theUnsafe;
 
     static {
@@ -76,19 +76,6 @@ public class UnsafeWrapper {
 
     public static <T> T createDummyInstance(Class<T> clazz) throws InstantiationException {
         return clazz.cast(getUnsafe().allocateInstance(clazz));
-    }
-
-    public static class Hook {
-        public void whereAmI() {
-            System.out.println(this.getClass().getModule().getName());
-        }
-
-        public MethodHandles.Lookup getLookup(Class<?> cl) throws Throwable {
-            ClassLoader loader = ClassLoader.getSystemClassLoader();
-            Class<?> intUnsafeClass = loader.loadClass(cl.getName());
-            return MethodHandles.privateLookupIn(intUnsafeClass, MethodHandles.lookup());
-        }
-
     }
 
 }

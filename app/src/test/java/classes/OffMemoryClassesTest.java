@@ -2,31 +2,36 @@ package classes;
 
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Test;
-import sun.misc.Unsafe;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
 
 public class OffMemoryClassesTest {
-
+    Object inst;
     @Test
-    void test() throws Throwable {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        Unsafe U = UnsafeWrapper.getUnsafe();
-        UnsafeWrapper.Hook hook = new UnsafeWrapper.Hook();
-        Class<?> hookClass = hook.getClass();
-        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
-        UnsafeWrapper.moveToJavaBase(hookClass);
-        hook.whereAmI();
-        MethodHandles.Lookup l = hook.getLookup(intUnsafeClass);
-        System.out.println(l.lookupClass().getName());
-        MethodType mt = MethodType.methodType(intUnsafeClass);
-        MethodHandle mh = l.findStatic(intUnsafeClass,"getUnsafe",mt);
-        Object o  = mh.invoke();
-        mt = MethodType.methodType(long.class, Class.class, String.class);
-        mh = l.findVirtual(intUnsafeClass,"objectFieldOffset",mt);
-        Class<?> lClass = MethodHandles.Lookup.class;
-        System.out.println(mh.invoke(o,lClass,"allowedModes"));
+    void TestClassLocation() throws NoSuchFieldException {
+        Canary canaryClass = new Canary();
+        Canary canaryClass2 = new Canary();
+        sun.misc.Unsafe U = UnsafeWrapper.getUnsafe();
+        Field f = this.getClass().getDeclaredField("inst");
+        long offset =   U.objectFieldOffset(f);
+        System.out.println(offset);
+        System.out.printf( "%016X",U.getLong(this,offset));
+
+        for (int i = 0; i < 50; i++) {
+            System.out.printf("%02X", U.getByte(this, offset -i) & 0xFF);
+        }
+        System.out.println();
+        for (int i = 0; i < 50; i++) {
+            System.out.printf("%02X", U.getByte(canaryClass, i) & 0xFF);
+        }
+        System.out.println("");
+        for (int i = 0; i < 50; i++) {
+            System.out.printf("%02X", U.getByte(canaryClass2, i) & 0xFF);
+        }
+    }
+
+    static class Canary {
+        static int b = 3;
+        int a = 5;
     }
 }
