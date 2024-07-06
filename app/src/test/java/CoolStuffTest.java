@@ -9,6 +9,7 @@ import com.nixiedroid.modules.util.Modules;
 import com.nixiedroid.runtime.Info;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import samples.Cats;
 import samples.Clazz;
@@ -59,8 +60,8 @@ public class CoolStuffTest {
         return lsh ^ value ^ longSeed;
     }
 
-    @Test
-    void ModulesIllegalAccess() {
+    @BeforeAll
+    static void ModulesIllegalAccess() {
         Assertions.assertThrows(IllegalAccessException.class, () -> {
             Class<?> cl = Class.forName("jdk.internal.misc.VM");
             Method m = cl.getMethod("initLevel");

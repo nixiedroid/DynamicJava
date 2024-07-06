@@ -1,62 +1,151 @@
 package classes;
 
+import com.nixiedroid.exceptions.Thrower;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+
 public class SuperclassTest {
-    public static void main(String[] args) {
-        System.out.println(new Subclass().supSuperA());
-        System.out.println(new SupSuperClass(4).getA());
-        System.out.println(new SuperClass().getA());
-        System.out.println(new Subclass().superA());
-        System.out.println(new Subclass().getA());
-    }
-}
-
-class Subclass extends SuperClass {
-    int a = 4;
-
-    int getA(){
-        return a;
-    }
-    int superA(){
-        return super.getA();
-    }
-    int supSuperA(){
-        return  ((SupSuperClass)this).getA();
+    @Test
+    void test() {
+        Assertions.assertEquals(4, new SubClass().supSuperA());
+        Assertions.assertEquals(1, new SupSuperClass().getA());
+        Assertions.assertEquals(2, new SuperClass().getA());
+        Assertions.assertEquals(2, new SubClass().superA());
+        Assertions.assertEquals(4, new SubClass().getA());
     }
 
-}
+    @Test
+    void specialTest() {
+        SubClass sub = new SubClass();
+        //caller class must be a subclass below the method
+        Assertions.assertThrows(
+                IllegalAccessException.class,
+                () -> getSpecial(SuperClass.class, SubClass.class, sub)
+        );
+        Assertions.assertEquals(
+                4,
+                getSpecial(
+                        SubClass.class,
+                        SubClass.class,
+                        sub
+                )
+        );
+        Assertions.assertEquals(
+                2,
+                getSpecial(
+                        SubClass.class,
+                        SuperClass.class,
+                        sub
+                )
+        );
+        Assertions.assertEquals(
+                2,
+                getSpecial(
+                        SubClass.class,
+                        SupSuperClass.class,
+                        sub
+                )
+        );
+        Assertions.assertEquals(
+                1,
+                getSpecial(
+                        SuperClass.class,
+                        SupSuperClass.class,
+                        sub
+                )
+        );
+    }
 
-class SuperClass extends SupSuperClass {
-    private int a = 2;
+    <T extends SupSuperClass> int getSpecial(
+            Class<? extends SupSuperClass> from,
+            Class<? extends SupSuperClass> to,
+            T object) {
+        MethodType mt = MethodType.methodType(int.class);
+        try {
+            MethodHandles.Lookup l = MethodHandles.privateLookupIn(
+                    from, MethodHandles.lookup()
+            );
+            MethodHandle mh = l.findSpecial(
+                    to,
+                    "getA",
+                    mt,
+                    from
+            );
+            try {
+                return (int) mh.invoke(object);
+            } catch (Throwable t) {
+                Thrower.throwException(t);
+            }
+        } catch (ReflectiveOperationException e) {
+            Thrower.throwException(e);
+        }
+        return 0;
+    }
 
-    public SuperClass() {
-        super(2);
-        System.out.println(super.hashCode());
-        System.out.println(super.equals(this));
-        System.out.println(super.toString());
-        System.out.println(super.getClass());
-        synchronized (this) {
-            super.notify();
+    @SuppressWarnings("ClassTooDeepInInheritanceTree")
+    static class SubClass extends SuperClass {
+        int a = 4;
+
+        @Override
+        int getA() {
+            return this.a;
+        }
+
+        int superA() {
+            return super.getA();
+        }
+
+        int supSuperA() {
+            return ((SupSuperClass) this).getA();
+        }
+
+    }
+
+    @SuppressWarnings("FieldCanBeLocal")
+    static class SuperClass extends SupSuperClass {
+        private final int a = 2;
+
+        @SuppressWarnings("EqualsWithItself")
+        public SuperClass() {
+            super();
+            Assertions.assertTrue(equals(this));
+            Assertions.assertNotNull(toString());
+            Assertions.assertNotNull(this.getClass().getSimpleName());
+        }
+
+        @Override
+        int getA() {
+            return this.a;
         }
     }
 
-    @Override
-    int getA() {
-        return a;
-    }
-}
-class SupSuperClass{
-    private int a =1;
-    int getA() {
-        return this.a;
-    }
+    static class SupSuperClass {
+        private final int a = 1;
 
-    public SupSuperClass(int a) {
-        System.out.println(this.hashCode());
-        System.out.println(equals(this));
-        System.out.println(toString());
-        System.out.println(this.getClass());
-        synchronized (this) {
-            this.notify();
+        @SuppressWarnings("EqualsWithItself")
+        public SupSuperClass() {
+            Assertions.assertTrue(equals(this));
+            Assertions.assertNotNull(toString());
+            Assertions.assertNotNull(this.getClass().getSimpleName());
+        }
+
+        int getA() {
+            return this.a;
+        }
+
+        @Override
+        public String toString() {
+            return "SupSuperClass{" +
+                    "a=" + this.a +
+                    '}';
         }
     }
+
 }
+
+
+
