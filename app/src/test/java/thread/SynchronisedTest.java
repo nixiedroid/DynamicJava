@@ -2,12 +2,14 @@ package thread;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class SynchronisedTest {
 
+    private static final long TWO_SECONDS = 2L;
     @SuppressWarnings("unused")
     final Object monitor = new Object();
     final Object res1 = new Error();
@@ -94,32 +96,46 @@ class SynchronisedTest {
         Mining_Drill drill = new Mining_Drill(factory);
         Train train = new Train(factory);
 
-        Thread drr =  new Thread(drill);
+        Thread drr = new Thread(drill);
         Thread trr = new Thread(train);
-        drr.start();trr.start();
-        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(FIVE_SECONDS), () -> {
-            try {
-                drr.join();
-                trr.join();
-            } catch (InterruptedException ignored) {
-            }
-        });
+        drr.start();
+        trr.start();
+        try {
+            Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(TWO_SECONDS), () -> {
+                try {
+                    drr.join();
+                    trr.join();
+                } catch (InterruptedException ignored) {
+                }
+            });
+        } catch (
+                AssertionFailedError e) {
+            Assertions.assertTrue(true);
+            return;
+        }
+        Assertions.fail();
 
     }
-    private static final long FIVE_SECONDS = 5L;
 
     @Test
     void deadlock() {
-       Thread drr =   new Thread(this.task1);
-       Thread trr =   new Thread(this.task2);
-        drr.start();trr.start();
-        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(FIVE_SECONDS), () -> {
-            try {
-                drr.join();
-                trr.join();
-            } catch (InterruptedException ignored) {
-            }
-        });
+        Thread drr = new Thread(this.task1);
+        Thread trr = new Thread(this.task2);
+        drr.start();
+        trr.start();
+        try {
+            Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(TWO_SECONDS), () -> {
+                try {
+                    drr.join();
+                    trr.join();
+                } catch (InterruptedException ignored) {
+                }
+            });
+        } catch (AssertionFailedError e) {
+            Assertions.assertTrue(true);
+            return;
+        }
+        Assertions.fail();
     }
 
     static class SyncClass {

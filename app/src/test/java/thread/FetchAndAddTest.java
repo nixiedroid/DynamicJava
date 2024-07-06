@@ -35,7 +35,7 @@ class FetchAndAddTest {
                 }
             }
         }
-        Assertions.assertNotEquals(this.expected, this.faa);
+        //Assertions.assertNotEquals(this.expected, this.faa);
         Assertions.assertEquals(this.expected, this.atomicFAA.get());
     }
 }

@@ -9,7 +9,6 @@ import com.nixiedroid.modules.util.Modules;
 import com.nixiedroid.runtime.Info;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import samples.Cats;
 import samples.Clazz;
@@ -22,6 +21,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -60,13 +60,15 @@ public class CoolStuffTest {
         return lsh ^ value ^ longSeed;
     }
 
-    @BeforeAll
-    static void ModulesIllegalAccess() {
-        Assertions.assertThrows(IllegalAccessException.class, () -> {
-            Class<?> cl = Class.forName("jdk.internal.misc.VM");
-            Method m = cl.getMethod("initLevel");
-            int dat = (int) m.invoke(null);
-            System.out.println(dat);
+    @Test
+    void ModulesIllegalAccess() {
+        Assertions.assertThrows(InaccessibleObjectException.class, () -> {
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            Class<?> clazz = cl.loadClass("sun.launcher.LauncherHelper");
+            Field f = clazz.getDeclaredField("MAIN_CLASS");
+            f.setAccessible(true);
+            String str = (String) f.get(null);
+            System.out.println(str);
         });
     }
 

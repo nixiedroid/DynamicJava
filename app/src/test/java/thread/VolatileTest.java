@@ -2,17 +2,23 @@ package thread;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 
 class VolatileTest {
-    private static final long FIVE_SECONDS = 5L;
+    private static final long TWO_SECONDS = 2L;
     private /*volatile*/ boolean isRunning = true;
     /**
      * Timeout Exception here is Required =)
      */
     @Test
     public void volatileTest() {
-        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(FIVE_SECONDS),this::executeTest);
+        try {
+            Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(TWO_SECONDS), this::executeTest);
+        } catch (AssertionFailedError e){
+            Assertions.assertTrue(true);
+            return;
+        } Assertions.fail();
     }
 
     @SuppressWarnings({"StatementWithEmptyBody"})
