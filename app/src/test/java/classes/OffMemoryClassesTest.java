@@ -9,6 +9,7 @@ public class OffMemoryClassesTest {
     Object inst;
     @Test
     void TestClassLocation() throws NoSuchFieldException {
+        
         Canary canaryClass = new Canary();
         Canary canaryClass2 = new Canary();
         sun.misc.Unsafe U = UnsafeWrapper.getUnsafe();

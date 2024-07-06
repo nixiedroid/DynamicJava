@@ -60,9 +60,6 @@ public final class UnsafeWrapper {
         getUnsafe().throwException(e);
     }
 
-    public static long getAddress(Object o) {
-        return 1;
-    }
 
     public static void moveToJavaBase(Class<?> cl) {
         try {

@@ -19,23 +19,26 @@ import java.io.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+
 @SuppressWarnings("unused")
 public class CoolStuffTest {
 
-    @Test
-    void ModulesIllegalAccess() {
-        Assertions.assertThrows(IllegalAccessException.class, () -> {
-            Class<?> cl = Class.forName("jdk.internal.misc.VM");
-            Method m = cl.getMethod("initLevel");
-            int dat = (int) m.invoke(null);
-            System.out.println(dat);
-        });
-    }
+    String blob = "CAFEBABE0000003400110A0004000D08000E07000F0700100100063C696E6974" +
+            "3E010003282956010004436F646501000F4C696E654E756D6265725461626C65" +
+            "01000367657401001428294C6A6176612F6C616E672F537472696E673B01000A" +
+            "536F7572636546696C6501000B53616D706C652E6A6176610C0005000601000F" +
+            "48656C6C6F2066726F6D20424C4F42010001480100106A6176612F6C616E672F" +
+            "4F626A656374002000030004000000000002000000050006000100070000001D" +
+            "00010001000000052AB70001B100000001000800000006000100000001000100" +
+            "09000A000100070000001B00010001000000031202B000000001000800000006" +
+            "0001000000030001000B00000002000C";
 
     public static String getModifiers(int modifiers) {
         StringBuilder sb = new StringBuilder("Modifiers:");
@@ -55,6 +58,17 @@ public class CoolStuffTest {
         final long lsh = longSeed << 32;
         return lsh ^ value ^ longSeed;
     }
+
+    @Test
+    void ModulesIllegalAccess() {
+        Assertions.assertThrows(IllegalAccessException.class, () -> {
+            Class<?> cl = Class.forName("jdk.internal.misc.VM");
+            Method m = cl.getMethod("initLevel");
+            int dat = (int) m.invoke(null);
+            System.out.println(dat);
+        });
+    }
+
     @Test
     public void modulesTest() {
         String FLOAT_CONSTANTS_CLASS_NAME = "jdk.internal.math.FloatConsts";
@@ -72,6 +86,7 @@ public class CoolStuffTest {
             Assertions.fail("Should not have thrown any exception");
         }
     }
+
     @Test
     public void communism() {
         try {
@@ -80,6 +95,7 @@ public class CoolStuffTest {
             Assertions.fail("Should not have thrown any exception");
         }
     }
+
     @SuppressWarnings({"unused", "InfiniteRecursion"})
     public void stuckOverflow(int counter) {
         counter++;
@@ -96,19 +112,43 @@ public class CoolStuffTest {
         Assertions.assertThrows(e.getClass(), () -> new ExceptionMuffler().accept(e));
     }
 
-    static class ExceptionMuffler implements Consumer<Throwable> {
-        @SuppressWarnings("unchecked")
-        private  <E extends Throwable> void quietlyThrow(Throwable e) throws E {
-            if (e != null) throw (E) e;
-        }
-
-        @Override
-        public void accept(Throwable throwable) {
-            quietlyThrow(throwable);
+    @SuppressWarnings("UnusedAssignment")
+    @Test
+    void performGC(){
+        synchronized (this){
+            new Thread(() -> {
+                Object o = new Object();
+                WeakReference<Object> ref = new WeakReference<>(o);
+                o = null;
+                while (ref.get() != null) {
+                    System.gc();
+                }
+            }).start();
         }
     }
 
-
+    /**
+     * <a href="https://habr.com/ru/articles/586994/">LInk</a>
+     */
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testBrokenHashSet() {
+        AtomicReference<HashSet<String>> ref = new AtomicReference<>();
+        try {
+            new HashSet<String>(null) {
+                @SuppressWarnings("deprecation")
+                @Override
+                protected void finalize() {
+                    ref.set(this);
+                }
+            };
+        } catch (NullPointerException ignored) {
+        }
+        while (ref.get() == null) {
+            System.gc();
+        }
+        Assertions.assertNotNull(ref.get());
+    }
 
     @Test
     void epicText() {
@@ -183,9 +223,9 @@ public class CoolStuffTest {
         MethodHandle SprivIntHandle = privLookup.findSetter(clazz, "prInt", int.class);
         System.out.println(GpIntHandle.invoke(obj));
         System.out.println(GprivIntHandle.invoke(obj));
-        final int ELEVEN =11;
+        final int ELEVEN = 11;
         SprivIntHandle.invoke(obj, ELEVEN);
-        final int THREE_TWO_ONE  =321;
+        final int THREE_TWO_ONE = 321;
         SpIntHandle.invoke(obj, THREE_TWO_ONE);
         System.out.println(GpIntHandle.invoke(obj));
         System.out.println(GprivIntHandle.invoke(obj));
@@ -207,33 +247,24 @@ public class CoolStuffTest {
         System.out.printf("%x", a + 2);
     }
 
-    String blob = "CAFEBABE0000003400110A0004000D08000E07000F0700100100063C696E6974" +
-            "3E010003282956010004436F646501000F4C696E654E756D6265725461626C65" +
-            "01000367657401001428294C6A6176612F6C616E672F537472696E673B01000A" +
-            "536F7572636546696C6501000B53616D706C652E6A6176610C0005000601000F" +
-            "48656C6C6F2066726F6D20424C4F42010001480100106A6176612F6C616E672F" +
-            "4F626A656374002000030004000000000002000000050006000100070000001D" +
-            "00010001000000052AB70001B100000001000800000006000100000001000100" +
-            "09000A000100070000001B00010001000000031202B000000001000800000006" +
-            "0001000000030001000B00000002000C";
     @Test
-    void testHiddenClass() throws Throwable{
+    void testHiddenClass() throws Throwable {
         byte[] cb = ByteArrayUtils.fromHexString(this.blob);
-        Assertions.assertEquals(this.blob,ByteArrayUtils.toString(cb));
-        JavaClassParser.ClassInfo ci =  JavaClassParser.create(cb);
-        Assertions.assertEquals("H",ci.getName());
-        MethodHandles.Lookup lookup = MethodHandles.lookup().defineHiddenClass(cb,false);
+        Assertions.assertEquals(this.blob, ByteArrayUtils.toString(cb));
+        JavaClassParser.ClassInfo ci = JavaClassParser.create(cb);
+        Assertions.assertEquals("H", ci.getName());
+        MethodHandles.Lookup lookup = MethodHandles.lookup().defineHiddenClass(cb, false);
         Class<?> hiddenClass = lookup.lookupClass();
-        MethodHandle get = lookup.findVirtual(hiddenClass,"get",MethodType.methodType(String.class));
+        MethodHandle get = lookup.findVirtual(hiddenClass, "get", MethodType.methodType(String.class));
         Object hello = hiddenClass.getDeclaredConstructor().newInstance();
-        Assertions.assertEquals("Hello from BLOB",get.invoke(hello));
+        Assertions.assertEquals("Hello from BLOB", get.invoke(hello));
     }
 
     @Test
     void initRawClass() throws Throwable {
         MethodHandles.Lookup l = new ModuleManager2().getBrokenLookup();
         MethodHandle cons = l.findConstructor(Class.class, MethodType.methodType(void.class, ClassLoader.class, Class.class));
-        Assertions.assertThrows(IllegalAccessException.class, () -> cons.invoke(null,null));
+        Assertions.assertThrows(IllegalAccessException.class, () -> cons.invoke(null, null));
         Class<?> unsafeClass = sun.misc.Unsafe.class;
         Class<?> intUnsafeClass = Class.forName("jdk.internal.misc.Unsafe");
         //jdk.internal.misc.Unsafe
@@ -242,7 +273,7 @@ public class CoolStuffTest {
             MethodHandle getter = l.findStaticGetter(unsafeClass, "theInternalUnsafe", intUnsafeClass);
             intUnsafe = getter.invoke();
             MethodHandle allocateInstance = l.findVirtual(intUnsafeClass, "allocateInstance", MethodType.methodType(Object.class, Class.class));
-            Assertions.assertThrows(IllegalAccessException.class, () -> allocateInstance.invoke(intUnsafe,Class.class));
+            Assertions.assertThrows(IllegalAccessException.class, () -> allocateInstance.invoke(intUnsafe, Class.class));
         } catch (ReflectiveOperationException e) {
             Assertions.fail(e);
         }
@@ -250,18 +281,6 @@ public class CoolStuffTest {
 
     }
 
-    public static class Hook {
-        public void whereAmI() {
-            System.out.println(this.getClass().getModule().getName());
-        }
-
-        public MethodHandles.Lookup getLookup(Class<?> cl) throws Throwable {
-            ClassLoader loader = ClassLoader.getSystemClassLoader();
-            Class<?> intUnsafeClass = loader.loadClass(cl.getName());
-            return MethodHandles.privateLookupIn(intUnsafeClass, MethodHandles.lookup());
-        }
-
-    }
     void HookClass() throws Throwable {
         ClassLoader cl = ClassLoader.getSystemClassLoader();
         Unsafe U = UnsafeWrapper.getUnsafe();
@@ -273,12 +292,12 @@ public class CoolStuffTest {
         MethodHandles.Lookup l = hook.getLookup(intUnsafeClass);
         System.out.println(l.lookupClass().getName());
         MethodType mt = MethodType.methodType(intUnsafeClass);
-        MethodHandle mh = l.findStatic(intUnsafeClass,"getUnsafe",mt);
-        Object o  = mh.invoke();
+        MethodHandle mh = l.findStatic(intUnsafeClass, "getUnsafe", mt);
+        Object o = mh.invoke();
         mt = MethodType.methodType(long.class, Class.class, String.class);
-        mh = l.findVirtual(intUnsafeClass,"objectFieldOffset",mt);
+        mh = l.findVirtual(intUnsafeClass, "objectFieldOffset", mt);
         Class<?> lClass = MethodHandles.Lookup.class;
-        System.out.println(mh.invoke(o,lClass,"allowedModes"));
+        System.out.println(mh.invoke(o, lClass, "allowedModes"));
     }
 
     @Test
@@ -357,11 +376,11 @@ public class CoolStuffTest {
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         lookup = MethodHandles.privateLookupIn(Uclass, lookup);
-        Object U = lookup.findStaticGetter(Uclass,"theUnsafe",Uclass).invoke();
+        Object U = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass).invoke();
 
         MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
         MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
-        putInt.invoke(U,lookup,allowedModesFieldMemoryOffset,TRUSTED);
+        putInt.invoke(U, lookup, allowedModesFieldMemoryOffset, TRUSTED);
 
         Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
 
@@ -383,20 +402,20 @@ public class CoolStuffTest {
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         lookup = MethodHandles.privateLookupIn(Uclass, lookup);
-        Object U = lookup.findStaticGetter(Uclass,"theUnsafe",Uclass).invoke();
+        Object U = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass).invoke();
 
         MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
         MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
-        putInt.invoke(U,lookup,allowedModesFieldMemoryOffset,TRUSTED);
+        putInt.invoke(U, lookup, allowedModesFieldMemoryOffset, TRUSTED);
 
         Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
 
-        MethodType getIntType = MethodType.methodType(int.class,Object.class,long.class);
+        MethodType getIntType = MethodType.methodType(int.class, Object.class, long.class);
         MethodHandle getInt = lookup.findVirtual(intUnsafeClass, "getInt", getIntType);
-        return (o, offset) -> (Integer) getInt.invoke(iU,o,offset);
+        return (o, offset) -> (Integer) getInt.invoke(iU, o, offset);
     }
 
-    ThrowableTerConsumer<Object, Long,Integer> putInt() throws Throwable {
+    ThrowableTerConsumer<Object, Long, Integer> putInt() throws Throwable {
         final int TRUSTED = -1;
 
         String sunArchDataModel = System.getProperty("sun.arch.data.model");
@@ -409,16 +428,41 @@ public class CoolStuffTest {
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         lookup = MethodHandles.privateLookupIn(Uclass, lookup);
-        Object U = lookup.findStaticGetter(Uclass,"theUnsafe",Uclass).invoke();
+        Object U = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass).invoke();
 
         MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
         MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
-        putInt.invoke(U,lookup,allowedModesFieldMemoryOffset,TRUSTED);
+        putInt.invoke(U, lookup, allowedModesFieldMemoryOffset, TRUSTED);
 
         Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
 
         MethodHandle putIntInternal = lookup.findVirtual(intUnsafeClass, "putInt", putIntType);
 
-        return (o, offset, x) -> putIntInternal.invoke(iU,o,offset,x);
+        return (o, offset, x) -> putIntInternal.invoke(iU, o, offset, x);
+    }
+
+    static class ExceptionMuffler implements Consumer<Throwable> {
+        @SuppressWarnings("unchecked")
+        private <E extends Throwable> void quietlyThrow(Throwable e) throws E {
+            if (e != null) throw (E) e;
+        }
+
+        @Override
+        public void accept(Throwable throwable) {
+            quietlyThrow(throwable);
+        }
+    }
+
+    public static class Hook {
+        public void whereAmI() {
+            System.out.println(this.getClass().getModule().getName());
+        }
+
+        public MethodHandles.Lookup getLookup(Class<?> cl) throws Throwable {
+            ClassLoader loader = ClassLoader.getSystemClassLoader();
+            Class<?> intUnsafeClass = loader.loadClass(cl.getName());
+            return MethodHandles.privateLookupIn(intUnsafeClass, MethodHandles.lookup());
+        }
+
     }
 }
