@@ -1,14 +1,15 @@
 plugins {
     id 'java'
+    id "me.champeau.jmh" version "0.7.2"
 }
 java {
     group = 'com.nixiedroid'
     version = '1'
     base.archivesName = 'app'
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+    sourceCompatibility = "21"
+    targetCompatibility = "21"
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 repositories {
@@ -36,9 +37,9 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // https://mvnrepository.com/artifact/org.openjdk.jmh/jmh-core
-    testImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    implementation 'org.openjdk.jmh:jmh-core:1.37'
 
     // https://mvnrepository.com/artifact/org.openjdk.jmh/jmh-generator-annprocess
-    testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
+    implementation 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 
 }
