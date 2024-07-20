@@ -1,4 +1,4 @@
-package com.nixiedroid.urlWrapper;
+package com.nixiedroid.urlMocker;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -10,7 +10,7 @@ public class URLHook {
     private static boolean skip = false;
 
     static {
-        URLPatcher.load("URLWrapper/URLWrapper.urls");
+        URLPatcher.load("URLMocker/URLMocker.urls");
     }
     public static URLConnection openConnection(URL url, Proxy proxy) {
         if (skip) {
@@ -30,7 +30,7 @@ public class URLHook {
 
     private static URLConnection openActualConnection(URL url, Proxy proxy) throws IOException {
         Logger.log.info("Connecting to: " + url);
-        if ("false".equals(System.getProperty("urlWrapper.doRedirect", "false"))) {
+        if ("false".equals(System.getProperty("urlMocker.doRedirect", "false"))) {
             return url.openConnection(proxy);
         }
         URL newUrl = URLPatcher.replace(url);

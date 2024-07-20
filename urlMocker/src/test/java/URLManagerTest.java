@@ -1,4 +1,4 @@
-import com.nixiedroid.urlWrapper.URLPatcher;
+import com.nixiedroid.urlMocker.URLPatcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ public class URLManagerTest
 {
     @BeforeAll
     public static void init(){
-        URLPatcher.load("URLWrapper.urls");
+        URLPatcher.load("URLMocker.urls");
     }
 
     @Test

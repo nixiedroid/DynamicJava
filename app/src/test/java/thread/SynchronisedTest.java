@@ -57,7 +57,7 @@ class SynchronisedTest {
     }
 
     @Test
-    void test() throws Exception {
+    void testMultipleThreadsAccessGlobalVariable() throws Exception {
         final int amount = 150;
         List<Thread> threads = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
@@ -70,7 +70,7 @@ class SynchronisedTest {
         for (Thread thread : threads) {
             thread.join();
         }
-        Assertions.assertNotEquals(this.value, amount);
+        Assertions.assertEquals(this.value, amount);
         System.out.println("Result sum: " + this.value + ", should be " + amount);
     }
 
@@ -188,7 +188,8 @@ class SynchronisedTest {
         }
 
         public void run() {
-            for (int i = 1; i <= 30; i++) {
+            final int THIRTY =30;
+            for (int i = 1; i <= THIRTY; i++) {
                 this.factory.put();
             }
         }

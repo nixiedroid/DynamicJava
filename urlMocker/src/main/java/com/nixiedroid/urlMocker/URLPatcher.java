@@ -1,4 +1,4 @@
-package com.nixiedroid.urlWrapper;
+package com.nixiedroid.urlMocker;
 
 import java.io.BufferedReader;
 import java.io.File;

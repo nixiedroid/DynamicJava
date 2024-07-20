@@ -1,4 +1,4 @@
-package com.nixiedroid.urlWrapper.mock;
+package com.nixiedroid.urlMocker.mock;
 
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;

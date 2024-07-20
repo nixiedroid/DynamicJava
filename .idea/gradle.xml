@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/benchmark" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/hooks" />
             <option value="$PROJECT_DIR$/hooks/java8" />
@@ -17,7 +18,7 @@
             <option value="$PROJECT_DIR$/java21" />
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/premain" />
-            <option value="$PROJECT_DIR$/urlWrapper" />
+            <option value="$PROJECT_DIR$/urlMocker" />
           </set>
         </option>
       </GradleProjectSettings>

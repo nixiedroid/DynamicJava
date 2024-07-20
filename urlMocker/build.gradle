@@ -18,9 +18,9 @@ shadowJar{
 
 }
 java {
-    group = 'com.nixiedroid.urlwrapper'
+    group = 'com.nixiedroid.urlmocker'
     version = ''
-    base.archivesName = 'URLWrapper'
+    base.archivesName = 'URLMocker'
     sourceCompatibility = "8"
     targetCompatibility = "11"
     toolchain {
@@ -52,5 +52,5 @@ jar {
 }
 test {
     useJUnitPlatform()
-    test.systemProperty 'urlWrapper.log', 'true'
+    test.systemProperty 'urlMocker.log', 'true'
 }

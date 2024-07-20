@@ -2,8 +2,8 @@ package com.nixiedroid.premain;
 
 import com.nixiedroid.modules.ModuleManager2;
 import com.nixiedroid.runtime.Info;
-import com.nixiedroid.urlWrapper.Logger;
-import com.nixiedroid.urlWrapper.mock.URLHandlerMocker;
+import com.nixiedroid.urlMocker.Logger;
+import com.nixiedroid.urlMocker.mock.URLHandlerMocker;
 
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -16,7 +16,7 @@ public class Handler extends PremainHandler {
     public void handle(String args, Instrumentation inst) {
         verifyJavaVersion();
         Logger.log.info("Starting URL Hook");
-        if ("false".equals(System.getProperty("urlWrapper.doRedirect", "false"))) {
+        if ("false".equals(System.getProperty("urlMocker.doRedirect", "false"))) {
             Logger.log.info("Logging urls only. Without redirect");
         }
         try {
@@ -32,10 +32,10 @@ public class Handler extends PremainHandler {
         if (Info.getVersion() < JAVA_COMPILE_VERSION) {
             Logger.log.info("Detected untested java version: " + Info.getVersion());
 
-            if ("true".equals(System.getProperty("urlWrapper.javaVerIgnore", "false"))) {
-                Logger.log.info("Found urlWrapper.javaVerIgnore = true. Ignoring old java version");
+            if ("true".equals(System.getProperty("urlMocker.javaVerIgnore", "false"))) {
+                Logger.log.info("Found urlMocker.javaVerIgnore = true. Ignoring old java version");
             } else {
-                throw new RuntimeException("Shutting down due to untested java version. Use -DurlWrapper.javaVerIgnore=true to override");
+                throw new RuntimeException("Shutting down due to untested java version. Use -DurlMocker.javaVerIgnore=true to override");
             }
         }
     }

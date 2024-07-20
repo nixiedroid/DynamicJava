@@ -1,7 +1,7 @@
-package com.nixiedroid.urlWrapper.mock;
+package com.nixiedroid.urlMocker.mock;
 
-import com.nixiedroid.unsafe.UnsafeWrapper;
-import com.nixiedroid.urlWrapper.Logger;
+import com.nixiedroid.unsafe.UnsafeMocker;
+import com.nixiedroid.urlMocker.Logger;
 
 import java.lang.reflect.Field;
 import java.net.URL;
