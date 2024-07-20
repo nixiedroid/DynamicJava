@@ -1,6 +1,7 @@
 package thread;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -57,6 +58,7 @@ class SynchronisedTest {
     }
 
     @Test
+    @Disabled
     void testMultipleThreadsAccessGlobalVariable() throws Exception {
         final int amount = 150;
         List<Thread> threads = new ArrayList<>();

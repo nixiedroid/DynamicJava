@@ -1,40 +1,23 @@
 package com.nixiedroid.classloaders;
 
 
-import com.nixiedroid.classloaders.parser.ClassFileParser;
 import com.nixiedroid.classloaders.parser.JavaClassParser;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class FileClassLoader extends ClassLoader {
-    private static final byte[] MAGIC = new byte[]{(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
     protected final String PKG_PREFIX;
     protected final String EXTENSION;
 
-    public FileClassLoader(ClassLoader parent) {
-        super(parent); //Support for classloader replacement by THIS class
-        PKG_PREFIX = "com.nixiedroid.plugins";
-        EXTENSION = "clazz";
-    }
-
     public FileClassLoader(final String prefix, final String extension) {
-        PKG_PREFIX = prefix;
-        EXTENSION = extension;
+        this.PKG_PREFIX = prefix;
+        this.EXTENSION = extension;
     }
 
-    private static void validateClassMagic(byte[] bytes) throws ValidationException {
-        if (bytes == null) throw new ValidationException("Class File is Null");
-        if (bytes.length < 4) throw new ValidationException("Invalid Class File Length");
-        for (int i = 0; i < 4; i++) {
-            if (MAGIC[i] != bytes[i]) throw new ValidationException("Magic Signature is Invalid");
-        }
-    }
-
-    protected final String getRealClassName(byte[] classBytes) throws ClassNotFoundException {
-        return JavaClassParser.create(classBytes).getSimpleName();
+    protected final String getRealClassName(byte[] classBytes) {
+        return JavaClassParser.create(classBytes).getName();
     }
 
     protected final String getFileName(String className, String extension) throws FileNotFoundException {
@@ -54,8 +37,7 @@ public class FileClassLoader extends ClassLoader {
         loadClassInputLogging(name);
         Class<?> cl = findLoadedClass(name);
         if (cl != null) return cl;
-        if (name.startsWith(PKG_PREFIX)) {
-            loadClassProcessLogging(name);
+        if (name.startsWith(this.PKG_PREFIX)) {
             cl = findClass(name);
             if (cl != null) return cl;
         }
@@ -64,11 +46,9 @@ public class FileClassLoader extends ClassLoader {
 
     protected void loadClassInputLogging(String name) {
     }
-    protected void loadClassProcessLogging(String name) {
-    }
 
     @Override
-    protected final Class<?> findClass(String name) throws ClassNotFoundException {
+    protected final Class<?> findClass(String name) {
         byte[] classBytes = getClassBytes(name);
         String realClassName = getRealClassName(classBytes);
         return defineClass(realClassName, classBytes, 0, classBytes.length); //Name must be equal to inside class
@@ -76,7 +56,7 @@ public class FileClassLoader extends ClassLoader {
 
     protected byte[] getClassBytes(String name) {
         try {
-            return readFile(getFileName(name, EXTENSION));
+            return readFile(getFileName(name, this.EXTENSION));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
