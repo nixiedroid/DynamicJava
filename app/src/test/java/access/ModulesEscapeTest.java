@@ -7,7 +7,6 @@ import com.nixiedroid.runtime.Info;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -68,12 +67,11 @@ public class ModulesEscapeTest {
     @Test
     void HookClass() throws Throwable {
         ClassLoader cl = ClassLoader.getSystemClassLoader();
-        Unsafe U = UnsafeWrapper.getUnsafe();
         Hook hook = new Hook();
         Class<?> hookClass = hook.getClass();
         Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
         UnsafeWrapper.moveToJavaBase(hookClass);
-        Assertions.assertEquals("base",hook.whereAmI());
+        Assertions.assertEquals("java.base",hook.whereAmI());
         MethodHandles.Lookup l = hook.getLookup(intUnsafeClass);
         System.out.println(l.lookupClass().getName());
         MethodType mt = MethodType.methodType(intUnsafeClass);
