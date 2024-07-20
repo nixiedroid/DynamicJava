@@ -1,12 +1,11 @@
 package com.nixiedroid.urlMocker.mock;
 
-import com.nixiedroid.unsafe.UnsafeMocker;
 import com.nixiedroid.urlMocker.Logger;
 
 import java.lang.reflect.Field;
 import java.net.URL;
 
-public class URLHandlerMocker {
+public final class URLHandlerMocker {
     private URLHandlerMocker(){
         throw new RuntimeException("Should not be run");
     }
