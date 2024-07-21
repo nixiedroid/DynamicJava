@@ -1,9 +1,7 @@
-package com.nixiedroid.products.models.dynamic;
+package invoke;
 
 
 import java.lang.invoke.MethodType;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class MethodDesc {
     private final String name;

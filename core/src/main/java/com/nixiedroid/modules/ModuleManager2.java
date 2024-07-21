@@ -50,7 +50,7 @@ public class ModuleManager2 {
     private MethodHandles.Lookup thisWillBreakSoon() {
         int TRUSTED = -1;
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        final long allowedModesFieldMemoryOffset = Info.isIs64Bit() ? 12L : 8L;
+        final long allowedModesFieldMemoryOffset = Info.is64Bit() ? 12L : 8L;
         UnsafeWrapper.getUnsafe().putInt(lookup, allowedModesFieldMemoryOffset, TRUSTED);
         return lookup;
     }

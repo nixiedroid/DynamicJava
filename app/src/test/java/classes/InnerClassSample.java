@@ -2,13 +2,11 @@ package classes;
 
 import java.lang.invoke.MethodHandle;
 
-public class MethodHandleTests {
+@SuppressWarnings({"unused", "FieldMayBeFinal"})
+public class InnerClassSample {
+    private static final int ELEVEN =11;
     private int value = 10;
-    private int sValue = 11;
-
-    public static void main(String[] args) {
-
-    }
+    private int sValue = ELEVEN;
 
     static class SInnerClass {
         int a = 4;
@@ -49,8 +47,8 @@ public class MethodHandleTests {
         private int b = 5;
 
         private InnerClass() {
-            System.out.println(MethodHandleTests.this.value);
-            System.out.println(MethodHandleTests.this.sValue);
+            System.out.println(InnerClassSample.this.value);
+            System.out.println(InnerClassSample.this.sValue);
         }
         public InnerClass(int a) {
         }
@@ -68,8 +66,8 @@ public class MethodHandleTests {
         private int b = 5;
 
         private PInnerClass() {
-            System.out.println(MethodHandleTests.this.value);
-            System.out.println(MethodHandleTests.this.sValue);
+            System.out.println(InnerClassSample.this.value);
+            System.out.println(InnerClassSample.this.sValue);
         }
         public PInnerClass(int a) {
         }
@@ -83,16 +81,17 @@ public class MethodHandleTests {
     }
 }
 
+@SuppressWarnings("unused")
 class OuterClass {
     private final MethodHandle outerPrivateMethod;
 
     OuterClass(MethodHandle outerPrivateMethod) {
         this.outerPrivateMethod = outerPrivateMethod;
-        new MethodHandleTests.SInnerClass(2);
-        MethodHandleTests mh = new MethodHandleTests();
-        MethodHandleTests.InnerClass ic = mh.new InnerClass(3);
+        new InnerClassSample.SInnerClass(2);
+        InnerClassSample mh = new InnerClassSample();
+        InnerClassSample.InnerClass ic = mh.new InnerClass(3);
 
-        (new MethodHandleTests()).new InnerClass(5);
+        (new InnerClassSample()).new InnerClass(5);
     }
 
     public void execute() {

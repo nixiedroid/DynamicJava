@@ -1,7 +1,5 @@
 package invoke;
 
-import com.nixiedroid.interfaces.ThrowableBiFunction;
-import com.nixiedroid.interfaces.ThrowableTerConsumer;
 import com.nixiedroid.modules.ModuleManager2;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +10,7 @@ import samples.MHtestObj;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -96,81 +95,25 @@ public class MethodHandlesTest {
         if (modifiers == -1) sb.append(" Trusted");
         return sb.toString();
     }
-    ThrowableBiFunction<Class<?>, String, Long> objectFieldOffset() throws Throwable {
-        final int TRUSTED = -1;
 
-        String sunArchDataModel = System.getProperty("sun.arch.data.model");
-        boolean is64Bit = sunArchDataModel.contains("64");
-        final long allowedModesFieldMemoryOffset = is64Bit ? 12L : 8L;
 
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
-        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
-
+    @Test
+    void invokeExactTest() throws Throwable {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        lookup = MethodHandles.privateLookupIn(Uclass, lookup);
-        Object U = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass).invoke();
-
-        MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
-        MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
-        putInt.invoke(U, lookup, allowedModesFieldMemoryOffset, TRUSTED);
-
-        Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
-
-        MethodType oFieldOffsetType = MethodType.methodType(long.class, Class.class, String.class);
-        MethodHandle oFieldOffset = lookup.findVirtual(intUnsafeClass, "objectFieldOffset", oFieldOffsetType);
-        return (c, s) -> (Long) oFieldOffset.invoke(iU, c, s);
+        MethodType type = MethodType.methodType(int.class,int.class);
+        MethodHandle mh = lookup.findVirtual(this.getClass(),"a",type);
+        Assertions.assertEquals(1,mh.invoke(this,4));
+        Assertions.assertThrows(WrongMethodTypeException.class ,() -> mh.invoke(this,(double) 4));
+        Assertions.assertEquals(1,(int) mh.invokeExact(this,4));
+        Assertions.assertThrows(WrongMethodTypeException.class ,() -> mh.invokeExact(this,(double) 4));
     }
 
-    ThrowableBiFunction<Object, Long, Integer> getInt() throws Throwable {
-        final int TRUSTED = -1;
 
-        String sunArchDataModel = System.getProperty("sun.arch.data.model");
-        boolean is64Bit = sunArchDataModel.contains("64");
-        final long allowedModesFieldMemoryOffset = is64Bit ? 12L : 8L;
-
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
-        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
-
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        lookup = MethodHandles.privateLookupIn(Uclass, lookup);
-        Object U = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass).invoke();
-
-        MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
-        MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
-        putInt.invoke(U, lookup, allowedModesFieldMemoryOffset, TRUSTED);
-
-        Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
-
-        MethodType getIntType = MethodType.methodType(int.class, Object.class, long.class);
-        MethodHandle getInt = lookup.findVirtual(intUnsafeClass, "getInt", getIntType);
-        return (o, offset) -> (Integer) getInt.invoke(iU, o, offset);
+    int a(int a){
+        return 1;
     }
 
-    ThrowableTerConsumer<Object, Long, Integer> putInt() throws Throwable {
-        final int TRUSTED = -1;
-
-        String sunArchDataModel = System.getProperty("sun.arch.data.model");
-        boolean is64Bit = sunArchDataModel.contains("64");
-        final long allowedModesFieldMemoryOffset = is64Bit ? 12L : 8L;
-
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        Class<?> Uclass = cl.loadClass("sun.misc.Unsafe");
-        Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
-
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        lookup = MethodHandles.privateLookupIn(Uclass, lookup);
-        Object U = lookup.findStaticGetter(Uclass, "theUnsafe", Uclass).invoke();
-
-        MethodType putIntType = MethodType.methodType(void.class, Object.class, long.class, int.class);
-        MethodHandle putInt = lookup.findVirtual(Uclass, "putInt", putIntType);
-        putInt.invoke(U, lookup, allowedModesFieldMemoryOffset, TRUSTED);
-
-        Object iU = lookup.findStaticGetter(Uclass, "theInternalUnsafe", intUnsafeClass).invoke();
-
-        MethodHandle putIntInternal = lookup.findVirtual(intUnsafeClass, "putInt", putIntType);
-
-        return (o, offset, x) -> putIntInternal.invoke(iU, o, offset, x);
+    int a(double a){
+        return 2;
     }
 }

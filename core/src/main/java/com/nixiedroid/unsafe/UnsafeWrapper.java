@@ -60,11 +60,11 @@ public final class UnsafeWrapper {
         getUnsafe().throwException(e);
     }
 
-
+    @SuppressWarnings("deprecation")
     public static void moveToJavaBase(Class<?> cl) {
         try {
             final Field field = Class.class.getDeclaredField("module");
-            @SuppressWarnings("deprecation") final long offset = getUnsafe().objectFieldOffset(field);
+            final long offset = getUnsafe().objectFieldOffset(field);
             UnsafeWrapper.getUnsafe().putObject(cl, offset, Object.class.getModule());
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);

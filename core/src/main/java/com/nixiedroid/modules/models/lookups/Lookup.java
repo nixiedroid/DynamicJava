@@ -30,7 +30,7 @@ public abstract class Lookup {
     }
     public static class ForJava17 extends Lookup {
         public ForJava17() {
-            final long allowedModesFieldMemoryOffset = Info.isIs64Bit() ? 12L : 8L;
+            final long allowedModesFieldMemoryOffset = Info.is64Bit() ? 12L : 8L;
             Context.i().getUnsafe().putInt(lookup, allowedModesFieldMemoryOffset, ForJava7.TRUSTED);
         }
     }
