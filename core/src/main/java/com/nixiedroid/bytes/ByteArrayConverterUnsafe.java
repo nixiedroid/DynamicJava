@@ -20,72 +20,92 @@ public class ByteArrayConverterUnsafe implements ByteArrayConverter {
 
 
     @Override
-    public byte toInt8(byte[] b, int start) {
+    public byte toByte(byte[] b, int start) {
         return U.getByte(b, OFFSET + start);
     }
 
     @Override
-    public short toInt16B(byte[] b, int start) {
-        return Short.reverseBytes(toInt16L(b, start));
+    public short toShortB(byte[] b, int start) {
+        return Short.reverseBytes(toShortL(b, start));
     }
 
     @Override
-    public short toInt16L(byte[] b, int start) {
+    public short toShortL(byte[] b, int start) {
         return U.getShort(b, OFFSET + start);
     }
 
     @Override
-    public int toInt32B(byte[] b, int start) {
-        return Integer.reverseBytes(toInt32L(b, start));
+    public int toIntegerB(byte[] b, int start) {
+        return Integer.reverseBytes(toIntegerL(b, start));
     }
 
     @Override
-    public int toInt32L(byte[] b, int start) {
+    public int toIntegerL(byte[] b, int start) {
         return U.getInt(b, OFFSET + start);
     }
 
     @Override
-    public long toInt64B(byte[] b, int start) {
-        return Long.reverseBytes(toInt64L(b, start));
+    public long toLongB(byte[] b, int start) {
+        return Long.reverseBytes(toLongL(b, start));
     }
 
     @Override
-    public long toInt64L(byte[] b, int start) {
+    public long toLongL(byte[] b, int start) {
         return U.getLong(b, OFFSET + start);
     }
 
     @Override
-    public void int8ToBytes(byte[] b, int start, byte by) {
+    public float toFloatB(byte[] b, int start) {
+        return Float.intBitsToFloat(toIntegerB(b,start));
+    }
+
+    @Override
+    public float toFloatL(byte[] b, int start) {
+        return U.getFloat(b,OFFSET+start);
+    }
+
+    @Override
+    public double toDoubleB(byte[] b, int start) {
+        return Double.longBitsToDouble(toLongB(b,start));
+    }
+
+    @Override
+    public double toDoubleL(byte[] b, int start) {
+        return U.getDouble(b,OFFSET+start);
+    }
+
+    @Override
+    public void fromByte(byte[] b, int start, byte by) {
         U.putByte(b, OFFSET + start, by);
     }
 
     @Override
-    public void int16ToBytesB(byte[] b, int start, short s) {
-        int16ToBytesL(b, start, Short.reverseBytes(s));
+    public void fromShortB(byte[] b, int start, short s) {
+        fromShortL(b, start, Short.reverseBytes(s));
     }
 
     @Override
-    public void int16ToBytesL(byte[] b, int start, short s) {
+    public void fromShortL(byte[] b, int start, short s) {
         U.putShort(b, OFFSET + start, s);
     }
 
     @Override
-    public void int32ToBytesB(byte[] b, int start, int i) {
-        int32ToBytesL(b, start, Integer.reverseBytes(i));
+    public void fromIntegerB(byte[] b, int start, int i) {
+        fromIntegerL(b, start, Integer.reverseBytes(i));
     }
 
     @Override
-    public void int32ToBytesL(byte[] b, int start, int i) {
+    public void fromIntegerL(byte[] b, int start, int i) {
         U.putInt(b, OFFSET + start, i);
     }
 
     @Override
-    public void int64ToBytesB(byte[] b, int start, long l) {
-        int64ToBytesL(b, start, Long.reverseBytes(l));
+    public void fromLongB(byte[] b, int start, long l) {
+        fromLongL(b, start, Long.reverseBytes(l));
     }
 
     @Override
-    public void int64ToBytesL(byte[] b, int start, long l) {
+    public void fromLongL(byte[] b, int start, long l) {
         U.putLong(b, OFFSET + start, l);
     }
 }

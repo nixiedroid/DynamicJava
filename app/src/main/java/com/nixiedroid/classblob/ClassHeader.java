@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
+@SuppressWarnings("unused")
 public class ClassHeader extends ByteSerializable<ClassHeader> {
     public static final int MIN_SIZE = Integer.BYTES * 3;
     private ClassHeaderFlags flags;
@@ -66,18 +66,18 @@ public class ClassHeader extends ByteSerializable<ClassHeader> {
     public ClassHeader deserialize(ByteArrayInputStream stream) throws IOException {
         if (stream == null) throw new IOException("Input is null");
         if (stream.available() < MIN_SIZE) throw new IOException("Input is too short");
-        this.flags = new ClassHeaderFlags(this.converter.toInt32L(stream.readNBytes(4),0));
-        this.offset = this.converter.toInt32L(stream.readNBytes(4),0);
-        this.classSize = this.converter.toInt32L(stream.readNBytes(4),0);
+        this.flags = new ClassHeaderFlags(this.converter.toIntegerL(stream.readNBytes(4),0));
+        this.offset = this.converter.toIntegerL(stream.readNBytes(4),0);
+        this.classSize = this.converter.toIntegerL(stream.readNBytes(4),0);
         if (this.flags.isFlagSet(ClassHeaderFlags.NAME_PROVIDED)) {
             if (stream.available() < 2) throw new IOException("Input is too short");
-            this.nameLen = this.converter.toInt16L(stream.readNBytes(2),0);
+            this.nameLen = this.converter.toShortL(stream.readNBytes(2),0);
             if (stream.available() < this.nameLen) throw new IOException("Input is too short");
             this.name = StringArrayUtils.StringFromBytes(stream.readNBytes(this.nameLen));
         }
         if (this.flags.isFlagSet(ClassHeaderFlags.ENCRYPTED) || this.flags.isFlagSet(ClassHeaderFlags.DECRYPTER)) {
             if (stream.available() < 4) throw new IOException("Input is too short");
-            this.encAlgorithm = this.converter.toInt32L(stream.readNBytes(4),0);
+            this.encAlgorithm = this.converter.toIntegerL(stream.readNBytes(4),0);
         }
         return this;
     }
@@ -86,20 +86,20 @@ public class ClassHeader extends ByteSerializable<ClassHeader> {
     public void serialize(ByteArrayOutputStream stream) throws IOException {
         if (stream == null) throw new IOException();
         byte[] arr = new byte[Integer.BYTES*3];
-        this.converter.int32ToBytesL(arr,0,this.flags.toInt());
-        this.converter.int32ToBytesL(arr,4,this.offset);
-        this.converter.int32ToBytesL(arr,8,this.classSize);
+        this.converter.fromIntegerL(arr,0,this.flags.toInt());
+        this.converter.fromIntegerL(arr,4,this.offset);
+        this.converter.fromIntegerL(arr,8,this.classSize);
         stream.write(arr);
         if (this.flags.isFlagSet(ClassHeaderFlags.NAME_PROVIDED)) {
             arr = new byte[2];
-            this.converter.int16ToBytesL(arr,0,this.nameLen);
+            this.converter.fromShortL(arr,0,this.nameLen);
             stream.write(arr);
             stream.write(StringArrayUtils.utf8toBytes(this.name));
         }
 
         if (this.flags.isFlagSet(ClassHeaderFlags.ENCRYPTED) || this.flags.isFlagSet(ClassHeaderFlags.DECRYPTER)) {
             arr = new byte[2];
-            this.converter.int32ToBytesL(arr,0,this.encAlgorithm);
+            this.converter.fromIntegerL(arr,0,this.encAlgorithm);
             stream.write(arr);
         }
     }

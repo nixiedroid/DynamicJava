@@ -2,151 +2,253 @@ package com.nixiedroid.bytes;
 
 public class ByteArrayConverterGenerics implements ByteArrayConverter {
 
-    public <T extends Number> T fromBytesL(final byte[] bytes, int start, Class<T> targetClass) {
+    public <T extends Number> T toValueL(final byte[] bytes, int start, Class<T> targetClass) {
         if (bytes == null) throw new IllegalArgumentException("Input array is null");
-        int count = bytes.length - 1 + start;
+        if (start < 0 || start >= bytes.length) throw new IllegalArgumentException("Invalid start index");
+
+        int remaining = bytes.length - start;
         long out = 0;
-        if (count >= Long.BYTES) throw new IllegalArgumentException();
-        for (int i = 0; i <= count; i++) {
-            out |= ((long) bytes[start + i] & FF) << (i << 3);
+
+        if (targetClass == Byte.class) {
+            out = bytes[start];
+        } else if (targetClass == Short.class && remaining >= 2) {
+            for (int i = 0; i < 2; i++) {
+                out |= ((long) bytes[start + i] & FF) << (i << 3);
+            }
+            return targetClass.cast((short) out);
+        } else if (targetClass == Integer.class && remaining >= 4) {
+            for (int i = 0; i < 4; i++) {
+                out |= ((long) bytes[start + i] & FF) << (i << 3);
+            }
+            return targetClass.cast((int) out);
+        } else if (targetClass == Long.class && remaining >= 8) {
+            for (int i = 0; i < 8; i++) {
+                out |= ((long) bytes[start + i] & FF) << (i << 3);
+            }
+            return targetClass.cast(out);
+        } else if (targetClass == Float.class && remaining >= 4) {
+            int intBits = 0;
+            for (int i = 0; i < 4; i++) {
+                intBits |= (bytes[start + i] & FF) << (i * 8);
+            }
+            return targetClass.cast(Float.intBitsToFloat(intBits));
+        } else if (targetClass == Double.class && remaining >= 8) {
+            long longBits = 0;
+            for (int i = 0; i < 8; i++) {
+                longBits |= (long) (bytes[start + i] & FF) << (i * 8);
+            }
+            return targetClass.cast(Double.longBitsToDouble(longBits));
+        } else {
+            throw new IllegalArgumentException("Unsupported target class or insufficient bytes");
         }
-        switch (bytes.length - start) {
-            case 1:
-                return targetClass.cast((byte) out);
-            case 2:
-                return targetClass.cast((short) out);
-            case 4:
-                return targetClass.cast((int) out);
-            default:
-                return targetClass.cast(out);
-        }
+
+        return targetClass.cast((byte) out);
     }
 
-    public <T extends Number> T fromBytesB(final byte[] bytes, int start,  Class<T> targetClass) {
+    public <T extends Number> T toValueB(final byte[] bytes, int start, Class<T> targetClass) {
         if (bytes == null) throw new IllegalArgumentException("Input array is null");
-        int count = bytes.length - 1;
+        if (start < 0 || start >= bytes.length) throw new IllegalArgumentException("Invalid start index");
+        int remaining = bytes.length - start;
         long out = 0;
-        if (count >= Long.BYTES) throw new IllegalArgumentException();
-        for (int i = 0; i <= count; i++) {
-            out |= ((long) bytes[i] & FF) << (count - i << 3);
+
+        if (targetClass == Byte.class) {
+            out = bytes[start];
+        } else if (targetClass == Short.class && remaining >= 2) {
+            for (int i = 0; i < 2; i++) {
+                out |= ((long) bytes[start + i] & FF) << ((1 - i) << 3);
+            }
+            return targetClass.cast((short) out);
+        } else if (targetClass == Integer.class && remaining >= 4) {
+            for (int i = 0; i < 4; i++) {
+                out |= ((long) bytes[start + i] & FF) << ((3 - i) << 3);
+            }
+            return targetClass.cast((int) out);
+        } else if (targetClass == Long.class && remaining >= 8) {
+            for (int i = 0; i < 8; i++) {
+                out |= ((long) bytes[start + i] & FF) << ((7 - i) << 3);
+            }
+            return targetClass.cast(out);
+        } else if (targetClass == Float.class && remaining >= 4) {
+            int intBits = 0;
+            for (int i = 0; i < 4; i++) {
+                intBits |= (bytes[start + i] & FF) << ((3 - i) * 8);
+            }
+            return targetClass.cast(Float.intBitsToFloat(intBits));
+        } else if (targetClass == Double.class && remaining >= 8) {
+            long longBits = 0;
+            for (int i = 0; i < 8; i++) {
+                longBits |= (long) (bytes[start + i] & FF) << ((7 - i) * 8);
+            }
+            return targetClass.cast(Double.longBitsToDouble(longBits));
+        } else {
+            throw new IllegalArgumentException("Unsupported target class or insufficient bytes");
         }
-        switch (bytes.length) {
-            case 1:
-                return targetClass.cast((byte) out);
-            case 2:
-                return targetClass.cast((short) out);
-            case 4:
-                return targetClass.cast((int) out);
-            default:
-                return targetClass.cast(out);
-        }
+
+        // For byte (special case handled separately)
+        return targetClass.cast((byte) out);
     }
 
-    public <T extends Number> byte[] toBytesL(byte[] b, int start, final T object) {
+    public <T extends Number> void fromValueL(byte[] b, int start, final T object) {
         if (object == null) throw new IllegalArgumentException("Object is null");
-        int count;
+        if (b == null) throw new IllegalArgumentException("Output array is null");
+        if (start < 0 || start >= b.length) throw new IllegalArgumentException("Invalid start index");
+
+        int byteCount;
+        long value;
+
         if (object instanceof Integer) {
-            count = Integer.BYTES - 1;
+            byteCount = Integer.BYTES;
+            value = object.intValue();
         } else if (object instanceof Byte) {
-            count = Byte.BYTES - 1;
+            byteCount = Byte.BYTES;
+            value = object.byteValue();
         } else if (object instanceof Short) {
-            count = Short.BYTES - 1;
+            byteCount = Short.BYTES;
+            value = object.shortValue();
         } else if (object instanceof Long) {
-            count = Long.BYTES - 1;
-        } else throw new IllegalArgumentException();
-        byte[] out = new byte[count + 1];
-        for (int i = 0; i <= count; i++) {
-            out[i] = (byte) ((object.longValue() >> (i << 3)) & FF);
+            byteCount = Long.BYTES;
+            value = object.longValue();
+        } else if (object instanceof Float) {
+            byteCount = Float.BYTES;
+            value = Float.floatToIntBits(object.floatValue());
+        } else if (object instanceof Double) {
+            byteCount = Double.BYTES;
+            value = Double.doubleToLongBits(object.doubleValue());
+        } else {
+            throw new IllegalArgumentException("Unsupported object type");
         }
-        return out;
+
+        if (start + byteCount > b.length) throw new IllegalArgumentException("Output array is too small");
+
+        for (int i = 0; i < byteCount; i++) {
+            b[start + i] = (byte) ((value >> (i << 3)) & FF);
+        }
     }
 
-    public <T extends Number> byte[] toBytesB(byte[] b, int start, final T object) {
+    public <T extends Number> void fromValueB(byte[] b, int start, final T object) {
         if (object == null) throw new IllegalArgumentException("Object is null");
-        int count;
+        if (b == null) throw new IllegalArgumentException("Output array is null");
+        if (start < 0 || start >= b.length) throw new IllegalArgumentException("Invalid start index");
+
+        int byteCount;
+        long value;
+
         if (object instanceof Integer) {
-            count = Integer.BYTES - 1;
+            byteCount = Integer.BYTES;
+            value = object.intValue();
         } else if (object instanceof Byte) {
-            count = Byte.BYTES - 1;
+            byteCount = Byte.BYTES;
+            value = object.byteValue();
         } else if (object instanceof Short) {
-            count = Short.BYTES - 1;
+            byteCount = Short.BYTES;
+            value = object.shortValue();
         } else if (object instanceof Long) {
-            count = Long.BYTES - 1;
-        } else throw new IllegalArgumentException();
-        byte[] out = new byte[count + 1];
-        for (int i = 0; i <= count; i++) {
-            out[i] = (byte) ((object.longValue() >> ((count - i) << 3)) & FF);
+            byteCount = Long.BYTES;
+            value = object.longValue();
+        } else if (object instanceof Float) {
+            byteCount = Float.BYTES;
+            value = Float.floatToIntBits(object.floatValue());
+        } else if (object instanceof Double) {
+            byteCount = Double.BYTES;
+            value = Double.doubleToLongBits(object.doubleValue());
+        } else {
+            throw new IllegalArgumentException("Unsupported object type");
         }
-        return out;
+
+        if (start + byteCount > b.length) throw new IllegalArgumentException("Output array is too small");
+
+        for (int i = 0; i < byteCount; i++) {
+            b[start + i] = (byte) ((value >> ((byteCount - 1 - i) << 3)) & FF);
+        }
     }
 
     @Override
-    public byte toInt8(byte[] b, int start) {
-        return 0;
+    public byte toByte(byte[] b, int start) {
+        return toValueB(b,start,Byte.class);
     }
 
     @Override
-    public short toInt16B(byte[] b, int start) {
-        return 0;
+    public short toShortB(byte[] b, int start) {
+        return toValueB(b,start,Short.class);
     }
 
     @Override
-    public short toInt16L(byte[] b, int start) {
-        return 0;
+    public short toShortL(byte[] b, int start) {
+        return toValueL(b,start,Short.class);
     }
 
     @Override
-    public int toInt32B(byte[] b, int start) {
-        return 0;
+    public int toIntegerB(byte[] b, int start) {
+        return toValueB(b,start,Integer.class);
     }
 
     @Override
-    public int toInt32L(byte[] b, int start) {
-        return 0;
+    public int toIntegerL(byte[] b, int start) {
+        return toValueL(b,start,Integer.class);
     }
 
     @Override
-    public long toInt64B(byte[] b, int start) {
-        return 0;
+    public long toLongB(byte[] b, int start) {
+        return toValueB(b,start,Long.class);
     }
 
     @Override
-    public long toInt64L(byte[] b, int start) {
-        return 0;
+    public long toLongL(byte[] b, int start) {
+        return toValueL(b,start,Long.class);
     }
 
     @Override
-    public void int8ToBytes(byte[] b, int start, byte by) {
-
+    public float toFloatB(byte[] b, int start) {
+        return toValueB(b,start,Float.class);
     }
 
     @Override
-    public void int16ToBytesB(byte[] b, int start, short s) {
-
+    public float toFloatL(byte[] b, int start) {
+        return toValueL(b,start,Float.class);
     }
 
     @Override
-    public void int16ToBytesL(byte[] b, int start, short s) {
-
+    public double toDoubleB(byte[] b, int start) {
+        return toValueB(b,start,Double.class);
     }
 
     @Override
-    public void int32ToBytesB(byte[] b, int start, int i) {
-
+    public double toDoubleL(byte[] b, int start) {
+        return toValueL(b,start,Double.class);
     }
 
     @Override
-    public void int32ToBytesL(byte[] b, int start, int i) {
-
+    public void fromByte(byte[] b, int start, byte by) {
+            fromValueB(b,start,by);
     }
 
     @Override
-    public void int64ToBytesB(byte[] b, int start, long l) {
-
+    public void fromShortB(byte[] b, int start, short s) {
+        fromValueB(b,start,s);
     }
 
     @Override
-    public void int64ToBytesL(byte[] b, int start, long l) {
+    public void fromShortL(byte[] b, int start, short s) {
+        fromValueL(b,start,s);
+    }
 
+    @Override
+    public void fromIntegerB(byte[] b, int start, int i) {
+        fromValueB(b,start,i);
+    }
+
+    @Override
+    public void fromIntegerL(byte[] b, int start, int i) {
+        fromValueL(b,start,i);
+    }
+
+    @Override
+    public void fromLongB(byte[] b, int start, long l) {
+        fromValueB(b,start,l);
+    }
+
+    @Override
+    public void fromLongL(byte[] b, int start, long l) {
+        fromValueL(b,start,l);
     }
 }
