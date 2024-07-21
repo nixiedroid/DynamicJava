@@ -1,6 +1,6 @@
 package com.nixiedroid.classblob;
 
-import com.nixiedroid.bytes.ByteArrayUtils;
+import com.nixiedroid.bytes.StringArrayUtils;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -20,7 +20,7 @@ public class ClassReader {
         List<ClassBytes> classes = new LinkedList<>();
         ClassesBlob blob = new ClassesBlob(header, headers, classes);
         blob.serialize(baos);
-        System.out.println(ByteArrayUtils.toString(baos.toByteArray()));
+        System.out.println(StringArrayUtils.toString(baos.toByteArray()));
         baos.writeTo(fos);
         fos.flush();
         fos.close();

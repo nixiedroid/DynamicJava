@@ -1,4 +1,4 @@
-import com.nixiedroid.bytes.ByteArrayUtils;
+import com.nixiedroid.bytes.StringArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import samples.Cats;
@@ -117,7 +117,7 @@ public class CoolStuffTest {
         ) {
             out.writeObject(h);
             b = bos.toByteArray();
-            System.out.println(ByteArrayUtils.toString(b));
+            System.out.println(StringArrayUtils.toString(b));
         } catch (IOException e) {
             throw new AssertionError(e);
         }

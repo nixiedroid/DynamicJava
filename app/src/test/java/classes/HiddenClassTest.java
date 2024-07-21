@@ -1,6 +1,6 @@
 package classes;
 
-import com.nixiedroid.bytes.ByteArrayUtils;
+import com.nixiedroid.bytes.StringArrayUtils;
 import com.nixiedroid.classloaders.parser.JavaClassParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,8 +31,8 @@ public class HiddenClassTest {
 
     @Test
     void testHiddenClassWrongPackage() {
-        byte[] cb = ByteArrayUtils.fromHexString(this.wrongPackageBlob);
-        Assertions.assertEquals(this.wrongPackageBlob, ByteArrayUtils.toString(cb));
+        byte[] cb = StringArrayUtils.fromHexString(this.wrongPackageBlob);
+        Assertions.assertEquals(this.wrongPackageBlob, StringArrayUtils.toString(cb));
         JavaClassParser.ClassInfo ci = JavaClassParser.create(cb);
         Assertions.assertEquals("H", ci.getName());
         Assertions.assertThrows(IllegalArgumentException.class,
@@ -42,8 +42,8 @@ public class HiddenClassTest {
     @Test
     void testHiddenClass() throws Throwable {
         final int FOURTY_TWO = 42;
-        byte[] cb = ByteArrayUtils.fromHexString(this.blob);
-        Assertions.assertEquals(this.blob, ByteArrayUtils.toString(cb));
+        byte[] cb = StringArrayUtils.fromHexString(this.blob);
+        Assertions.assertEquals(this.blob, StringArrayUtils.toString(cb));
         JavaClassParser.ClassInfo ci = JavaClassParser.create(cb);
         Assertions.assertEquals("classes.H", ci.getName());
         MethodHandles.Lookup lookup = MethodHandles.lookup().defineHiddenClass(cb, false);

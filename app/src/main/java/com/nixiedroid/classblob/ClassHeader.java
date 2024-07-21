@@ -1,6 +1,8 @@
 package com.nixiedroid.classblob;
 
-import com.nixiedroid.bytes.ByteArrayUtils;
+import com.nixiedroid.bytes.ByteArrayConverter;
+import com.nixiedroid.bytes.ByteArrayConverterDefault;
+import com.nixiedroid.bytes.StringArrayUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +17,7 @@ public class ClassHeader extends ByteSerializable<ClassHeader> {
     private short nameLen;
     private String name;
     private int encAlgorithm;
+    private final ByteArrayConverter converter = new ByteArrayConverterDefault();
 
 
     public ClassHeader(ClassHeaderFlags flags, int offset, int classSize) {
@@ -63,18 +66,18 @@ public class ClassHeader extends ByteSerializable<ClassHeader> {
     public ClassHeader deserialize(ByteArrayInputStream stream) throws IOException {
         if (stream == null) throw new IOException("Input is null");
         if (stream.available() < MIN_SIZE) throw new IOException("Input is too short");
-        this.flags = new ClassHeaderFlags(ByteArrayUtils.i().fromBytes(stream.readNBytes(4)));
-        this.offset = ByteArrayUtils.i().fromBytes(stream.readNBytes(4));
-        this.classSize = ByteArrayUtils.i().fromBytes(stream.readNBytes(4));
+        this.flags = new ClassHeaderFlags(this.converter.toInt32L(stream.readNBytes(4),0));
+        this.offset = this.converter.toInt32L(stream.readNBytes(4),0);
+        this.classSize = this.converter.toInt32L(stream.readNBytes(4),0);
         if (this.flags.isFlagSet(ClassHeaderFlags.NAME_PROVIDED)) {
             if (stream.available() < 2) throw new IOException("Input is too short");
-            this.nameLen = ByteArrayUtils.i().fromBytes(stream.readNBytes(2));
+            this.nameLen = this.converter.toInt16L(stream.readNBytes(2),0);
             if (stream.available() < this.nameLen) throw new IOException("Input is too short");
-            this.name = ByteArrayUtils.StringFromBytes(stream.readNBytes(this.nameLen));
+            this.name = StringArrayUtils.StringFromBytes(stream.readNBytes(this.nameLen));
         }
         if (this.flags.isFlagSet(ClassHeaderFlags.ENCRYPTED) || this.flags.isFlagSet(ClassHeaderFlags.DECRYPTER)) {
             if (stream.available() < 4) throw new IOException("Input is too short");
-            this.encAlgorithm = ByteArrayUtils.i().fromBytes(stream.readNBytes(4));
+            this.encAlgorithm = this.converter.toInt32L(stream.readNBytes(4),0);
         }
         return this;
     }
@@ -82,15 +85,22 @@ public class ClassHeader extends ByteSerializable<ClassHeader> {
     @Override
     public void serialize(ByteArrayOutputStream stream) throws IOException {
         if (stream == null) throw new IOException();
-        stream.write(ByteArrayUtils.i().toBytes(this.flags.toInt()));
-        stream.write(ByteArrayUtils.i().toBytes(this.offset));
-        stream.write(ByteArrayUtils.i().toBytes(this.classSize));
+        byte[] arr = new byte[Integer.BYTES*3];
+        this.converter.int32ToBytesL(arr,0,this.flags.toInt());
+        this.converter.int32ToBytesL(arr,4,this.offset);
+        this.converter.int32ToBytesL(arr,8,this.classSize);
+        stream.write(arr);
         if (this.flags.isFlagSet(ClassHeaderFlags.NAME_PROVIDED)) {
-            stream.write(ByteArrayUtils.i().toBytes(this.nameLen));
-            stream.write(ByteArrayUtils.utf8toBytes(this.name));
+            arr = new byte[2];
+            this.converter.int16ToBytesL(arr,0,this.nameLen);
+            stream.write(arr);
+            stream.write(StringArrayUtils.utf8toBytes(this.name));
         }
+
         if (this.flags.isFlagSet(ClassHeaderFlags.ENCRYPTED) || this.flags.isFlagSet(ClassHeaderFlags.DECRYPTER)) {
-            stream.write(ByteArrayUtils.i().toBytes(this.encAlgorithm));
+            arr = new byte[2];
+            this.converter.int32ToBytesL(arr,0,this.encAlgorithm);
+            stream.write(arr);
         }
     }
 }
