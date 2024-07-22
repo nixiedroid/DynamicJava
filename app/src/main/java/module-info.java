@@ -5,4 +5,6 @@ module nixiedroid.dynamic.app {
     requires jdk.unsupported;
     requires nixiedroid.dynamic.premain;
     requires java.desktop;
+    requires java.management;
+    requires jdk.management;
 }

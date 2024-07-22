@@ -6,43 +6,29 @@ public interface ByteArrayConverter {
     int SHORT = 2;
     int INTEGER = 4;
     int LONG = 8;
-    int DOUBLE = 8;
-    int FLOAT = 4;
 
-    byte toByte(byte[] b, int start);
+    byte toByte(byte[] b, int start, Endiannes e);
 
-    short toShortB(byte[] b, int start);
+    short toShort(byte[] b, int start, Endiannes e);
 
-    short toShortL(byte[] b, int start);
+    int toInteger(byte[] b, int start, Endiannes e);
 
-    int toIntegerB(byte[] b, int start);
+    long toLong(byte[] b, int start, Endiannes e);
 
-    int toIntegerL(byte[] b, int start);
+    float toFloat(byte[] b, int start, Endiannes e);
 
-    long toLongB(byte[] b, int start);
+    double toDouble(byte[] b, int start, Endiannes e);
 
-    long toLongL(byte[] b, int start);
 
-    float toFloatB(byte[] b, int start);
+    void fromByte(byte[] b, int start, byte by, Endiannes e);
 
-    float toFloatL(byte[] b, int start);
+    void fromShort(byte[] b, int start, short s, Endiannes e);
 
-    double toDoubleB(byte[] b, int start);
+    void fromInteger(byte[] b, int start, int i, Endiannes e);
 
-    double toDoubleL(byte[] b, int start);
+    void fromLong(byte[] b, int start, long l, Endiannes e);
 
-    void fromByte(byte[] b, int start, byte by);
+    void fromFloat(byte[] b, int start, float f, Endiannes e);
 
-    void fromShortB(byte[] b, int start, short s);
-
-    void fromShortL(byte[] b, int start, short s);
-
-    void fromIntegerB(byte[] b, int start, int i);
-
-    void fromIntegerL(byte[] b, int start, int i);
-
-    void fromLongB(byte[] b, int start, long l);
-
-    void fromLongL(byte[] b, int start, long l);
-
+    void fromDouble(byte[] b, int start, double d, Endiannes e);
 }

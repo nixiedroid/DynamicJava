@@ -5,8 +5,8 @@ import com.nixiedroid.unsafe.type.Size;
 
 import java.util.HashMap;
 import java.util.Map;
-
-public class Memory {
+@SuppressWarnings("unused")
+public final class Memory {
     private static final Map<Pointer, Size> allocated;
 
     static {
@@ -17,7 +17,7 @@ public class Memory {
                 int amount = 0;
                 int size = 0;
                 for (Map.Entry<Pointer, Size> entry : allocated.entrySet()) {
-                    size += entry.getValue().size();
+                    size += (int) entry.getValue().size();
                     amount++;
                     Memory.free(entry.getKey());
                 }
@@ -37,7 +37,7 @@ public class Memory {
         throw new UnsupportedOperationException("Unable to create instance of utility class");
     }
 
-    public static Pointer malloc(int bytes) {
+    public static Pointer malloc(long bytes) {
         if (bytes <= 0) throw new IllegalArgumentException("Malloc size is wrong");
         Pointer p = new Pointer(UnsafeWrapper.getUnsafe().allocateMemory(bytes));
         allocated.put(p, new Size(bytes));

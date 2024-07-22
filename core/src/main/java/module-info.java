@@ -8,6 +8,7 @@ module nixiedroid.dynamic.core {
     exports com.nixiedroid.exceptions;
     exports com.nixiedroid.classloaders.finder;
     exports com.nixiedroid.classloaders.parser;
+    exports com.nixiedroid.unsafe.type;
     requires java.instrument;
     requires java.management;
     requires jdk.management;

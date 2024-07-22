@@ -1,19 +1,15 @@
 package com.nixiedroid.unsafe.type;
 
 public final class Size {
-    private final int size;
-    public final static Size INVALID_SIZE = new Size(0,false);
+    private final long size;
 
-    public Size(int size) {
+    public Size(long size) {
         if (size<0) throw new IllegalArgumentException("Size must be greater than 0");
         this.size = size;
     }
-    private Size(int size, boolean dummy){
-        this.size = size;
-    }
 
-    public int size() {
-        return size;
+    public long size() {
+        return this.size;
     }
 
 
@@ -24,18 +20,18 @@ public final class Size {
 
         Size size1 = (Size) o;
 
-        return size == size1.size;
+        return this.size == size1.size;
     }
 
     @Override
     public int hashCode() {
-        return size;
+        return Long.hashCode(this.size);
     }
 
     @Override
     public String toString() {
         return "Size{" +
-                "size=" + size +
+                "size=" + this.size +
                 '}';
     }
 }

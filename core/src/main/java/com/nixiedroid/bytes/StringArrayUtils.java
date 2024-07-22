@@ -10,6 +10,7 @@ public abstract class StringArrayUtils {
     private static final Pattern hexString = Pattern.compile("[0-9a-fA-F]+");
 
     private static final int HEX = 16;
+    private static final int FF = 0xFF;
 
     public static byte[] fromHexString(final String encoded) {
         if (encoded == null || encoded.isBlank()) return new byte[0];
@@ -49,11 +50,11 @@ public abstract class StringArrayUtils {
         for (int j = 0; j < length; j++) {
             switch (endiannes) {
                 case LITTLE:
-                    b[j * 2] = (byte) (buffer[j] & 0xFF);
+                    b[j * 2] = (byte) (buffer[j] & FF);
                     b[j * 2 + 1] = (byte) (buffer[j] >> 8);
                     break;
                 case BIG:
-                    b[j * 2 + 1] = (byte) (buffer[j] & 0xFF);
+                    b[j * 2 + 1] = (byte) (buffer[j] & FF);
                     b[j * 2] = (byte) (buffer[j] >> 8);
                     break;
             }
@@ -68,7 +69,7 @@ public abstract class StringArrayUtils {
         final byte[] b = new byte[length];
         str.getChars(0, length, buffer, 0);
         for (int j = 0; j < length; j++) {
-            b[j] = (byte) (buffer[j] & 0xFF);
+            b[j] = (byte) (buffer[j] & FF);
         }
         return b;
     }
@@ -82,7 +83,7 @@ public abstract class StringArrayUtils {
         if (data == null) throw new IllegalArgumentException();
         StringJoiner out = new StringJoiner("");
         for (byte b : data) {
-            out.add(String.format("%02X", b & 0xFF));
+            out.add(String.format("%02X", b & FF));
         }
         return out.toString();
     }

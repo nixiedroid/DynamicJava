@@ -2,7 +2,6 @@ package com.nixiedroid.premainImpl;
 
 import com.nixiedroid.premain.PremainHandler;
 
-import javax.xml.transform.Transformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
@@ -40,7 +39,7 @@ public class Handler extends PremainHandler {
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer) throws IllegalClassFormatException {
 
-        System.out.println("Loading: " + className);
+        //System.out.println("Loading: " + className);
         return super.transform(
                 loader,
                 className,
