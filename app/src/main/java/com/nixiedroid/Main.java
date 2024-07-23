@@ -6,7 +6,9 @@ public final class Main {
 
     @SuppressWarnings("RedundantThrows")
     Main() throws Throwable{
-
+       // ClassLoader cl = ClassLoader.getSystemClassLoader();
+      //  cl.loadClass("com.nixiedroid.Stuff");
+        Class.forName("com.nixiedroid.Stuff");
     }
 
 

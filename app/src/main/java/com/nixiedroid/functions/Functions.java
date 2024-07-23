@@ -1,4 +1,4 @@
-package com.nixiedroid.function;
+package com.nixiedroid.functions;
 
 import java.util.function.BiFunction;
 import java.util.function.IntPredicate;
