@@ -1,6 +1,6 @@
 package com.nixiedroid.runtime;
 
-public final class Info {
+public final class Properties {
     private static final boolean is64Bit;
     private static final int version;
     private static final boolean isCompressedOOPS;
@@ -49,8 +49,6 @@ public final class Info {
             isCompressedOOPS = false;
         }
     }
-
-    private Info(){}
 
     public static boolean is64Bit() {
         return is64Bit;

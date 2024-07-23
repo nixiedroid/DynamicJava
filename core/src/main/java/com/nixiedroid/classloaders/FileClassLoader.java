@@ -1,7 +1,7 @@
 package com.nixiedroid.classloaders;
 
 
-import com.nixiedroid.classloaders.parser.JavaClassParser;
+import com.nixiedroid.classes.JavaClassParser;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

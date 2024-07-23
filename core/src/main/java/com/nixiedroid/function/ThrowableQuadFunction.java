@@ -1,4 +1,4 @@
-package com.nixiedroid.interfaces;
+package com.nixiedroid.function;
 
 import java.util.Objects;
 import java.util.function.Function;

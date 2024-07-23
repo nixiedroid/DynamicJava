@@ -10,10 +10,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class CoolStuffTest {
 
+    private static final int MiB = 20;
+
     static long hashCollisionGenerator(final long value, final int seed) {
         final long longSeed = (seed & 0xFFFF_FFFFL);
         final long lsh = longSeed << 32;
         return lsh ^ value ^ longSeed;
+    }
+
+    public static void printMemUsage() {
+        System.out.println("Available heap size = " +
+                (Runtime.getRuntime().freeMemory() >> MiB) + "MiB");
+        System.out.println("Max heap size = " +
+                (Runtime.getRuntime().totalMemory() >> MiB) + "MiB");
+        System.out.println("Max jvm fat size = " +
+                (Runtime.getRuntime().maxMemory() >> MiB) + "MiB");
     }
 
     @SuppressWarnings({"unused", "InfiniteRecursion"})
@@ -74,7 +85,6 @@ public class CoolStuffTest {
         }
         Assertions.assertNotNull(ref.get());
     }
-
 
     @Test
     void longHashCodeCollisionTest() {

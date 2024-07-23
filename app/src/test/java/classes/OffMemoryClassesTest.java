@@ -1,6 +1,6 @@
 package classes;
 
-import com.nixiedroid.runtime.Info;
+import com.nixiedroid.runtime.Properties;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ public class OffMemoryClassesTest {
     Object inst;
     @Test
     void TestClassLocation() throws NoSuchFieldException {
-        System.out.println(Info.isCompressedOOPS());
+        System.out.println(Properties.isCompressedOOPS());
         Canary canaryClass = new Canary();
         Canary canaryClass2 = new Canary();
         sun.misc.Unsafe U = UnsafeWrapper.getUnsafe();

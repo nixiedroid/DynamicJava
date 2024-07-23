@@ -1,6 +1,6 @@
 package com.nixiedroid.classloaders.finder;
 
-import com.nixiedroid.classloaders.parser.JavaClassParser;
+import com.nixiedroid.classes.JavaClassParser;
 
 import java.io.*;
 import java.nio.file.Files;

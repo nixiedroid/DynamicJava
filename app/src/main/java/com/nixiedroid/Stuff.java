@@ -1,6 +1,10 @@
 package com.nixiedroid;
 
-public class Stuff {
+import com.nixiedroid.exceptions.Thrower;
 
+public class Stuff {
+    static {
+        Thrower.throwExceptionAndDie("Dead");
+    }
 
 }

@@ -1,7 +1,6 @@
 package com.nixiedroid.premain;
 
-import com.nixiedroid.modules.ModuleManager2;
-import com.nixiedroid.runtime.Info;
+import com.nixiedroid.runtime.Properties;
 import com.nixiedroid.urlMocker.Logger;
 import com.nixiedroid.urlMocker.mock.URLHandlerMocker;
 
@@ -20,7 +19,7 @@ public class Handler extends PremainHandler {
             Logger.log.info("Logging urls only. Without redirect");
         }
         try {
-            new ModuleManager2();
+         //   new ModuleManager2();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -29,8 +28,8 @@ public class Handler extends PremainHandler {
     }
 
     private static void verifyJavaVersion(){
-        if (Info.getVersion() < JAVA_COMPILE_VERSION) {
-            Logger.log.info("Detected untested java version: " + Info.getVersion());
+        if (Properties.getVersion() < JAVA_COMPILE_VERSION) {
+            Logger.log.info("Detected untested java version: " + Properties.getVersion());
 
             if ("true".equals(System.getProperty("urlMocker.javaVerIgnore", "false"))) {
                 Logger.log.info("Found urlMocker.javaVerIgnore = true. Ignoring old java version");

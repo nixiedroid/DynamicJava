@@ -1,4 +1,4 @@
-package com.nixiedroid.classloaders.parser;
+package com.nixiedroid.classes;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
@@ -42,28 +42,36 @@ public class JavaClassParser {
             return this.interfaceNames;
         }
 
-        public boolean isPublic() {
-            return (modifiers & 0x0001) != 0;
+        public static boolean isPublic(int modifiers) {
+            return (modifiers & Modifiers.PUBLIC) != 0;
         }
 
-        public boolean isFinal() {
-            return (modifiers & 0x0010) != 0;
+        public static boolean isSuper(int modifiers){
+            return (modifiers & Modifiers.SUPER) != 0;
         }
 
-        public boolean isInterface() {
-            return (modifiers & 0x0200) != 0;
+        public static boolean isFinal(int modifiers) {
+            return (modifiers & Modifiers.FINAL) != 0;
         }
 
-        public boolean isAbstract() {
-            return (modifiers & 0x0400) != 0;
+        public static boolean isInterface(int modifiers) {
+            return (modifiers & Modifiers.INTERFACE) != 0;
         }
 
-        public boolean isAnnotation() {
-            return (modifiers & 0x2000) != 0;
+        public static boolean isAbstract(int modifiers) {
+            return (modifiers & Modifiers.ABSTRACT) != 0;
         }
 
-        public boolean isEnum() {
-            return (modifiers & 0x4000) != 0;
+        public static boolean isAnnotation(int modifiers) {
+            return (modifiers & Modifiers.ANNOTATION) != 0;
+        }
+
+        public static boolean isEnum(int modifiers) {
+            return (modifiers & Modifiers.ENUM) != 0;
+        }
+
+        public static boolean isModule(int modifiers) {
+            return (modifiers & Modifiers.MODULE) != 0;
         }
     }
 

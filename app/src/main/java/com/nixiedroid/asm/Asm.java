@@ -1,7 +1,6 @@
 package com.nixiedroid.asm;
 
 import com.nixiedroid.exceptions.Thrower;
-import com.nixiedroid.modules.util.Modules;
 
 public class Asm {
     public Asm(){

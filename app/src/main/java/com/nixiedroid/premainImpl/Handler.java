@@ -39,7 +39,7 @@ public class Handler extends PremainHandler {
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer) throws IllegalClassFormatException {
 
-        //System.out.println("Loading: " + className);
+        System.out.println("Loading: " + className);
         return super.transform(
                 loader,
                 className,

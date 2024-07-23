@@ -1,8 +1,8 @@
-package com.nixiedroid.classloaders;
+package com.nixiedroid.classes;
 
 import java.io.ByteArrayOutputStream;
 
-public class ClUtil {
+public class Classes {
     public static String getClassLoaderOf(Class cl) {
         String clLdrName;
         if (cl.getClassLoader() == null) {

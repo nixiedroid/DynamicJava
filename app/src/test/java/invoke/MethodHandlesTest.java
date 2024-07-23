@@ -1,6 +1,6 @@
 package invoke;
 
-import com.nixiedroid.modules.ModuleManager2;
+import com.nixiedroid.runtime.Properties;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,9 +39,19 @@ public class MethodHandlesTest {
     }
 
 
+    MethodHandles.Lookup getBrokenLookup(){
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        final int TRUSTED = -1;
+        final long allowedModesFieldMemoryOffset = Properties.is64Bit() ? 12L : 8L;
+        UnsafeWrapper.getUnsafe().putInt(
+                lookup, allowedModesFieldMemoryOffset, TRUSTED
+        );
+        return lookup;
+    }
+
     @Test
     void initRawClass() throws Throwable {
-        MethodHandles.Lookup l = new ModuleManager2().getBrokenLookup();
+        MethodHandles.Lookup l = getBrokenLookup();
         MethodHandle cons = l.findConstructor(Class.class, MethodType.methodType(void.class, ClassLoader.class, Class.class));
         Assertions.assertThrows(IllegalAccessException.class, () -> cons.invoke(null, null));
         Class<?> unsafeClass = sun.misc.Unsafe.class;

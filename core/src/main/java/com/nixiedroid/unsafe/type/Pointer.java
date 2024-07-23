@@ -1,13 +1,13 @@
 package com.nixiedroid.unsafe.type;
 
-import com.nixiedroid.runtime.Info;
+import com.nixiedroid.runtime.Properties;
 
 public final class Pointer {
     public static final Pointer ZERO_POINTER = new Pointer(0, false);
     public static final int SIZE;
 
     static {
-        if (Info.isCompressedOOPS()) SIZE = 4;
+        if (Properties.isCompressedOOPS()) SIZE = 4;
         else SIZE = 8;
     }
 
