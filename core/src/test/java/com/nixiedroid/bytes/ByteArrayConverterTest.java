@@ -20,7 +20,7 @@ class ByteArrayConverterTest {
     void fromByteTest() {
         byte[] array = new byte[Byte.BYTES];
         for (byte i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++) {
-            this.converter.fromByte(array, 0, i, BIG);
+            this.converter.writeByte(array, 0, i, BIG);
             Assertions.assertArrayEquals(StringArrayUtils.fromHexString(Integer.toHexString(i & FF)), array);
         }
     }
@@ -30,10 +30,10 @@ class ByteArrayConverterTest {
         byte[] array = new byte[Short.BYTES];
         for (short i = Short.MIN_VALUE; i < (Short.MAX_VALUE - STEP_S + 1); i += STEP_S) {
             byte[] expected = fromHexStringShortPadded(i);
-            this.converter.fromShort(array, 0, i, BIG);
+            this.converter.writeShort(array, 0, i, BIG);
             Assertions.assertArrayEquals(expected, array);
             ByteArrays.reverse(expected);
-            this.converter.fromShort(array, 0, i, LITTLE);
+            this.converter.writeShort(array, 0, i, LITTLE);
             Assertions.assertArrayEquals(expected, array);
         }
     }
@@ -43,10 +43,10 @@ class ByteArrayConverterTest {
         byte[] array = new byte[Integer.BYTES];
         for (int i = Integer.MIN_VALUE; i < (Integer.MAX_VALUE - STEP_I) + 1; i += STEP_I) {
             byte[] expected = fromHexStringIntPadded(i);
-            this.converter.fromInteger(array, 0, i, BIG);
+            this.converter.writeInteger(array, 0, i, BIG);
             Assertions.assertArrayEquals(expected, array);
             ByteArrays.reverse(expected);
-            this.converter.fromInteger(array, 0, i, LITTLE);
+            this.converter.writeInteger(array, 0, i, LITTLE);
             Assertions.assertArrayEquals(expected, array);
         }
     }
@@ -58,10 +58,10 @@ class ByteArrayConverterTest {
         for (int i = Integer.MIN_VALUE; i < (Integer.MAX_VALUE - STEP_I) + 1; i += STEP_I) {
             f = Float.intBitsToFloat(i);
             byte[] expected = fromHexStringFloatPadded(f);
-            this.converter.fromFloat(array, 0, f, BIG);
+            this.converter.writeFloat(array, 0, f, BIG);
             Assertions.assertArrayEquals(expected, array);
             ByteArrays.reverse(expected);
-            this.converter.fromFloat(array, 0, f, LITTLE);
+            this.converter.writeFloat(array, 0, f, LITTLE);
             Assertions.assertArrayEquals(expected, array);
         }
     }
@@ -73,10 +73,10 @@ class ByteArrayConverterTest {
         for (long i = Long.MIN_VALUE; i < (Long.MAX_VALUE - STEP_L) + 1; i += STEP_L) {
             d = Double.longBitsToDouble(i);
             byte[] expected = fromHexStringDoublePadded(d);
-            this.converter.fromDouble(array, 0, d, BIG);
+            this.converter.writeDouble(array, 0, d, BIG);
             Assertions.assertArrayEquals(expected, array);
             ByteArrays.reverse(expected);
-            this.converter.fromDouble(array, 0, d, LITTLE);
+            this.converter.writeDouble(array, 0, d, LITTLE);
             Assertions.assertArrayEquals(expected, array);
         }
     }
@@ -88,10 +88,10 @@ class ByteArrayConverterTest {
         byte[] array = new byte[8];
         for (long i = Long.MIN_VALUE; i < (Long.MAX_VALUE - STEP_L) + 1; i += STEP_L) {
             byte[] expected = fromHexStringLongPadded(i);
-            this.converter.fromLong(array, 0, i, BIG);
+            this.converter.writeLong(array, 0, i, BIG);
             Assertions.assertArrayEquals(expected, array);
             ByteArrays.reverse(expected);
-            this.converter.fromLong(array, 0, i, LITTLE);
+            this.converter.writeLong(array, 0, i, LITTLE);
             Assertions.assertArrayEquals(expected, array);
         }
     }
@@ -100,8 +100,8 @@ class ByteArrayConverterTest {
     void toByteTest() {
         byte[] array = new byte[1];
         for (byte i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++) {
-            this.converter.fromByte(array, 0, i, LITTLE);
-            Assertions.assertEquals(i, this.converter.toByte(array, 0, BIG));
+            this.converter.writeByte(array, 0, i, LITTLE);
+            Assertions.assertEquals(i, this.converter.readByte(array, 0, BIG));
         }
     }
 
@@ -109,10 +109,10 @@ class ByteArrayConverterTest {
     void toShortTest() {
         byte[] array = new byte[2];
         for (short i = Short.MIN_VALUE; i < Short.MAX_VALUE - 1; i += 2) {
-            this.converter.fromShort(array, 0, i, LITTLE);
-            Assertions.assertEquals(i, this.converter.toShort(array, 0, LITTLE));
-            this.converter.fromShort(array, 0, i, BIG);
-            Assertions.assertEquals(i, this.converter.toShort(array, 0, BIG));
+            this.converter.writeShort(array, 0, i, LITTLE);
+            Assertions.assertEquals(i, this.converter.readShort(array, 0, LITTLE));
+            this.converter.writeShort(array, 0, i, BIG);
+            Assertions.assertEquals(i, this.converter.readShort(array, 0, BIG));
         }
     }
 
@@ -120,10 +120,10 @@ class ByteArrayConverterTest {
     void toIntegerTest() {
         byte[] array = new byte[4];
         for (int i = Integer.MIN_VALUE; i < (Integer.MAX_VALUE - STEP_I) + 1; i += STEP_I) {
-            this.converter.fromInteger(array, 0, i, LITTLE);
-            Assertions.assertEquals(i, this.converter.toInteger(array, 0, LITTLE));
-            this.converter.fromInteger(array, 0, i, BIG);
-            Assertions.assertEquals(i, this.converter.toInteger(array, 0, BIG));
+            this.converter.writeInteger(array, 0, i, LITTLE);
+            Assertions.assertEquals(i, this.converter.readInteger(array, 0, LITTLE));
+            this.converter.writeInteger(array, 0, i, BIG);
+            Assertions.assertEquals(i, this.converter.readInteger(array, 0, BIG));
         }
     }
 
@@ -131,10 +131,10 @@ class ByteArrayConverterTest {
     void toLongTest() {
         byte[] array = new byte[8];
         for (long i = Long.MIN_VALUE; i < (Long.MAX_VALUE - STEP_L) + 1; i += STEP_L) {
-            this.converter.fromLong(array, 0, i, LITTLE);
-            Assertions.assertEquals(i, this.converter.toLong(array, 0, LITTLE));
-            this.converter.fromLong(array, 0, i, BIG);
-            Assertions.assertEquals(i, this.converter.toLong(array, 0, BIG));
+            this.converter.writeLong(array, 0, i, LITTLE);
+            Assertions.assertEquals(i, this.converter.readLong(array, 0, LITTLE));
+            this.converter.writeLong(array, 0, i, BIG);
+            Assertions.assertEquals(i, this.converter.readLong(array, 0, BIG));
         }
     }
 
@@ -145,10 +145,10 @@ class ByteArrayConverterTest {
         byte[] array = new byte[4];
         for (int i = Integer.MIN_VALUE; i < (Integer.MAX_VALUE - STEP_I) + 1; i += STEP_I) {
             f = Float.intBitsToFloat(i);
-            this.converter.fromFloat(array, 0, f, LITTLE);
-            Assertions.assertEquals(f, this.converter.toFloat(array, 0, LITTLE));
-            this.converter.fromFloat(array, 0, f, BIG);
-            Assertions.assertEquals(f, this.converter.toFloat(array, 0, BIG));
+            this.converter.writeFloat(array, 0, f, LITTLE);
+            Assertions.assertEquals(f, this.converter.readFloat(array, 0, LITTLE));
+            this.converter.writeFloat(array, 0, f, BIG);
+            Assertions.assertEquals(f, this.converter.readFloat(array, 0, BIG));
         }
     }
 
@@ -158,10 +158,10 @@ class ByteArrayConverterTest {
         double d;
         for (long i = Long.MIN_VALUE; i < (Long.MAX_VALUE - STEP_L) + 1; i += STEP_L) {
             d = Double.longBitsToDouble(i);
-            this.converter.fromDouble(array, 0, d, LITTLE);
-            Assertions.assertEquals(d, this.converter.toDouble(array, 0, LITTLE));
-            this.converter.fromDouble(array, 0, d, BIG);
-            Assertions.assertEquals(d, this.converter.toDouble(array, 0, BIG));
+            this.converter.writeDouble(array, 0, d, LITTLE);
+            Assertions.assertEquals(d, this.converter.readDouble(array, 0, LITTLE));
+            this.converter.writeDouble(array, 0, d, BIG);
+            Assertions.assertEquals(d, this.converter.readDouble(array, 0, BIG));
         }
     }
 

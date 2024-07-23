@@ -123,62 +123,62 @@ public class ByteArrayConverterGenerics implements ByteArrayConverter {
     }
 
     @Override
-    public byte toByte(byte[] b, int start, Endiannes e) {
+    public byte readByte(byte[] b, int start, Endiannes e) {
         return toValue(b, start, Byte.class, e);
     }
 
     @Override
-    public short toShort(byte[] b, int start, Endiannes e) {
+    public short readShort(byte[] b, int start, Endiannes e) {
         return toValue(b, start, Short.class, e);
     }
 
     @Override
-    public int toInteger(byte[] b, int start, Endiannes e) {
+    public int readInteger(byte[] b, int start, Endiannes e) {
         return toValue(b, start, Integer.class, e);
     }
 
     @Override
-    public long toLong(byte[] b, int start, Endiannes e) {
+    public long readLong(byte[] b, int start, Endiannes e) {
         return toValue(b, start, Long.class, e);
     }
 
     @Override
-    public float toFloat(byte[] b, int start, Endiannes e) {
+    public float readFloat(byte[] b, int start, Endiannes e) {
         return toValue(b, start, Float.class, e);
     }
 
     @Override
-    public double toDouble(byte[] b, int start, Endiannes e) {
+    public double readDouble(byte[] b, int start, Endiannes e) {
         return toValue(b, start, Double.class, e);
     }
 
     @Override
-    public void fromByte(byte[] b, int start, byte by, Endiannes e) {
+    public void writeByte(byte[] b, int start, byte by, Endiannes e) {
         fromValue(b, start, by, e);
     }
 
     @Override
-    public void fromShort(byte[] b, int start, short s, Endiannes e) {
+    public void writeShort(byte[] b, int start, short s, Endiannes e) {
         fromValue(b, start, s, e);
     }
 
     @Override
-    public void fromInteger(byte[] b, int start, int i, Endiannes e) {
+    public void writeInteger(byte[] b, int start, int i, Endiannes e) {
         fromValue(b, start, i, e);
     }
 
     @Override
-    public void fromLong(byte[] b, int start, long l, Endiannes e) {
+    public void writeLong(byte[] b, int start, long l, Endiannes e) {
         fromValue(b, start, l, e);
     }
 
     @Override
-    public void fromFloat(byte[] b, int start, float f, Endiannes e) {
+    public void writeFloat(byte[] b, int start, float f, Endiannes e) {
         fromValue(b, start, f, e);
     }
 
     @Override
-    public void fromDouble(byte[] b, int start, double d, Endiannes e) {
+    public void writeDouble(byte[] b, int start, double d, Endiannes e) {
         fromValue(b, start, d, e);
     }
 }

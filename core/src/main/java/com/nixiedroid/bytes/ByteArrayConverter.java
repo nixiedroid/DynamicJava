@@ -7,28 +7,28 @@ public interface ByteArrayConverter {
     int INTEGER = 4;
     int LONG = 8;
 
-    byte toByte(byte[] b, int start, Endiannes e);
+    byte readByte(byte[] b, int start, Endiannes e);
 
-    short toShort(byte[] b, int start, Endiannes e);
+    short readShort(byte[] b, int start, Endiannes e);
 
-    int toInteger(byte[] b, int start, Endiannes e);
+    int readInteger(byte[] b, int start, Endiannes e);
 
-    long toLong(byte[] b, int start, Endiannes e);
+    long readLong(byte[] b, int start, Endiannes e);
 
-    float toFloat(byte[] b, int start, Endiannes e);
+    float readFloat(byte[] b, int start, Endiannes e);
 
-    double toDouble(byte[] b, int start, Endiannes e);
+    double readDouble(byte[] b, int start, Endiannes e);
 
 
-    void fromByte(byte[] b, int start, byte by, Endiannes e);
+    void writeByte(byte[] b, int start, byte by, Endiannes e);
 
-    void fromShort(byte[] b, int start, short s, Endiannes e);
+    void writeShort(byte[] b, int start, short s, Endiannes e);
 
-    void fromInteger(byte[] b, int start, int i, Endiannes e);
+    void writeInteger(byte[] b, int start, int i, Endiannes e);
 
-    void fromLong(byte[] b, int start, long l, Endiannes e);
+    void writeLong(byte[] b, int start, long l, Endiannes e);
 
-    void fromFloat(byte[] b, int start, float f, Endiannes e);
+    void writeFloat(byte[] b, int start, float f, Endiannes e);
 
-    void fromDouble(byte[] b, int start, double d, Endiannes e);
+    void writeDouble(byte[] b, int start, double d, Endiannes e);
 }

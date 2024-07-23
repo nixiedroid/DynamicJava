@@ -22,19 +22,19 @@ public class PrimitiveSerializationTest {
         long byteArrOffset = U.arrayBaseOffset(byte[].class);
 
         U.putLong(array, byteArrOffset, dummyLong);
-        converter.fromLong(expected,0, dummyLong, Endiannes.LITTLE);
+        converter.writeLong(expected,0, dummyLong, Endiannes.LITTLE);
         Assertions.assertArrayEquals(expected, array);
 
         U.putLong(array,byteArrOffset,ZERO);
-        converter.fromLong(expected,0, 0,Endiannes.LITTLE);
+        converter.writeLong(expected,0, 0,Endiannes.LITTLE);
         Assertions.assertArrayEquals(expected, array);
 
         U.putLong(array, byteArrOffset, shortLong);
-        converter.fromLong(expected,0, shortLong,Endiannes.LITTLE);
+        converter.writeLong(expected,0, shortLong,Endiannes.LITTLE);
         Assertions.assertArrayEquals(expected, array);
 
         U.putLong(array, byteArrOffset, dummyInt);
-        converter.fromLong(expected,0, dummyInt,Endiannes.LITTLE);
+        converter.writeLong(expected,0, dummyInt,Endiannes.LITTLE);
         Assertions.assertArrayEquals(expected, array);
 
     }

@@ -25,14 +25,14 @@ package com.nixiedroid.bytes;
 public class ByteArrayConverterDefault implements ByteArrayConverter {
 
     @Override
-    public byte toByte(byte[] b, int start, Endiannes e) {
+    public byte readByte(byte[] b, int start, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + BYTE) throw new IllegalArgumentException();
         return (byte) (b[start] & FF);
     }
 
     @Override
-    public short toShort(byte[] b, int start, Endiannes e) {
+    public short readShort(byte[] b, int start, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + SHORT) throw new IllegalArgumentException();
         if (e == Endiannes.BIG) {
@@ -44,7 +44,7 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public int toInteger(byte[] b, int start, Endiannes e) {
+    public int readInteger(byte[] b, int start, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + INTEGER) throw new IllegalArgumentException();
         if (e == Endiannes.BIG) {
@@ -60,7 +60,7 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public long toLong(byte[] b, int start, Endiannes e) {
+    public long readLong(byte[] b, int start, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + LONG) throw new IllegalArgumentException();
         if (e == Endiannes.BIG) {
@@ -84,24 +84,24 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public float toFloat(byte[] b, int start, Endiannes e) {
-        return Float.intBitsToFloat(toInteger(b, start, e));
+    public float readFloat(byte[] b, int start, Endiannes e) {
+        return Float.intBitsToFloat(readInteger(b, start, e));
     }
 
     @Override
-    public double toDouble(byte[] b, int start, Endiannes e) {
-        return Double.longBitsToDouble(toLong(b, start, e));
+    public double readDouble(byte[] b, int start, Endiannes e) {
+        return Double.longBitsToDouble(readLong(b, start, e));
     }
 
     @Override
-    public void fromByte(byte[] b, int start, byte by, Endiannes e) {
+    public void writeByte(byte[] b, int start, byte by, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + BYTE) throw new IllegalArgumentException();
         b[start] = (byte) (by & FF);
     }
 
     @Override
-    public void fromShort(byte[] b, int start, short s, Endiannes e) {
+    public void writeShort(byte[] b, int start, short s, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + SHORT) throw new IllegalArgumentException();
         if (e == Endiannes.BIG) {
@@ -114,7 +114,7 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public void fromInteger(byte[] b, int start, int i, Endiannes e) {
+    public void writeInteger(byte[] b, int start, int i, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + INTEGER) throw new IllegalArgumentException();
         if (e == Endiannes.BIG) {
@@ -131,7 +131,7 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public void fromLong(byte[] b, int start, long l, Endiannes e) {
+    public void writeLong(byte[] b, int start, long l, Endiannes e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + LONG) throw new IllegalArgumentException();
         if (e == Endiannes.BIG) {
@@ -155,12 +155,13 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
         b[start + 7] = (byte) ((l >> 56) & FF);
     }
 
-    @Override public void fromFloat(byte[] b, int start, float f, Endiannes e) {
-        fromInteger(b,start,Float.floatToIntBits(f),e);
+    @Override
+    public void writeFloat(byte[] b, int start, float f, Endiannes e) {
+        writeInteger(b,start,Float.floatToIntBits(f),e);
     }
 
     @Override
-    public void fromDouble(byte[] b, int start, double d, Endiannes e) {
-        fromLong(b,start,Double.doubleToLongBits(d),e);
+    public void writeDouble(byte[] b, int start, double d, Endiannes e) {
+        writeLong(b,start,Double.doubleToLongBits(d),e);
     }
 }
