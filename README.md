@@ -1,14 +1,23 @@
 ### What is it?
-There are examples of code to use java class files
-without requiring to statically link them into application
 
-Practical usage of this includes loading plugins into java app
+This repository contains code samples of me using different aspects of java core API
+Code includes
+- java Reflection API
+- java MethodHandles API
+- java ClassLoader API
+- java Modules
+- java Instrumentation (JavaAgent)
+- and other API-s to manipulate byte code at Runtime
 
-### Tested on:
-Oracle JDK v21 WinX64
+### Requirements
+
+Java HotSpot Virtual Machine x64 v17
+(Oracle Java 17)
+
+I am using at the same time
+- jdk11
+- jdk17
+- jdk21
 
 ### Notes
 see [NOTES MAP](notes/index.md)
-
-### Requirements to build:
-Oracle Jdk 11 and  21

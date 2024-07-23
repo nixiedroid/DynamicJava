@@ -1,4 +1,4 @@
-rootProject.name = 'DynamicJava'
+rootProject.name = 'JavaSamples'
 include 'app'
 include 'core'
 include 'plugin'
