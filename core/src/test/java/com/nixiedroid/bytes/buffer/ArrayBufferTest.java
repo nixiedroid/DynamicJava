@@ -14,7 +14,6 @@ class ArrayBufferTest {
         buffer.writeInteger(0x12128787);
         buffer.writeInteger(0x12128787);
         buffer.writeInteger(0x12128787);
-        buffer.readByte();
     }
 
 }
