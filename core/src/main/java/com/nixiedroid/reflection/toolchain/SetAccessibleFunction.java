@@ -1,6 +1,6 @@
 package com.nixiedroid.reflection.toolchain;
 
-import com.nixiedroid.bytes.ByteArrays;
+import com.nixiedroid.bytes.converter.ByteArrays;
 import com.nixiedroid.function.BiConsumerAdapter;
 import com.nixiedroid.function.ThrowableBiConsumer;
 

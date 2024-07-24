@@ -1,6 +1,6 @@
 package com.nixiedroid.reflection.toolchain;
 
-import com.nixiedroid.bytes.ByteArrays;
+import com.nixiedroid.bytes.converter.ByteArrays;
 import com.nixiedroid.function.FunctionAdapter;
 import com.nixiedroid.function.ThrowableFunction;
 

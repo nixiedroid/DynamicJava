@@ -1,8 +1,8 @@
 package basics;
 
-import com.nixiedroid.bytes.ByteArrayConverter;
-import com.nixiedroid.bytes.ByteArrayConverterDefault;
-import com.nixiedroid.bytes.Endiannes;
+import com.nixiedroid.bytes.converter.ByteArrayConverter;
+import com.nixiedroid.bytes.converter.ByteArrayConverterDefault;
+import com.nixiedroid.bytes.converter.Endianness;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,19 +22,19 @@ public class PrimitiveSerializationTest {
         long byteArrOffset = U.arrayBaseOffset(byte[].class);
 
         U.putLong(array, byteArrOffset, dummyLong);
-        converter.writeLong(expected,0, dummyLong, Endiannes.LITTLE);
+        converter.writeLong(expected,0, dummyLong, Endianness.LITTLE_ENDIAN);
         Assertions.assertArrayEquals(expected, array);
 
         U.putLong(array,byteArrOffset,ZERO);
-        converter.writeLong(expected,0, 0,Endiannes.LITTLE);
+        converter.writeLong(expected,0, 0, Endianness.LITTLE_ENDIAN);
         Assertions.assertArrayEquals(expected, array);
 
         U.putLong(array, byteArrOffset, shortLong);
-        converter.writeLong(expected,0, shortLong,Endiannes.LITTLE);
+        converter.writeLong(expected,0, shortLong, Endianness.LITTLE_ENDIAN);
         Assertions.assertArrayEquals(expected, array);
 
         U.putLong(array, byteArrOffset, dummyInt);
-        converter.writeLong(expected,0, dummyInt,Endiannes.LITTLE);
+        converter.writeLong(expected,0, dummyInt, Endianness.LITTLE_ENDIAN);
         Assertions.assertArrayEquals(expected, array);
 
     }

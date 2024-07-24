@@ -1,4 +1,4 @@
-package com.nixiedroid.bytes;
+package com.nixiedroid.bytes.converter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

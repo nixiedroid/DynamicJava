@@ -1,9 +1,9 @@
 package com.nixiedroid.classblob;
 
-import com.nixiedroid.bytes.ByteArrayConverter;
-import com.nixiedroid.bytes.ByteArrayConverterDefault;
-import com.nixiedroid.bytes.Endiannes;
-import com.nixiedroid.bytes.StringArrayUtils;
+import com.nixiedroid.bytes.converter.ByteArrayConverter;
+import com.nixiedroid.bytes.converter.ByteArrayConverterDefault;
+import com.nixiedroid.bytes.converter.Endianness;
+import com.nixiedroid.bytes.converter.StringArrayUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,18 +67,18 @@ public class ClassHeader extends ByteSerializable<ClassHeader> {
     public ClassHeader deserialize(ByteArrayInputStream stream) throws IOException {
         if (stream == null) throw new IOException("Input is null");
         if (stream.available() < MIN_SIZE) throw new IOException("Input is too short");
-        this.flags = new ClassHeaderFlags(this.converter.readInteger(stream.readNBytes(4),0, Endiannes.LITTLE));
-        this.offset = this.converter.readInteger(stream.readNBytes(4),0,Endiannes.LITTLE);
-        this.classSize = this.converter.readInteger(stream.readNBytes(4),0,Endiannes.LITTLE);
+        this.flags = new ClassHeaderFlags(this.converter.readInteger(stream.readNBytes(4),0, Endianness.LITTLE_ENDIAN));
+        this.offset = this.converter.readInteger(stream.readNBytes(4),0, Endianness.LITTLE_ENDIAN);
+        this.classSize = this.converter.readInteger(stream.readNBytes(4),0, Endianness.LITTLE_ENDIAN);
         if (this.flags.isFlagSet(ClassHeaderFlags.NAME_PROVIDED)) {
             if (stream.available() < 2) throw new IOException("Input is too short");
-            this.nameLen = this.converter.readShort(stream.readNBytes(2),0,Endiannes.LITTLE);
+            this.nameLen = this.converter.readShort(stream.readNBytes(2),0, Endianness.LITTLE_ENDIAN);
             if (stream.available() < this.nameLen) throw new IOException("Input is too short");
             this.name = StringArrayUtils.StringFromBytes(stream.readNBytes(this.nameLen));
         }
         if (this.flags.isFlagSet(ClassHeaderFlags.ENCRYPTED) || this.flags.isFlagSet(ClassHeaderFlags.DECRYPTER)) {
             if (stream.available() < 4) throw new IOException("Input is too short");
-            this.encAlgorithm = this.converter.readInteger(stream.readNBytes(4),0,Endiannes.LITTLE);
+            this.encAlgorithm = this.converter.readInteger(stream.readNBytes(4),0, Endianness.LITTLE_ENDIAN);
         }
         return this;
     }
@@ -87,20 +87,20 @@ public class ClassHeader extends ByteSerializable<ClassHeader> {
     public void serialize(ByteArrayOutputStream stream) throws IOException {
         if (stream == null) throw new IOException();
         byte[] arr = new byte[Integer.BYTES*3];
-        this.converter.writeInteger(arr,0,this.flags.toInt(),Endiannes.LITTLE);
-        this.converter.writeInteger(arr,4,this.offset,Endiannes.LITTLE);
-        this.converter.writeInteger(arr,8,this.classSize,Endiannes.LITTLE);
+        this.converter.writeInteger(arr,0,this.flags.toInt(), Endianness.LITTLE_ENDIAN);
+        this.converter.writeInteger(arr,4,this.offset, Endianness.LITTLE_ENDIAN);
+        this.converter.writeInteger(arr,8,this.classSize, Endianness.LITTLE_ENDIAN);
         stream.write(arr);
         if (this.flags.isFlagSet(ClassHeaderFlags.NAME_PROVIDED)) {
             arr = new byte[2];
-            this.converter.writeShort(arr,0,this.nameLen,Endiannes.LITTLE);
+            this.converter.writeShort(arr,0,this.nameLen, Endianness.LITTLE_ENDIAN);
             stream.write(arr);
             stream.write(StringArrayUtils.utf8toBytes(this.name));
         }
 
         if (this.flags.isFlagSet(ClassHeaderFlags.ENCRYPTED) || this.flags.isFlagSet(ClassHeaderFlags.DECRYPTER)) {
             arr = new byte[2];
-            this.converter.writeInteger(arr,0,this.encAlgorithm,Endiannes.LITTLE);
+            this.converter.writeInteger(arr,0,this.encAlgorithm, Endianness.LITTLE_ENDIAN);
             stream.write(arr);
         }
     }

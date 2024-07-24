@@ -1,5 +1,7 @@
 package com.nixiedroid.bytes;
 
+import com.nixiedroid.bytes.converter.Endianness;
+import com.nixiedroid.bytes.converter.StringArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,12 +32,12 @@ class StringArrayUtilsTest {
         Assertions.assertArrayEquals(StringArrayUtils.fromHexString(
                 "480065006C006C006F00200077006F0072006C0064002100"
         ), StringArrayUtils.utf16toBytes("Hello world!"));
-        Assertions.assertArrayEquals(StringArrayUtils.fromHexString("00310031"), StringArrayUtils.utf16toBytes("11", Endiannes.BIG));
-        Assertions.assertArrayEquals(StringArrayUtils.fromHexString("00000000"), StringArrayUtils.utf16toBytes("\0\0", Endiannes.BIG));
-        Assertions.assertArrayEquals(StringArrayUtils.fromHexString("003A003A"), StringArrayUtils.utf16toBytes("::", Endiannes.BIG));
+        Assertions.assertArrayEquals(StringArrayUtils.fromHexString("00310031"), StringArrayUtils.utf16toBytes("11", Endianness.BIG_ENDIAN));
+        Assertions.assertArrayEquals(StringArrayUtils.fromHexString("00000000"), StringArrayUtils.utf16toBytes("\0\0", Endianness.BIG_ENDIAN));
+        Assertions.assertArrayEquals(StringArrayUtils.fromHexString("003A003A"), StringArrayUtils.utf16toBytes("::", Endianness.BIG_ENDIAN));
         Assertions.assertArrayEquals(StringArrayUtils.fromHexString(
                 "00480065006C006C006F00200077006F0072006C00640021"
-        ), StringArrayUtils.utf16toBytes("Hello world!", Endiannes.BIG));
+        ), StringArrayUtils.utf16toBytes("Hello world!", Endianness.BIG_ENDIAN));
 
     }
 

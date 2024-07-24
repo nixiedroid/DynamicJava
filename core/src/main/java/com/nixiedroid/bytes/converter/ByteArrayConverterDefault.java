@@ -1,4 +1,4 @@
-package com.nixiedroid.bytes;
+package com.nixiedroid.bytes.converter;
 
 /**
  * BIG
@@ -25,17 +25,17 @@ package com.nixiedroid.bytes;
 public class ByteArrayConverterDefault implements ByteArrayConverter {
 
     @Override
-    public byte readByte(byte[] b, int start, Endiannes e) {
+    public byte readByte(byte[] b, int start, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + BYTE) throw new IllegalArgumentException();
         return (byte) (b[start] & FF);
     }
 
     @Override
-    public short readShort(byte[] b, int start, Endiannes e) {
+    public short readShort(byte[] b, int start, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + SHORT) throw new IllegalArgumentException();
-        if (e == Endiannes.BIG) {
+        if (e == Endianness.BIG_ENDIAN) {
             return (short) ((b[start + 1] & FF) |
                     (b[start] & FF) << 8);
         }
@@ -44,10 +44,10 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public int readInteger(byte[] b, int start, Endiannes e) {
+    public int readInteger(byte[] b, int start, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + INTEGER) throw new IllegalArgumentException();
-        if (e == Endiannes.BIG) {
+        if (e == Endianness.BIG_ENDIAN) {
             return (b[start + 3] & FF) |
                     (b[start + 2] & FF) << 8 |
                     (b[start + 1] & FF) << 16 |
@@ -60,10 +60,10 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public long readLong(byte[] b, int start, Endiannes e) {
+    public long readLong(byte[] b, int start, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + LONG) throw new IllegalArgumentException();
-        if (e == Endiannes.BIG) {
+        if (e == Endianness.BIG_ENDIAN) {
             return ((long) b[start] & FF) << 56 |
                     ((long) b[start + 1] & FF) << 48 |
                     ((long) b[start + 2] & FF) << 40 |
@@ -84,27 +84,27 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public float readFloat(byte[] b, int start, Endiannes e) {
+    public float readFloat(byte[] b, int start, Endianness e) {
         return Float.intBitsToFloat(readInteger(b, start, e));
     }
 
     @Override
-    public double readDouble(byte[] b, int start, Endiannes e) {
+    public double readDouble(byte[] b, int start, Endianness e) {
         return Double.longBitsToDouble(readLong(b, start, e));
     }
 
     @Override
-    public void writeByte(byte[] b, int start, byte by, Endiannes e) {
+    public void writeByte(byte[] b, int start, byte by, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + BYTE) throw new IllegalArgumentException();
         b[start] = (byte) (by & FF);
     }
 
     @Override
-    public void writeShort(byte[] b, int start, short s, Endiannes e) {
+    public void writeShort(byte[] b, int start, short s, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + SHORT) throw new IllegalArgumentException();
-        if (e == Endiannes.BIG) {
+        if (e == Endianness.BIG_ENDIAN) {
             b[start] = (byte) ((s >> 8) & FF);
             b[start + 1] = (byte) (s & FF);
             return;
@@ -114,10 +114,10 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public void writeInteger(byte[] b, int start, int i, Endiannes e) {
+    public void writeInteger(byte[] b, int start, int i, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + INTEGER) throw new IllegalArgumentException();
-        if (e == Endiannes.BIG) {
+        if (e == Endianness.BIG_ENDIAN) {
             b[start] = (byte) ((i >> 24) & FF);
             b[start + 1] = (byte) ((i >> 16) & FF);
             b[start + 2] = (byte) ((i >> 8) & FF);
@@ -131,10 +131,10 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public void writeLong(byte[] b, int start, long l, Endiannes e) {
+    public void writeLong(byte[] b, int start, long l, Endianness e) {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + LONG) throw new IllegalArgumentException();
-        if (e == Endiannes.BIG) {
+        if (e == Endianness.BIG_ENDIAN) {
             b[start] = (byte) ((l >> 56) & FF);
             b[start + 1] = (byte) ((l >> 48) & FF);
             b[start + 2] = (byte) ((l >> 40) & FF);
@@ -156,12 +156,12 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
     }
 
     @Override
-    public void writeFloat(byte[] b, int start, float f, Endiannes e) {
+    public void writeFloat(byte[] b, int start, float f, Endianness e) {
         writeInteger(b,start,Float.floatToIntBits(f),e);
     }
 
     @Override
-    public void writeDouble(byte[] b, int start, double d, Endiannes e) {
+    public void writeDouble(byte[] b, int start, double d, Endianness e) {
         writeLong(b,start,Double.doubleToLongBits(d),e);
     }
 }

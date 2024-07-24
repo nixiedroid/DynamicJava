@@ -1,4 +1,4 @@
-import com.nixiedroid.bytes.StringArrayUtils;
+import com.nixiedroid.bytes.converter.StringArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import samples.Cats;

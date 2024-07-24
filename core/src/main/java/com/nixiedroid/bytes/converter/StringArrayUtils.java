@@ -1,4 +1,4 @@
-package com.nixiedroid.bytes;
+package com.nixiedroid.bytes.converter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;
@@ -38,22 +38,22 @@ public abstract class StringArrayUtils {
     }
 
     public static byte[] utf16toBytes(final String str) {
-        return utf16toBytes(str, Endiannes.LITTLE);
+        return utf16toBytes(str, Endianness.LITTLE_ENDIAN);
     }
 
-    public static byte[] utf16toBytes(final String str, Endiannes endiannes) {
+    public static byte[] utf16toBytes(final String str, Endianness endianness) {
         if (str == null) throw new IllegalArgumentException();
         final int length = str.length();
         final char[] buffer = new char[length];
         str.getChars(0, length, buffer, 0);
         final byte[] b = new byte[length * 2];
         for (int j = 0; j < length; j++) {
-            switch (endiannes) {
-                case LITTLE:
+            switch (endianness) {
+                case LITTLE_ENDIAN:
                     b[j * 2] = (byte) (buffer[j] & FF);
                     b[j * 2 + 1] = (byte) (buffer[j] >> 8);
                     break;
-                case BIG:
+                case BIG_ENDIAN:
                     b[j * 2 + 1] = (byte) (buffer[j] & FF);
                     b[j * 2] = (byte) (buffer[j] >> 8);
                     break;

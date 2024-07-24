@@ -70,7 +70,7 @@ public class UnsafeClassInstantiationTest {
     public void createInstanceWithoutConstructor() {
         TestClass cl = null;
         try {
-            cl = UnsafeWrapper.createDummyInstance(TestClass.class);
+            cl = (TestClass) UnsafeWrapper.getUnsafe().allocateInstance(TestClass.class);
         } catch (Exception e) {
             fail("Should not have thrown any exception : \n " + e);
         }

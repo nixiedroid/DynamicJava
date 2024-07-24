@@ -38,7 +38,13 @@ public final class ModuleManager {
         }
     }
 
-    private static void moveToJavaBase(Class<?> cl) {
+    /**
+     * Sets the module of a class to the base module, effectively making it part of the Java base module.
+     *
+     * @param cl The class whose module is to be set to the base module.
+     * @throws RuntimeException If the module field cannot be accessed.
+     */
+    public static void moveToJavaBase(Class<?> cl) {
         unsafe.putObject(cl, moduleFieldOffset, Object.class.getModule());
     }
 

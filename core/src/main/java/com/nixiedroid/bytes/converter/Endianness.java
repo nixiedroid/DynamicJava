@@ -1,4 +1,4 @@
-package com.nixiedroid.bytes;
+package com.nixiedroid.bytes.converter;
 
 /**
  *   32-bit integer 0x12345678
@@ -14,8 +14,8 @@ package com.nixiedroid.bytes;
  * _0x12__34__56__78
  */
 
-public enum Endiannes {
-    LITTLE,
-    BIG
+public enum Endianness {
+    LITTLE_ENDIAN,
+    BIG_ENDIAN
 }
 

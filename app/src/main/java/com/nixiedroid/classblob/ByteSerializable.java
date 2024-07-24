@@ -1,7 +1,7 @@
 package com.nixiedroid.classblob;
 
-import com.nixiedroid.bytes.ByteArrayConverter;
-import com.nixiedroid.bytes.ByteArrayConverterDefault;
+import com.nixiedroid.bytes.converter.ByteArrayConverter;
+import com.nixiedroid.bytes.converter.ByteArrayConverterDefault;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

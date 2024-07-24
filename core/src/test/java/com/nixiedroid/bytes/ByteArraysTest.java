@@ -1,5 +1,7 @@
 package com.nixiedroid.bytes;
 
+import com.nixiedroid.bytes.converter.ByteArrays;
+import com.nixiedroid.bytes.converter.StringArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

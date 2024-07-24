@@ -1,6 +1,6 @@
 package com.nixiedroid.classblob;
 
-import com.nixiedroid.bytes.StringArrayUtils;
+import com.nixiedroid.bytes.converter.StringArrayUtils;
 
 import java.io.*;
 import java.util.LinkedList;

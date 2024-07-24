@@ -1,6 +1,6 @@
 package classes;
 
-import com.nixiedroid.bytes.StringArrayUtils;
+import com.nixiedroid.bytes.converter.StringArrayUtils;
 import com.nixiedroid.classes.JavaClassParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

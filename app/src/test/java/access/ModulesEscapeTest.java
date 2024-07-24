@@ -4,7 +4,6 @@ import com.nixiedroid.Main;
 import com.nixiedroid.reflection.ModuleManager;
 import com.nixiedroid.reflection.Modules;
 import com.nixiedroid.runtime.Properties;
-import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +68,7 @@ public class ModulesEscapeTest {
         Hook hook = new Hook();
         Class<?> hookClass = hook.getClass();
         Class<?> intUnsafeClass = cl.loadClass("jdk.internal.misc.Unsafe");
-        UnsafeWrapper.moveToJavaBase(hookClass);
+        ModuleManager.moveToJavaBase(hookClass);
         Assertions.assertEquals("java.base",hook.whereAmI());
         MethodHandles.Lookup l = hook.getLookup(intUnsafeClass);
         System.out.println(l.lookupClass().getName());

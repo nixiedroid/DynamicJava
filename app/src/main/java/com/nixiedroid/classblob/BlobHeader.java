@@ -1,7 +1,5 @@
 package com.nixiedroid.classblob;
 
-import com.nixiedroid.bytes.Endiannes;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,7 +34,7 @@ public class BlobHeader extends ByteSerializable<BlobHeader> {
 
 
     @Override
-    public BlobHeader deserialize(ByteArrayInputStream stream) throws IOException {
+    public BlobHeader deserialize(ByteArrayInputStream stream) {
         throw new Error();
 //        if (stream == null) throw new IOException("Input is null");
 //        if (stream.available() < SIZE) throw new IOException("Input is too short");
@@ -51,7 +49,7 @@ public class BlobHeader extends ByteSerializable<BlobHeader> {
     }
 
     @Override
-    public void serialize(ByteArrayOutputStream stream) throws IOException {
+    public void serialize(ByteArrayOutputStream stream) {
         throw new Error();
    //     if (stream == null) throw new IOException();
 //        stream.write(ByteArrayUtils.i().toBytes (magic,Endiannes.BIG));
