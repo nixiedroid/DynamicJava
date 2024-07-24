@@ -1,6 +1,8 @@
 package samples;
 
-public class Clazz{
+import java.io.Serializable;
+@SuppressWarnings("unused")
+public class Clazz implements Serializable {
     boolean sBoolean;
     Boolean oBoolean;
     boolean[] aBoolean;
@@ -28,5 +30,21 @@ public class Clazz{
     }
     private static void privSayStatic(String word){
         System.out.println(word + " Private Static");
+    }
+
+    public short getsShort() {
+        return this.sShort;
+    }
+
+    public void setsShort(short sShort) {
+        this.sShort = sShort;
+    }
+
+    public void setObj(Object obj) {
+        this.obj = obj;
+    }
+
+    public Object getObj() {
+        return this.obj;
     }
 }

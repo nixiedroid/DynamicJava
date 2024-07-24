@@ -1,5 +1,7 @@
 package com.nixiedroid.classblob;
 
+import java.util.Arrays;
+@SuppressWarnings("unused")
 public class ClassBytes  {
 
     byte[] classBytes;
@@ -29,5 +31,13 @@ public class ClassBytes  {
     public ClassBytes(byte[] classBytes) {
         this.classBytes = classBytes;
         this.name = "";
+    }
+
+    @Override
+    public String toString() {
+        return "ClassBytes{" +
+                "\nclassBytes=" + Arrays.toString(this.classBytes) +
+                ", \nname='" + this.name + '\'' +
+                '}';
     }
 }

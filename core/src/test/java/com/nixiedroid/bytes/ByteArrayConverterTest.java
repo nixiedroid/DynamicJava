@@ -1,9 +1,6 @@
 package com.nixiedroid.bytes;
 
-import com.nixiedroid.bytes.converter.ByteArrayConverter;
-import com.nixiedroid.bytes.converter.ByteArrayConverterUnsafe;
-import com.nixiedroid.bytes.converter.ByteArrays;
-import com.nixiedroid.bytes.converter.StringArrayUtils;
+import com.nixiedroid.bytes.converter.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +15,7 @@ class ByteArrayConverterTest {
     private final static short STEP_S = 1 << (Short.SIZE - GLOBAL_STEP);
     private static final int FF = 0xFF;
     private static final int FFFF = 0xFFFF;
-    final ByteArrayConverter converter = new ByteArrayConverterUnsafe();
+    final ByteArrayConverter converter = new ByteArrayConverterGenerics();
 
     @Test
     void fromByteTest() {

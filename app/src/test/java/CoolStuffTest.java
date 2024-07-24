@@ -1,7 +1,7 @@
 import com.nixiedroid.bytes.converter.StringArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import samples.Cats;
+import samples.Clazz;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
@@ -119,7 +119,9 @@ public class CoolStuffTest {
 
     @Test
     void testJavaSerialization() {
-        var h = new Cats.MoreCat(3, 4);
+        var h = new Clazz();
+        h.setsShort((short) 55);
+        h.setObj("HEL");
         byte[] b;
         try (
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -135,11 +137,11 @@ public class CoolStuffTest {
                 ByteArrayInputStream bis = new ByteArrayInputStream(b);
                 ObjectInput in = new ObjectInputStream(bis)
         ) {
-            Cats.MoreCat h2;
-            h2 = (Cats.MoreCat) in.readObject();
+            Clazz h2;
+            h2 = (Clazz) in.readObject();
 
-            Assertions.assertEquals(3, h2.getA());
-            Assertions.assertEquals(4, h2.getB());
+            Assertions.assertEquals(55, h2.getsShort());
+            Assertions.assertEquals("HEL", h2.getObj());
         } catch (IOException | ClassNotFoundException e) {
             Assertions.fail("Should not have thrown any exception");
         }

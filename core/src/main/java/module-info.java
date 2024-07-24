@@ -10,6 +10,7 @@ module nixiedroid.dynamic.core {
     exports com.nixiedroid.classes;
     exports com.nixiedroid.reflection.toolchain;
     exports com.nixiedroid.bytes.converter;
+    exports com.nixiedroid.bytes.streams;
     requires java.instrument;
     requires java.management;
     requires jdk.management;

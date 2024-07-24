@@ -113,12 +113,12 @@ public class ByteArrayConverterGenerics implements ByteArrayConverter {
 
         if (e == Endianness.BIG_ENDIAN) {
             for (int i = 0; i < byteCount; i++) {
-                b[start + i] = (byte) ((value >> ((byteCount - 1 - i) << 3)) & FF);
+                b[start + i] = (byte) ((value >>> ((byteCount - 1 - i) << 3)) & FF);
             }
             return;
         }
         for (int i = 0; i < byteCount; i++) {
-            b[start + i] = (byte) ((value >> (i << 3)) & FF);
+            b[start + i] = (byte) ((value >>> (i << 3)) & FF);
         }
     }
 

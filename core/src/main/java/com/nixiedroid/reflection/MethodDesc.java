@@ -1,4 +1,4 @@
-package invoke;
+package com.nixiedroid.reflection;
 
 
 import java.lang.invoke.MethodType;
@@ -18,13 +18,13 @@ public class MethodDesc {
         if (o == null || getClass() != o.getClass()) return false;
 
         MethodDesc desc = (MethodDesc) o;
-        return name.equals(desc.name) && methodType.equals(desc.methodType);
+        return this.name.equals(desc.name) && this.methodType.equals(desc.methodType);
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + methodType.hashCode();
+        int result = this.name.hashCode();
+        result = 31 * result + this.methodType.hashCode();
         return result;
     }
 }

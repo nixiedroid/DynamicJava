@@ -2,23 +2,23 @@ package com.nixiedroid.bytes.converter;
 
 /**
  * BIG
- * b[start + 0] =  (byte) ((l >> 56) & FF);
- * b[start + 1] =  (byte) ((l >> 48) & FF);
- * b[start + 2] =  (byte) ((l >> 40) & FF);
- * b[start + 3] =  (byte) ((l >> 32) & FF);
- * b[start + 4] =  (byte) ((l >> 24) & FF);
- * b[start + 5] =  (byte) ((l >> 16) & FF);
- * b[start + 6] =  (byte) ((l >>  8) & FF);
- * b[start + 7] =  (byte) ((l >>  0) & FF);
+ * b[start + 0] =  (byte) ((l >>> 56) & FF);
+ * b[start + 1] =  (byte) ((l >>> 48) & FF);
+ * b[start + 2] =  (byte) ((l >>> 40) & FF);
+ * b[start + 3] =  (byte) ((l >>> 32) & FF);
+ * b[start + 4] =  (byte) ((l >>> 24) & FF);
+ * b[start + 5] =  (byte) ((l >>> 16) & FF);
+ * b[start + 6] =  (byte) ((l >>>  8) & FF);
+ * b[start + 7] =  (byte) ((l >>>  0) & FF);
  * LITTLE:
- * b[start + 0] =  (byte) ((l >>  0) & FF);
- * b[start + 1] =  (byte) ((l >>  8) & FF);
- * b[start + 2] =  (byte) ((l >> 16) & FF);
- * b[start + 3] =  (byte) ((l >> 24) & FF);
- * b[start + 4] =  (byte) ((l >> 32) & FF);
- * b[start + 5] =  (byte) ((l >> 40) & FF);
- * b[start + 6] =  (byte) ((l >> 48) & FF);
- * b[start + 7] =  (byte) ((l >> 56) & FF);
+ * b[start + 0] =  (byte) ((l >>>  0) & FF);
+ * b[start + 1] =  (byte) ((l >>>  8) & FF);
+ * b[start + 2] =  (byte) ((l >>> 16) & FF);
+ * b[start + 3] =  (byte) ((l >>> 24) & FF);
+ * b[start + 4] =  (byte) ((l >>> 32) & FF);
+ * b[start + 5] =  (byte) ((l >>> 40) & FF);
+ * b[start + 6] =  (byte) ((l >>> 48) & FF);
+ * b[start + 7] =  (byte) ((l >>> 56) & FF);
  */
 // @formatter:off
 @SuppressWarnings({"unused", "MagicNumber", "DuplicatedCode"})
@@ -105,12 +105,12 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + SHORT) throw new IllegalArgumentException();
         if (e == Endianness.BIG_ENDIAN) {
-            b[start] = (byte) ((s >> 8) & FF);
+            b[start] = (byte) ((s >>> 8) & FF);
             b[start + 1] = (byte) (s & FF);
             return;
         }
         b[start] = (byte) (s & FF);
-        b[start + 1] = (byte) ((s >> 8) & FF);
+        b[start + 1] = (byte) ((s >>> 8) & FF);
     }
 
     @Override
@@ -118,16 +118,16 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + INTEGER) throw new IllegalArgumentException();
         if (e == Endianness.BIG_ENDIAN) {
-            b[start] = (byte) ((i >> 24) & FF);
-            b[start + 1] = (byte) ((i >> 16) & FF);
-            b[start + 2] = (byte) ((i >> 8) & FF);
+            b[start] = (byte) ((i >>> 24) & FF);
+            b[start + 1] = (byte) ((i >>> 16) & FF);
+            b[start + 2] = (byte) ((i >>> 8) & FF);
             b[start + 3] = (byte) (i & FF);
             return;
         }
         b[start] = (byte) (i & FF);
-        b[start + 1] = (byte) ((i >> 8) & FF);
-        b[start + 2] = (byte) ((i >> 16) & FF);
-        b[start + 3] = (byte) ((i >> 24) & FF);
+        b[start + 1] = (byte) ((i >>> 8) & FF);
+        b[start + 2] = (byte) ((i >>> 16) & FF);
+        b[start + 3] = (byte) ((i >>> 24) & FF);
     }
 
     @Override
@@ -135,24 +135,24 @@ public class ByteArrayConverterDefault implements ByteArrayConverter {
         if (b == null) throw new IllegalArgumentException();
         if (b.length < start + LONG) throw new IllegalArgumentException();
         if (e == Endianness.BIG_ENDIAN) {
-            b[start] = (byte) ((l >> 56) & FF);
-            b[start + 1] = (byte) ((l >> 48) & FF);
-            b[start + 2] = (byte) ((l >> 40) & FF);
-            b[start + 3] = (byte) ((l >> 32) & FF);
-            b[start + 4] = (byte) ((l >> 24) & FF);
-            b[start + 5] = (byte) ((l >> 16) & FF);
-            b[start + 6] = (byte) ((l >> 8) & FF);
+            b[start] = (byte) ((l >>> 56) & FF);
+            b[start + 1] = (byte) ((l >>> 48) & FF);
+            b[start + 2] = (byte) ((l >>> 40) & FF);
+            b[start + 3] = (byte) ((l >>> 32) & FF);
+            b[start + 4] = (byte) ((l >>> 24) & FF);
+            b[start + 5] = (byte) ((l >>> 16) & FF);
+            b[start + 6] = (byte) ((l >>> 8) & FF);
             b[start + 7] = (byte) (l & FF);
             return;
         }
         b[start] = (byte) (l & FF);
-        b[start + 1] = (byte) ((l >> 8) & FF);
-        b[start + 2] = (byte) ((l >> 16) & FF);
-        b[start + 3] = (byte) ((l >> 24) & FF);
-        b[start + 4] = (byte) ((l >> 32) & FF);
-        b[start + 5] = (byte) ((l >> 40) & FF);
-        b[start + 6] = (byte) ((l >> 48) & FF);
-        b[start + 7] = (byte) ((l >> 56) & FF);
+        b[start + 1] = (byte) ((l >>> 8) & FF);
+        b[start + 2] = (byte) ((l >>> 16) & FF);
+        b[start + 3] = (byte) ((l >>> 24) & FF);
+        b[start + 4] = (byte) ((l >>> 32) & FF);
+        b[start + 5] = (byte) ((l >>> 40) & FF);
+        b[start + 6] = (byte) ((l >>> 48) & FF);
+        b[start + 7] = (byte) ((l >>> 56) & FF);
     }
 
     @Override

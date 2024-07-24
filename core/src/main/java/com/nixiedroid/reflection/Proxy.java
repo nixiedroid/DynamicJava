@@ -1,4 +1,4 @@
-package invoke;
+package com.nixiedroid.reflection;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -7,7 +7,9 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class Proxy {
+
+@SuppressWarnings("unused")
+public class Proxy {
     private final Map<MethodDesc, MethodHandle> methodsCache = new HashMap<>();
     private final Class<?> proxyClass;
     private final MethodHandles.Lookup proxyLookup;
@@ -15,19 +17,19 @@ public final class Proxy {
 
     public Proxy(String className, boolean noInstance)throws ClassNotFoundException {
         this.proxyClass = loadClass(className);
-        this.proxyLookup = getLookup(proxyClass);
+        this.proxyLookup = getLookup(this.proxyClass);
         this.proxyInstance = null;
     }
 
     public Proxy(String className) throws ClassNotFoundException {
         this.proxyClass = loadClass(className);
-        this.proxyLookup = getLookup(proxyClass);
+        this.proxyLookup = getLookup(this.proxyClass);
         this.proxyInstance = invoke("<init>", void.class);
     }
 
     public Proxy(String className, Object... ctorArgs) throws ClassNotFoundException {
         this.proxyClass = loadClass(className);
-        this.proxyLookup = getLookup(proxyClass);
+        this.proxyLookup = getLookup(this.proxyClass);
         this.proxyInstance = invoke("<init>", void.class, ctorArgs);
     }
 
@@ -75,16 +77,16 @@ public final class Proxy {
                     return (R) mh.invoke();
                 } else if (Modifier.isStatic(mh.type().parameterType(0).getModifiers())) {
                     return (R) mh.invoke();
-                } else if (proxyInstance != null) {
-                    return (R) mh.invoke(proxyInstance);
+                } else if (this.proxyInstance != null) {
+                    return (R) mh.invoke(this.proxyInstance);
                 }
             }
             if (methodName.equals("<init>")) {
                 return (R) mh.invoke(args);
             } else if (Modifier.isStatic(mh.type().parameterType(0).getModifiers())) {
                 return (R) mh.invoke(args);
-            } else if (proxyInstance != null) {
-                return (R) mh.invoke(proxyInstance, args);
+            } else if (this.proxyInstance != null) {
+                return (R) mh.invoke(this.proxyInstance, args);
             }
             throw new IllegalStateException("Instance method called on a null instance.");
         } catch (ClassCastException e) {
@@ -104,16 +106,16 @@ public final class Proxy {
 
     private MethodHandle getMethodHandle(String methodName, MethodType mt) throws NoSuchMethodException, IllegalAccessException {
         final MethodDesc desc = new MethodDesc(methodName, mt);
-        return methodsCache.computeIfAbsent(desc, methodDesc -> {
+        return this.methodsCache.computeIfAbsent(desc, methodDesc -> {
             MethodHandle mh;
             try {
                 if (methodName.equals("<init>")) {
-                    mh = proxyLookup.findConstructor(proxyClass, mt);
+                    mh = this.proxyLookup.findConstructor(this.proxyClass, mt);
                 } else {
                     try {
-                        mh = proxyLookup.findVirtual(proxyClass, methodName, mt);
+                        mh = this.proxyLookup.findVirtual(this.proxyClass, methodName, mt);
                     } catch (NoSuchMethodException ignored) {
-                        mh = proxyLookup.findStatic(proxyClass, methodName, mt);
+                        mh = this.proxyLookup.findStatic(this.proxyClass, methodName, mt);
                     }
                 }
             } catch (NoSuchMethodException | IllegalAccessException e) {
