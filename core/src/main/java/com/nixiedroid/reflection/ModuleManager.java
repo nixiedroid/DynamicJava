@@ -1,4 +1,4 @@
-package com.nixiedroid.modules;
+package com.nixiedroid.reflection;
 
 import com.nixiedroid.exceptions.Thrower;
 import com.nixiedroid.unsafe.UnsafeWrapper;
@@ -9,11 +9,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @SuppressWarnings("unused")
-public class ModuleManager {
+public final class ModuleManager {
     private static final sun.misc.Unsafe unsafe;
     private static final long moduleFieldOffset;
     private static Method setAccessible;
-    private static Method setAccesibleModule;
+    private static Method setAccessibleModule;
 
     static {
         unsafe = UnsafeWrapper.getUnsafe();
@@ -22,6 +22,7 @@ public class ModuleManager {
         getAccessibleModule();
 
     }
+
 
     private ModuleManager(){
 
@@ -53,9 +54,9 @@ public class ModuleManager {
 
     private static void getAccessibleModule() {
         try {
-            setAccesibleModule = Module.class
+            setAccessibleModule = Module.class
                     .getDeclaredMethod("implAddExportsOrOpens", String.class, Module.class, boolean.class, boolean.class);
-            setAccessible.invoke(setAccesibleModule, true);
+            setAccessible.invoke(setAccessibleModule, true);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
@@ -74,7 +75,7 @@ public class ModuleManager {
             if (!accessNamedModules) {
                 cl.getModule().addOpens(cl.getPackageName(), accessor.getModule());
             } else {
-                setAccesibleModule.invoke(
+                setAccessibleModule.invoke(
                         cl.getModule(),
                         cl.getPackageName(),
                         accessor.getModule(),
@@ -94,7 +95,7 @@ public class ModuleManager {
                 .addExports(target.getPackageName(), accessor.getModule());
         else {
             try {
-                setAccesibleModule.invoke(
+                setAccessibleModule.invoke(
                         target.getModule(),
                         target.getPackageName(),
                         accessor.getModule(),

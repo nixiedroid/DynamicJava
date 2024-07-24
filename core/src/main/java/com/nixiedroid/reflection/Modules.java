@@ -1,23 +1,18 @@
-package com.nixiedroid.modules;
-
-import com.nixiedroid.modules.toolchain.Context;
-import com.nixiedroid.modules.toolchain.GetClassByNameFunction;
-import com.nixiedroid.modules.toolchain.TrustedLookupSupplier;
+package com.nixiedroid.reflection;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
+import com.nixiedroid.reflection.toolchain.SharedSecrets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.nixiedroid.modules.Fields.*;
+import static com.nixiedroid.reflection.Fields.*;
+@SuppressWarnings("unused")
 
 public class Modules {
 
-    public static void main(String[] args) throws Throwable {
-        new Modules().exportAllToAll();
-    }
 
     private final Set<Object> allSet = new HashSet<>();
     private final Map<String, Module> nameToModule;
@@ -25,7 +20,7 @@ public class Modules {
     private final Class<?> moduleClass;
 
     public Modules() throws Throwable {
-        this.moduleClass = Context.get(GetClassByNameFunction.class).apply(
+        this.moduleClass = SharedSecrets.getClassByName(
                 "java.lang.Module",
                 false, Modules.class.getClassLoader(),
                 Class.class
@@ -69,8 +64,7 @@ public class Modules {
         pckgForModule.put(pkgName, this.allSet);
         if (fieldName.startsWith("exported")) {
             MethodType mt = MethodType.methodType(void.class, Module.class, String.class);
-            MethodHandle mh = Context.get(TrustedLookupSupplier.class).get()
-                    .findStatic(Module.class, "addExportsToAll0", mt);
+            MethodHandle mh = SharedSecrets.findStatic(Module.class, "addExportsToAll0", mt);
             mh.invoke(module, pkgName);
         }
     }
@@ -124,8 +118,7 @@ public class Modules {
         moduleSet.add(moduleTo);
         if (fieldName.startsWith("exported")) {
             MethodType mt = MethodType.methodType(void.class, Module.class, String.class, Module.class);
-            MethodHandle mh = Context.get(TrustedLookupSupplier.class)
-                    .get().findStatic(Module.class, "addExports0", mt);
+            MethodHandle mh = SharedSecrets.findStatic(Module.class, "addExports0", mt);
             mh.invoke(moduleFrom, pkgName, moduleTo);
         }
     }

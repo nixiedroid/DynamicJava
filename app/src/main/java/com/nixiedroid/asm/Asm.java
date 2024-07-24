@@ -1,14 +1,15 @@
 package com.nixiedroid.asm;
 
 import com.nixiedroid.exceptions.Thrower;
+import com.nixiedroid.reflection.Modules;
 
 public class Asm {
     public Asm(){
-//        try {
-//            Modules.exportAllToAll();
-//        } catch (Throwable e) {
-//            Thrower.throwExceptionAndDie(e);
-//        }
+        try {
+            new Modules().exportAllToAll();
+        } catch (Throwable e) {
+            Thrower.throwExceptionAndDie(e);
+        }
 
 
         Class<?> cl = null;

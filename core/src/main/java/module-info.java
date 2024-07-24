@@ -1,6 +1,6 @@
 module nixiedroid.dynamic.core {
     exports com.nixiedroid.classloaders;
-    exports com.nixiedroid.modules;
+    exports com.nixiedroid.reflection;
     exports com.nixiedroid.runtime;
     exports com.nixiedroid.unsafe;
     exports com.nixiedroid.bytes;
@@ -8,6 +8,7 @@ module nixiedroid.dynamic.core {
     exports com.nixiedroid.classloaders.finder;
     exports com.nixiedroid.unsafe.type;
     exports com.nixiedroid.classes;
+    exports com.nixiedroid.reflection.toolchain;
     requires java.instrument;
     requires java.management;
     requires jdk.management;

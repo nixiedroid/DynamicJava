@@ -1,8 +1,8 @@
 package access;
 
 import com.nixiedroid.Main;
-import com.nixiedroid.modules.ModuleManager;
-import com.nixiedroid.modules.Modules;
+import com.nixiedroid.reflection.ModuleManager;
+import com.nixiedroid.reflection.Modules;
 import com.nixiedroid.runtime.Properties;
 import com.nixiedroid.unsafe.UnsafeWrapper;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +19,7 @@ public class ModulesEscapeTest {
     @Test
     public void modulesTest() {
         String FLOAT_CONSTANTS_CLASS_NAME = "jdk.internal.math.FloatConsts";
-        System.out.println(Properties.getVersion());;
+        System.out.println(Properties.getVersion());
         System.out.println(Main.class.getModule());
         System.out.println(ModuleManager.class.getModule());
         try {
