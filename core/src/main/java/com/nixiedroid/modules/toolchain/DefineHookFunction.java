@@ -8,74 +8,51 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 
-public class DefineHookFunction
-        implements ThrowableBiFunction<Class<?>, byte[], Class<?>>,Tool {
+public class DefineHookFunction implements ThrowableBiFunction<Class<?>, byte[], Class<?>>, Tool {
 
-    private MethodHandle privateLookupInMethodHandle;
+    private final MethodHandle defineHook;
+    private MethodHandle privateLookupIn;
     private MethodHandles.Lookup lookup;
-
-    private  sun.misc.Unsafe U;
-    private MethodHandle mh;
+    private sun.misc.Unsafe U;
 
     public DefineHookFunction() throws Throwable {
-        if (this.javaVersion >= 17) {
+        if (thisVersionGEQ(JAVA_17)) {
             this.lookup = Context.get(TrustedLookupSupplier.class).get();
-            this.mh = this.lookup.findSpecial(
-                    MethodHandles.Lookup.class,
-                    "defineClass",
-                    MethodType.methodType(Class.class, byte[].class),
-                    MethodHandles.Lookup.class
-            );
-            this.privateLookupInMethodHandle = Context.get(PrivateLookupFunction.class).get();
-        } else if (this.javaVersion >= 7) {
+            this.defineHook = this.lookup.findSpecial(MethodHandles.Lookup.class, "defineClass", MethodType.methodType(Class.class, byte[].class), MethodHandles.Lookup.class);
+            this.privateLookupIn = Context.get(PrivateLookupSupplier.class).get();
+            return;
+        } else if (thisVersionGEQ(JAVA_7)) {
             this.U = Context.get(UnsafeSupplier.class).get();
-            this.mh = retrieveHook(
-                    Context.get(TrustedLookupSupplier.class).get(),
-                    Context.get(PrivateLookupFunction.class).get()
-            ).findSpecial(
-                    this.U.getClass(),
-                    "defineAnonymousClass",
-                    MethodType.methodType(Class.class, Class.class, byte[].class, Object[].class),
-                    this.U.getClass()
-            );
+            this.defineHook = retrieveHook(Context.get(TrustedLookupSupplier.class).get(), Context.get(PrivateLookupSupplier.class).get()).findSpecial(this.U.getClass(), "defineAnonymousClass", MethodType.methodType(Class.class, Class.class, byte[].class, Object[].class), this.U.getClass());
+            return;
         }
+        throw new IllegalArgumentException();
     }
 
     @Override
     public Class<?> apply(Class<?> clazz, byte[] bytes) throws Throwable {
-        if (this.javaVersion >= 17) {
-            MethodHandles.Lookup lookup = (MethodHandles.Lookup)
-                    this.privateLookupInMethodHandle
-                            .invokeWithArguments(clazz, bytes);
+        if (thisVersionGEQ(JAVA_17)) {
+            MethodHandles.Lookup targetedLookup = (MethodHandles.Lookup) this.privateLookupIn.invokeWithArguments(clazz, this.lookup);
             try {
-                return (Class<?>) this.mh.invokeWithArguments(lookup, bytes);
+                return (Class<?>) this.defineHook.invokeWithArguments(targetedLookup, bytes);
             } catch (LinkageError exc) {
                 try {
-                    return Class.forName(
-                            JavaClassParser.create(ByteBuffer.wrap(bytes)).getName()
-                    );
+                    return Class.forName(JavaClassParser.create(ByteBuffer.wrap(bytes)).getName());
                 } catch (Throwable excTwo) {
                     throw exc;
                 }
             }
-        } else if (this.javaVersion >= 7) {
-            return (Class<?>) this.mh.invokeWithArguments(this.U, clazz, bytes, null);
+        } else if (thisVersionGEQ(JAVA_7)) {
+            return (Class<?>) this.defineHook.invokeWithArguments(this.U, clazz, bytes, null);
         }
         return null;
     }
 
-    private MethodHandles.Lookup retrieveHook(
-            MethodHandles.Lookup lookup,
-            MethodHandle privateLookupInMethodHandle
-    ) throws Throwable {
-        if (this.javaVersion >= 9) {
-            return (MethodHandles.Lookup)
-                    privateLookupInMethodHandle
-                    .invokeWithArguments(U.getClass(), lookup);
-        } else if (this.javaVersion >= 7) {
-            return (MethodHandles.Lookup)
-                    privateLookupInMethodHandle
-                            .invokeWithArguments(lookup, U.getClass());
+    private MethodHandles.Lookup retrieveHook(MethodHandles.Lookup lookup, MethodHandle privateLookupIn) throws Throwable {
+        if (thisVersionGEQ(JAVA_9)) {
+            return (MethodHandles.Lookup) privateLookupIn.invokeWithArguments(this.U.getClass(), lookup);
+        } else if (thisVersionGEQ(JAVA_7)) {
+            return (MethodHandles.Lookup) privateLookupIn.invokeWithArguments(lookup, this.U.getClass());
         }
         return null;
     }

@@ -20,6 +20,11 @@ public class ModuleManager {
         moduleFieldOffset = getModuleFieldOffset();
         getAccessible();
         getAccessibleModule();
+
+    }
+
+    private ModuleManager(){
+
     }
 
     private static long getModuleFieldOffset() {

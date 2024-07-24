@@ -1,16 +1,7 @@
 package com.nixiedroid.function;
 
-import java.util.Objects;
-import java.util.function.Consumer;
 @FunctionalInterface
 public interface ThrowableConsumer<A> {
     void accept(A var1) throws Throwable ;
 
-    default ThrowableConsumer<A> andThen(Consumer<? super A> after) {
-        Objects.requireNonNull(after);
-        return (t) -> {
-            this.accept(t);
-            after.accept(t);
-        };
-    }
 }

@@ -17,6 +17,6 @@ public class UnsafeSupplier implements Supplier<sun.misc.Unsafe> {
 
     @Override
     public Unsafe get() {
-        return U;
+        return this.U;
     }
 }

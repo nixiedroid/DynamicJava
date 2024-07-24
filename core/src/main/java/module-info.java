@@ -13,4 +13,5 @@ module nixiedroid.dynamic.core {
     requires jdk.management;
     requires jdk.unsupported;
     requires org.jetbrains.annotations;
+    requires java.desktop;
 }

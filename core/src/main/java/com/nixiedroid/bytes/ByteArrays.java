@@ -1,10 +1,15 @@
 package com.nixiedroid.bytes;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
 
 public final class ByteArrays {
+
+    private static final int BUF_SIZE = 1024;
 
     private ByteArrays() {
         throw new Error();
@@ -63,6 +68,17 @@ public final class ByteArrays {
         return result == 0;
     }
 
+
+    public static byte[] toByteArray(InputStream inputStream) throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[BUF_SIZE];
+            int bytesRead = 0;
+            while (-1 != (bytesRead = inputStream.read(buffer))) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        }
+    }
 
     public static boolean equals(byte[] a, byte[] b){
         return Arrays.equals(a,b);
