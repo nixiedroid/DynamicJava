@@ -8,6 +8,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 
+/**
+ * Defines a hook function to dynamically define classes at runtime.
+ */
 @SuppressWarnings({"unused", "ClassTooDeepInInheritanceTree"})
 interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class<?>> {
 
@@ -15,8 +18,15 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
 
         protected MethodHandle defineHook;
 
+        @Override
+        public Class<?> apply(Class<?> clazz, byte[] bytes) throws Throwable {
+            return (Class<?>) this.defineHook.invokeWithArguments(clazz, bytes);
+        }
     }
 
+    /**
+     * Java 17 implementation of DefineHookFunction using MethodHandles.
+     */
     class Java17 extends Default {
 
         private final MethodHandle privateLookupIn;
@@ -24,7 +34,8 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
 
         Java17() throws Throwable {
             this.lookup = Context.get(TrustedLookupSupplier.class).get();
-            this.defineHook = this.lookup.findSpecial(MethodHandles.Lookup.class, "defineClass", MethodType.methodType(Class.class, byte[].class), MethodHandles.Lookup.class);
+            this.defineHook = this.lookup.findSpecial(MethodHandles.Lookup.class, "defineClass",
+                    MethodType.methodType(Class.class, byte[].class), MethodHandles.Lookup.class);
             this.privateLookupIn = Context.get(PrivateLookupSupplier.class).get();
         }
 
@@ -43,12 +54,23 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
         }
     }
 
+    /**
+     * Java 7 implementation of DefineHookFunction using sun.misc.Unsafe.
+     */
     class Java7 extends Default {
         protected final sun.misc.Unsafe U;
 
         Java7() throws Throwable {
             this.U = Context.get(UnsafeSupplier.class).get();
-            this.defineHook = retrieveHook(Context.get(TrustedLookupSupplier.class).get(), Context.get(PrivateLookupSupplier.class).get()).findSpecial(this.U.getClass(), "defineAnonymousClass", MethodType.methodType(Class.class, Class.class, byte[].class, Object[].class), this.U.getClass());
+            this.defineHook = retrieveHook(
+                    Context.get(TrustedLookupSupplier.class).get(),
+                    Context.get(PrivateLookupSupplier.class).get()
+            ).findSpecial(
+                    this.U.getClass(),
+                    "defineAnonymousClass",
+                    MethodType.methodType(Class.class, Class.class, byte[].class, Object[].class),
+                    this.U.getClass()
+            );
         }
 
         protected MethodHandles.Lookup retrieveHook(MethodHandles.Lookup lookup, MethodHandle privateLookupIn) throws Throwable {
@@ -61,7 +83,9 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
         }
     }
 
-
+    /**
+     * Java 9+ implementation of DefineHookFunction using sun.misc.Unsafe.
+     */
     class Java9 extends Java7 {
 
         Java9() throws Throwable {
@@ -74,3 +98,4 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
         }
     }
 }
+

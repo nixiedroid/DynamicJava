@@ -36,6 +36,7 @@ public class ModulesEscapeTest {
     public void communism() {
         try {
             new Modules().exportAllToAll();
+
         } catch (Throwable exc) {
             Assertions.fail("Should not have thrown any exception");
         }
