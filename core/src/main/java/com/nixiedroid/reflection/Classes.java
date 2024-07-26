@@ -107,6 +107,15 @@ public final class Classes {
         return SharedSecrets.getClassByName(name, initialize, loader, caller);
     }
 
+    public static String getClassLoaderOf(Class<?> cl) {
+        String clLdrName;
+        if (cl.getClassLoader() == null) {
+            clLdrName = "BootstrapClassLoader";
+        } else {
+            clLdrName = cl.getClassLoader().getClass().getSimpleName();
+        }
+        return "Classloader of " + cl.getName() + " : " + clLdrName;
+    }
 
 
 }

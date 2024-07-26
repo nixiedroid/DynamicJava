@@ -1,6 +1,6 @@
 package com.nixiedroid.classes.assembler;
 
-@SuppressWarnings({"UnqualifiedFieldAccess", "unused"})
+@SuppressWarnings({"UnqualifiedFieldAccess", "unused", "MagicNumber"})
 public class ClassFileAssembler implements ClassFileConstants {
     private final ByteVector vec;
     private short cpIdx = 0;

@@ -1,6 +1,7 @@
 package com.nixiedroid.classes;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class JavaClassParser {
@@ -72,6 +73,19 @@ public class JavaClassParser {
 
         public static boolean isModule(int modifiers) {
             return (modifiers & Modifiers.MODULE) != 0;
+        }
+
+
+        @Override
+        public String toString() {
+            return "ClassInfo{" +
+                    "\nmodifiers=" + modifiers +
+                    ",\n name='" + name + '\'' +
+                    ",\n simpleName='" + simpleName + '\'' +
+                    ",\n packageName='" + packageName + '\'' +
+                    ",\n superClassName='" + superClassName + '\'' +
+                    ",\n interfaceNames=" + Arrays.toString(interfaceNames) +
+                    '}';
         }
     }
 
