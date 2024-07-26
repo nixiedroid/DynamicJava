@@ -1,4 +1,4 @@
-package com.nixiedroid.reflection;
+package com.nixiedroid.invoke;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -15,11 +15,6 @@ public class Proxy {
     private final MethodHandles.Lookup proxyLookup;
     private final Object proxyInstance;
 
-    public Proxy(String className, boolean noInstance)throws ClassNotFoundException {
-        this.proxyClass = loadClass(className);
-        this.proxyLookup = getLookup(this.proxyClass);
-        this.proxyInstance = null;
-    }
 
     public Proxy(String className) throws ClassNotFoundException {
         this.proxyClass = loadClass(className);

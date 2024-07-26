@@ -13,7 +13,7 @@ package com.nixiedroid.function;
  * @param <R> the type of the result of the function
  */
 @FunctionalInterface
-public interface ThrowableQuadFunction<A, B, C, D, R> {
+public interface ThrowableQuadFunction<A, B, C, D, R,T extends Throwable> {
 
     /**
      * Applies this function to the given arguments.
@@ -23,7 +23,7 @@ public interface ThrowableQuadFunction<A, B, C, D, R> {
      * @param var3 the third function argument
      * @param var4 the fourth function argument
      * @return the function result
-     * @throws Throwable if unable to compute a result
+     * @throws T if unable to compute a result
      */
-    R apply(A var1, B var2, C var3, D var4) throws Throwable;
+    R apply(A var1, B var2, C var3, D var4) throws T;
 }

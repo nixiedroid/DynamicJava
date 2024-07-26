@@ -1,17 +1,16 @@
 package com.nixiedroid.reflection.toolchain;
 
-import com.nixiedroid.function.ThrowableFunction;
-
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
+import java.util.function.Function;
 
 /**
  * A functional interface for obtaining declared fields of a given class.
  * This interface uses reflection to access and retrieve the fields.
  */
-interface GetDeclaredFieldsFunction extends ThrowableFunction<Class<?>, Field[]> {
+interface GetDeclaredFieldsFunction extends Function<Class<?>, Field[]> {
 
     /**
      * Implementation of {@link GetDeclaredFieldsFunction} for Java 7.
@@ -40,11 +39,14 @@ interface GetDeclaredFieldsFunction extends ThrowableFunction<Class<?>, Field[]>
          *
          * @param clazz the class from which to retrieve the declared fields
          * @return an array of {@link Field} objects representing the declared fields of the given class
-         * @throws Throwable if an error occurs while retrieving the fields
          */
         @Override
-        public Field[] apply(Class<?> clazz) throws Throwable {
-            return (Field[]) this.getFields0.invokeWithArguments(clazz, false);
+        public Field[] apply(Class<?> clazz) {
+            try {
+                return (Field[]) this.getFields0.invokeWithArguments(clazz, false);
+            } catch (Throwable e) {
+                throw new Error(e);
+            }
         }
     }
 }

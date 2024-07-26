@@ -6,16 +6,18 @@ package com.nixiedroid.function;
  *
  * <p>This is a functional interface whose functional method is {@link #get()}.
  *
- * @param <T> the type of results supplied by this supplier
+ * @param <R> the type of results supplied by this supplier
+ * @param <T> the type of Exception thrown by this supplier
  */
+@SuppressWarnings("unused")
 @FunctionalInterface
-public interface ThrowableSupplier<T> {
+public interface ThrowableSupplier<R, T extends Throwable> {
 
     /**
      * Gets a result.
      *
      * @return a result
-     * @throws Throwable if unable to compute a result
+     * @throws T if unable to compute a result
      */
-    T get() throws Throwable;
+    R get() throws T;
 }

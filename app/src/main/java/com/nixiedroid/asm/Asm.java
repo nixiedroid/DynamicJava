@@ -3,10 +3,11 @@ package com.nixiedroid.asm;
 import com.nixiedroid.exceptions.Thrower;
 import com.nixiedroid.reflection.Modules;
 
+@SuppressWarnings("unused")
 public class Asm {
     public Asm(){
         try {
-            new Modules().exportAllToAll();
+            Modules.exportAllToAll();
         } catch (Throwable e) {
             Thrower.throwExceptionAndDie(e);
         }

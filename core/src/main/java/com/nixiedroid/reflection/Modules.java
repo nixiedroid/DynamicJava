@@ -18,40 +18,45 @@ import static com.nixiedroid.reflection.Fields.*;
  * </p>
  */
 @SuppressWarnings("unused")
-public class Modules {
+public final class Modules {
 
-    private final Set<Object> allModules = new HashSet<>();
-    private final Map<String, Module> nameToModuleMap;
-    private final Class<?> moduleClass;
+    private static final Set<Object> allModules = new HashSet<>();
+    private static final Map<String, Module> nameToModuleMap;
+    private static final Class<?> moduleClass;
+
 
     /**
-     * Constructs a {@code Modules} instance and initializes module-related fields.
+     * Private constructor to prevent instantiation of this utility class.
      *
-     * <p>
-     * Retrieves the {@code Module} class and initializes the mappings and sets for module
-     * exports and visibility.
-     * </p>
-     *
-     * @throws Throwable If there is an error accessing or initializing module information.
+     * <p>Throws an {@link Error} to indicate that instantiation is not allowed.
      */
-    public Modules() throws Throwable {
-        this.moduleClass = SharedSecrets.getClassByName(
-                "java.lang.Module",
-                false, Modules.class.getClassLoader(),
-                Class.class
-        );
-        this.nameToModuleMap = retrieveNameToModuleMap();
-        initializeAllModulesSet();
+    private Modules() {
+        throw new Error("Cannot instantiate utility class");
     }
+
+    static {
+        try {
+            moduleClass = SharedSecrets.getClassByName(
+                    "java.lang.Module",
+                    false, Modules.class.getClassLoader(),
+                    Class.class
+            );
+            nameToModuleMap = retrieveNameToModuleMap();
+            initializeAllModulesSet();
+        } catch (ReflectiveOperationException e){
+            throw new Error(e);
+        }
+    }
+
 
     /**
      * Retrieves the mapping from module names to module instances.
      *
      * @return A map where the keys are module names and the values are module instances.
-     * @throws Throwable If there is an error retrieving the module information.
+     * @throws NoSuchFieldException If there is an error retrieving the module information.
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Module> retrieveNameToModuleMap() throws Throwable {
+    private static Map<String, Module> retrieveNameToModuleMap() throws NoSuchFieldException {
         ModuleLayer boot = ModuleLayer.boot();
         return (Map<String, Module>) getFieldData(boot, getField(boot.getClass(), "nameToModule"));
     }
@@ -59,11 +64,11 @@ public class Modules {
     /**
      * Initializes the set of all modules, including the unnamed and everyone modules.
      *
-     * @throws Throwable If there is an error accessing module fields.
+     * @throws NoSuchFieldException If there is an error accessing module fields.
      */
-    private void initializeAllModulesSet() throws Throwable {
-        this.allModules.add(getFieldData(this.moduleClass, getField(this.moduleClass, "ALL_UNNAMED_MODULE")));
-        this.allModules.add(getFieldData(this.moduleClass, getField(this.moduleClass, "EVERYONE_MODULE")));
+    private static void initializeAllModulesSet() throws NoSuchFieldException {
+        allModules.add(getFieldData(moduleClass, getField(moduleClass, "ALL_UNNAMED_MODULE")));
+        allModules.add(getFieldData(moduleClass, getField(moduleClass, "EVERYONE_MODULE")));
     }
 
     /**
@@ -76,8 +81,8 @@ public class Modules {
      *
      * @throws Throwable If there is an error performing the export operations.
      */
-    public void exportAllToAll() throws Throwable {
-        for (Module module : this.nameToModuleMap.values()) {
+    public static void exportAllToAll() throws Throwable {
+        for (Module module : nameToModuleMap.values()) {
             for (String pkgName : module.getPackages()) {
                 exportPackageToAll("exportedPackages", module, pkgName);
                 exportPackageToAll("openPackages", module, pkgName);
@@ -93,9 +98,9 @@ public class Modules {
      * @param pkgName The name of the package to export.
      * @throws Throwable If there is an error performing the export operation.
      */
-    private void exportPackageToAll(String fieldName, Module module, String pkgName) throws Throwable {
+    private static void exportPackageToAll(String fieldName, Module module, String pkgName) throws Throwable {
         Map<String, Set<?>> packageMap = getOrCreateFieldMap(module, fieldName);
-        packageMap.put(pkgName, this.allModules);
+        packageMap.put(pkgName, allModules);
 
         if (fieldName.startsWith("exported")) {
             MethodType methodType = MethodType.methodType(void.class, Module.class, String.class);
@@ -112,7 +117,7 @@ public class Modules {
      * @param packageNames The names of the packages to export.
      * @throws Throwable If there is an error performing the export operations.
      */
-    public void exportPackage(String moduleFromName, String moduleToName, String... packageNames) throws Throwable {
+    public static void exportPackage(String moduleFromName, String moduleToName, String... packageNames) throws Throwable {
         Module moduleFrom = getModuleByName(moduleFromName);
         Module moduleTo = getModuleByName(moduleToName);
         exportPackages(moduleFrom, moduleTo, packageNames);
@@ -125,8 +130,8 @@ public class Modules {
      * @return The {@code Module} instance corresponding to the given name.
      * @throws RuntimeException If the module does not exist.
      */
-    private Module getModuleByName(String name) {
-        Module module = this.nameToModuleMap.get(name);
+    private static Module getModuleByName(String name) {
+        Module module = nameToModuleMap.get(name);
         if (module == null) {
             throw new RuntimeException("Module not found: " + name);
         }
@@ -141,7 +146,7 @@ public class Modules {
      * @param packageNames The names of the packages to export.
      * @throws Throwable If there is an error performing the export operations.
      */
-    private void exportPackages(Module moduleFrom, Module moduleTo, String... packageNames) throws Throwable {
+    private static void exportPackages(Module moduleFrom, Module moduleTo, String... packageNames) throws Throwable {
         Set<String> modulePackages = moduleFrom.getPackages();
         for (String pkgName : packageNames) {
             if (!modulePackages.contains(pkgName)) {
@@ -162,7 +167,7 @@ public class Modules {
      * @throws Throwable If there is an error performing the export operation.
      */
     @SuppressWarnings("unchecked")
-    private void exportPackage(String fieldName, Object moduleFrom, String pkgName, Object moduleTo) throws Throwable {
+    private static void exportPackage(String fieldName, Object moduleFrom, String pkgName, Object moduleTo) throws Throwable {
         Map<String, Set<?>> packageMap = getOrCreateFieldMap(moduleFrom, fieldName);
         Set<Object> moduleSet = (Set<Object>)
                 packageMap.computeIfAbsent(pkgName, k -> new HashSet<>());
@@ -184,7 +189,7 @@ public class Modules {
      * @throws Throwable If there is an error accessing or modifying the field.
      */
     @SuppressWarnings("unchecked")
-    private Map<String, Set<?>> getOrCreateFieldMap(Object module, String fieldName) throws Throwable {
+    private static Map<String, Set<?>> getOrCreateFieldMap(Object module, String fieldName) throws Throwable {
         Map<String, Set<?>> packageMap = (Map<String, Set<?>>) getFieldData(module, getField(module.getClass(), fieldName));
         if (packageMap == null) {
             packageMap = new HashMap<>();

@@ -12,14 +12,14 @@ import java.lang.reflect.Constructor;
  * Provides various implementations depending on the Java version.
  */
 @SuppressWarnings({"unused"})
-interface LookupCtorFunction extends ThrowableFunction<Class<?>, MethodHandles.Lookup> {
+interface LookupCtorFunction extends ThrowableFunction<Class<?>, MethodHandles.Lookup,Throwable> {
 
     /**
      * Abstract base class for {@link LookupCtorFunction} implementations.
      * Provides a method to apply a function to obtain a {@link MethodHandles.Lookup} instance.
      */
     abstract class Default implements LookupCtorFunction {
-        protected ThrowableFunction<Class<?>, MethodHandles.Lookup> func;
+        protected ThrowableFunction<Class<?>, MethodHandles.Lookup,Throwable> func;
 
         /**
          * Applies the function to obtain a {@link MethodHandles.Lookup} instance for the given class.

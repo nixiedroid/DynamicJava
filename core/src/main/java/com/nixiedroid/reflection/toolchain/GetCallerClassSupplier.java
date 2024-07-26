@@ -1,30 +1,29 @@
 package com.nixiedroid.reflection.toolchain;
 
-import com.nixiedroid.function.ThrowableSupplier;
-
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.util.function.Supplier;
 
 /**
  * Interface that provides a mechanism to retrieve the caller class.
  *
- * <p>This interface extends {@link ThrowableSupplier} and is designed to retrieve the
+ * <p>This interface extends {@link Supplier} and is designed to retrieve the
  * class that invoked a particular method. The implementation for Java 7 is provided,
  * which uses internal Java reflection APIs to achieve this.</p>
  */
 @SuppressWarnings("unused")
-interface GetCallerClassFunction extends ThrowableSupplier<Class<?>> {
+interface GetCallerClassSupplier extends Supplier<Class<?>> {
 
     /**
-     * Implementation of {@link GetCallerClassFunction} for Java 7.
+     * Implementation of {@link GetCallerClassSupplier} for Java 7.
      *
      * <p>This implementation uses internal Java APIs to retrieve the caller class. It
      * accesses the `jdk.internal.reflect.Reflection.getCallerClass` method through
      * reflection. This is useful for scenarios where you need to determine the caller
      * class in a dynamic or reflective context.</p>
      */
-    class Java7 implements GetCallerClassFunction {
+    class Java7 implements GetCallerClassSupplier {
 
         private final MethodHandle getCaller;
 
@@ -70,16 +69,15 @@ interface GetCallerClassFunction extends ThrowableSupplier<Class<?>> {
          *
          * @return the caller class, which is the class that invoked the method
          *         where this instance was created.
-         * @throws Throwable if there is an error invoking the method handle.
          */
         @Override
-        public Class<?> get() throws Throwable {
+        public Class<?> get()  {
             try {
                 // Invoke the method handle to get the caller class
                 return (Class<?>) this.getCaller.invoke();
             } catch (Throwable t) {
                 // Wrap and rethrow any exceptions encountered during method invocation
-                throw new RuntimeException("Failed to get caller class", t);
+                throw new Error("Failed to get caller class", t);
             }
         }
     }

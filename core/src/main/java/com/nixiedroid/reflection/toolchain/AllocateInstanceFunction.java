@@ -6,7 +6,7 @@ import com.nixiedroid.function.ThrowableFunction;
  * A functional interface that provides a method to allocate an instance of a class.
  * This interface extends {@link ThrowableFunction} to allow throwing exceptions.
  */
-interface AllocateInstanceFunction extends ThrowableFunction<Class<?>, Object> {
+interface AllocateInstanceFunction extends ThrowableFunction<Class<?>, Object, InstantiationException> {
 
     /**
      * An implementation of {@link AllocateInstanceFunction} for Java 7.

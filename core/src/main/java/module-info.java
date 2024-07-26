@@ -11,6 +11,7 @@ module nixiedroid.dynamic.core {
     exports com.nixiedroid.reflection.toolchain;
     exports com.nixiedroid.bytes.converter;
     exports com.nixiedroid.bytes.streams;
+    exports com.nixiedroid.invoke;
     requires java.instrument;
     requires java.management;
     requires jdk.management;
@@ -18,4 +19,5 @@ module nixiedroid.dynamic.core {
     requires org.jetbrains.annotations;
     requires java.desktop;
     requires java.sql;
+    requires java.rmi;
 }

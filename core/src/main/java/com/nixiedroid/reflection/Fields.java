@@ -16,9 +16,13 @@ import java.lang.reflect.Field;
  */
 public final class Fields {
 
-    // Private constructor to prevent instantiation
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     *
+     * <p>Throws an {@link Error} to indicate that instantiation is not allowed.
+     */
     private Fields() {
-        // No-op
+        throw new Error("Cannot instantiate utility class");
     }
 
     /**
@@ -27,9 +31,9 @@ public final class Fields {
      * @param clazz The class containing the field.
      * @param fieldName The name of the field to retrieve.
      * @return The {@link Field} object representing the specified field.
-     * @throws Throwable If there is an error retrieving the field.
+     * @throws NoSuchFieldException If there is an error retrieving the field.
      */
-    public static Field getField(Class<?> clazz, String fieldName) throws Throwable {
+    public static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
         return SharedSecrets.getField(clazz, fieldName);
     }
 

@@ -12,16 +12,12 @@ import java.nio.ByteBuffer;
  * Defines a hook function to dynamically define classes at runtime.
  */
 @SuppressWarnings({"unused", "ClassTooDeepInInheritanceTree"})
-interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class<?>> {
+interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class<?>, IllegalAccessException> {
 
     abstract class Default implements DefineHookFunction {
 
         protected MethodHandle defineHook;
 
-        @Override
-        public Class<?> apply(Class<?> clazz, byte[] bytes) throws Throwable {
-            return (Class<?>) this.defineHook.invokeWithArguments(clazz, bytes);
-        }
     }
 
     /**
@@ -40,16 +36,18 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
         }
 
         @Override
-        public Class<?> apply(Class<?> clazz, byte[] bytes) throws Throwable {
-            MethodHandles.Lookup targetedLookup = (MethodHandles.Lookup) this.privateLookupIn.invokeWithArguments(clazz, this.lookup);
+        public Class<?> apply(Class<?> clazz, byte[] bytes) throws IllegalAccessException {
             try {
-                return (Class<?>) this.defineHook.invokeWithArguments(targetedLookup, bytes);
-            } catch (LinkageError exc) {
+                MethodHandles.Lookup targetedLookup = (MethodHandles.Lookup) this.privateLookupIn.invokeWithArguments(clazz, this.lookup);
                 try {
+                    return (Class<?>) this.defineHook.invokeWithArguments(targetedLookup, bytes);
+                } catch (LinkageError exc) {
                     return Class.forName(JavaClassParser.create(ByteBuffer.wrap(bytes)).getName());
-                } catch (Throwable excTwo) {
-                    throw exc;
                 }
+            } catch (IllegalAccessException e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new Error(e);
             }
         }
     }
@@ -78,8 +76,12 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
         }
 
         @Override
-        public Class<?> apply(Class<?> clazz, byte[] bytes) throws Throwable {
-            return (Class<?>) this.defineHook.invokeWithArguments(this.U, clazz, bytes, null);
+        public Class<?> apply(Class<?> clazz, byte[] bytes) {
+            try {
+                return (Class<?>) this.defineHook.invokeWithArguments(this.U, clazz, bytes, null);
+            } catch (Throwable e) {
+                throw new Error(e);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.nixiedroid.reflection;
+package com.nixiedroid.invoke;
 
 import com.nixiedroid.exceptions.Thrower;
 import com.nixiedroid.unsafe.UnsafeWrapper;

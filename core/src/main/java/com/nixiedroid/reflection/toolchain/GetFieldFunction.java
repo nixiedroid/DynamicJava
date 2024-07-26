@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
  * A functional interface for retrieving a {@link Field} from a given class by its name.
  * This interface allows you to find a specific field within a class using its name.
  */
-interface GetFieldFunction extends ThrowableBiFunction<Class<?>, String, Field> {
+interface GetFieldFunction extends ThrowableBiFunction<Class<?>, String, Field, NoSuchFieldException> {
 
     /**
      * Java 7 implementation of {@link GetFieldFunction}.
@@ -33,10 +33,9 @@ interface GetFieldFunction extends ThrowableBiFunction<Class<?>, String, Field> 
          * @param fieldName the name of the field to retrieve
          * @return the {@link Field} object corresponding to the specified name
          * @throws NoSuchFieldException if no field with the specified name is found in the class
-         * @throws Throwable if any other error occurs during retrieval
          */
         @Override
-        public Field apply(Class<?> clazz, String fieldName) throws Throwable {
+        public Field apply(Class<?> clazz, String fieldName) throws NoSuchFieldException {
             Field[] fields = this.getDeclaredFieldsFunction.apply(clazz);
             for (Field field : fields) {
                 if (field.getName().equals(fieldName)) {

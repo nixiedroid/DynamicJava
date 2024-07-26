@@ -1,7 +1,7 @@
 package access;
 
 import com.nixiedroid.Main;
-import com.nixiedroid.reflection.ModuleManager;
+import com.nixiedroid.invoke.ModuleManager;
 import com.nixiedroid.reflection.Modules;
 import com.nixiedroid.runtime.Properties;
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +34,7 @@ public class ModulesEscapeTest {
     @Test
     public void communism() {
         try {
-            new Modules().exportAllToAll();
+            Modules.exportAllToAll();
 
         } catch (Throwable exc) {
             Assertions.fail("Should not have thrown any exception");

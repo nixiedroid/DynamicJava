@@ -9,9 +9,10 @@ package com.nixiedroid.function;
  * @param <A> the type of the first argument to the function
  * @param <B> the type of the second argument to the function
  * @param <R> the type of the result of the function
+ * @param <T> the type of exception to Throw
  */
 @FunctionalInterface
-public interface ThrowableBiFunction<A, B, R> {
+public interface ThrowableBiFunction<A, B, R,T extends Throwable> {
 
     /**
      * Applies this function to the given arguments.
@@ -19,7 +20,7 @@ public interface ThrowableBiFunction<A, B, R> {
      * @param var1 the first function argument
      * @param var2 the second function argument
      * @return the function result
-     * @throws Throwable if unable to compute a result
+     * @throws T if unable to compute a result
      */
-    R apply(A var1, B var2) throws Throwable;
+    R apply(A var1, B var2) throws T;
 }

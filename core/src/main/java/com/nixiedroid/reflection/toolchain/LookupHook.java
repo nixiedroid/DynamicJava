@@ -13,14 +13,14 @@ import java.lang.invoke.MethodHandles;
  * This interface supports various mechanisms for creating or obtaining a {@link MethodHandles.Lookup} instance.
  */
 @SuppressWarnings("unused")
-interface LookupHook extends ThrowableFunction<Class<?>, MethodHandles.Lookup> {
+interface LookupHook extends ThrowableFunction<Class<?>, MethodHandles.Lookup,Throwable> {
 
     /**
      * Default implementation of {@link LookupHook}.
      * Uses a {@link ThrowableFunction} to obtain a {@link MethodHandles.Lookup} for a given class.
      */
     abstract class Default implements LookupHook {
-        protected ThrowableFunction<Class<?>, MethodHandles.Lookup> function;
+        protected ThrowableFunction<Class<?>, MethodHandles.Lookup,Throwable> function;
 
         /**
          * Applies the function to obtain a {@link MethodHandles.Lookup} for the given class.

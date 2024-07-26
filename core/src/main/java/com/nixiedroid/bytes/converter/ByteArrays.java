@@ -32,40 +32,30 @@ public final class ByteArrays {
         }
     }
 
-    public static boolean equals(byte[] a, int aFromIndex, int aToIndex,
-                                 byte[] b, int bFromIndex, int bToIndex) {
-        if (a == b) {
-            return true;
+    private static void rangeCheck(int arrayLength, int fromIndex, int toIndex) {
+        if (fromIndex > toIndex) throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+        if (fromIndex < 0) throw new ArrayIndexOutOfBoundsException(fromIndex);
+        if (toIndex > arrayLength) throw new ArrayIndexOutOfBoundsException(toIndex);
+    }
+
+    public static boolean equals(
+            byte[] a, int aFromIndex, int aToIndex,
+            byte[] b, int bFromIndex, int bToIndex
+    ) {
+        if (a == b) return true;
+        if (a == null || b == null) return false;
+
+        rangeCheck(a.length, aFromIndex, aToIndex);
+        rangeCheck(b.length, bFromIndex, bToIndex);
+
+        int aLength = aToIndex - aFromIndex;
+        int bLength = bToIndex - bFromIndex;
+        if (aLength != bLength) return false;
+
+        for (int index = 0; index < aLength; index++) {
+            if (a[aFromIndex + index] != b[bFromIndex + index]) return false;
         }
-
-        if (a == null || b == null) {
-            return false;
-        }
-
-        if (a.length == 0) {
-            return b.length == 0;
-        }
-
-        int lenA = aToIndex - aFromIndex;
-        int lenB = bToIndex - bFromIndex;
-
-        if (lenB == 0) {
-            return lenA == 0;
-        }
-
-        int result = 0;
-        result |= lenA - lenB;
-
-        //This code is from some crypto stuff
-        //This method ensures that the time taken to compare the two
-        //subarrays does not depend on their contents, preventing timing attacks:
-        //TODO: Speed up, by ignoring constant time
-        for (int indexA = 0; indexA < lenA; indexA++) {
-            int indexB = ((indexA - lenB) >>> 31) * indexA; //If (indexA >= lenB) indexB==0
-            result |= a[aFromIndex + indexA] ^ b[bFromIndex + indexB];
-        }
-
-        return result == 0;
+        return true;
     }
 
 

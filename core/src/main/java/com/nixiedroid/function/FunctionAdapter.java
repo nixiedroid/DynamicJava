@@ -8,8 +8,9 @@ import java.util.function.Function;
  *
  * @param <A> the type of the input to the function
  * @param <R> the type of the result of the function
+ * @param <T> the type of Exception to throw
  */
-public class FunctionAdapter<A, R> implements ThrowableFunction<A, R> {
+public class FunctionAdapter<A, R, T extends Throwable> implements ThrowableFunction<A, R, T> {
 
     private final Function<? super A, ? extends R> function;
 
@@ -27,10 +28,10 @@ public class FunctionAdapter<A, R> implements ThrowableFunction<A, R> {
      *
      * @param var1 the function argument
      * @return the function result
-     * @throws Throwable if unable to compute a result
+     * @throws T if unable to compute a result
      */
     @Override
-    public R apply(A var1) throws Throwable {
+    public R apply(A var1) throws T {
         return this.function.apply(var1);
     }
 }
