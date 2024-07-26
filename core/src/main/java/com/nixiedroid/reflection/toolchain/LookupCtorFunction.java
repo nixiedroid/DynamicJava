@@ -55,7 +55,7 @@ interface LookupCtorFunction extends ThrowableFunction<Class<?>, MethodHandles.L
         Java9() throws Throwable {
             // Access the constructor of MethodHandles.Lookup
             Constructor<MethodHandles.Lookup> lookupCtor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, int.class);
-            Context.get(SetAccessibleFunction.class).accept(lookupCtor, true); // Make it accessible
+            Context.get(SetAccessibleBiConsumer.class).accept(lookupCtor, true); // Make it accessible
             final MethodHandle methodHandle = lookupCtor.newInstance(MethodHandles.Lookup.class, -1)
                     .findConstructor(MethodHandles.Lookup.class, MethodType.methodType(void.class, Class.class, int.class));
             this.func = clazz -> (MethodHandles.Lookup) methodHandle.invokeWithArguments(clazz, -1);
@@ -71,7 +71,7 @@ interface LookupCtorFunction extends ThrowableFunction<Class<?>, MethodHandles.L
         Java14() throws Throwable {
             // Access the constructor of MethodHandles.Lookup with additional parameters
             Constructor<?> lookupCtor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, Class.class, int.class);
-            Context.get(SetAccessibleFunction.class).accept(lookupCtor, true); // Make it accessible
+            Context.get(SetAccessibleBiConsumer.class).accept(lookupCtor, true); // Make it accessible
             final MethodHandle mthHandle = ((MethodHandles.Lookup) lookupCtor.newInstance(MethodHandles.Lookup.class, null, -1))
                     .findConstructor(MethodHandles.Lookup.class, MethodType.methodType(void.class, Class.class, Class.class, int.class));
             this.func = clazz -> (MethodHandles.Lookup) mthHandle.invokeWithArguments(clazz, null, -1);

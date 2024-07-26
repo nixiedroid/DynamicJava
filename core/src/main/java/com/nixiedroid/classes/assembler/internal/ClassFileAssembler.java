@@ -1,4 +1,4 @@
-package com.nixiedroid.classes.assembler;
+package com.nixiedroid.classes.assembler.internal;
 
 @SuppressWarnings({"UnqualifiedFieldAccess", "unused", "MagicNumber"})
 public class ClassFileAssembler implements ClassFileConstants {

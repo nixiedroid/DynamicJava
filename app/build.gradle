@@ -31,7 +31,7 @@ application  {
     applicationDefaultJvmArgs = ["-javaagent:" + preMainDir, "-server","-XX:-UseCompressedOops"]
 }
 
-compileJava{
+compileJava {
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
     options.compilerArgs << "--add-exports=java.base/jdk.internal.org.objectweb.asm=nixiedroid.dynamic.app"
 }

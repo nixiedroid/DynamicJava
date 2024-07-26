@@ -3,6 +3,8 @@ package com.nixiedroid.reflection;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import com.nixiedroid.reflection.toolchain.SharedSecrets;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -115,9 +117,8 @@ public final class Modules {
      * @param moduleFromName The name of the module from which to export packages.
      * @param moduleToName The name of the module to which to export packages.
      * @param packageNames The names of the packages to export.
-     * @throws Throwable If there is an error performing the export operations.
      */
-    public static void exportPackage(String moduleFromName, String moduleToName, String... packageNames) throws Throwable {
+    public static void exportPackage(String moduleFromName, String moduleToName, String... packageNames)  {
         Module moduleFrom = getModuleByName(moduleFromName);
         Module moduleTo = getModuleByName(moduleToName);
         exportPackages(moduleFrom, moduleTo, packageNames);
@@ -144,16 +145,19 @@ public final class Modules {
      * @param moduleFrom The module from which to export packages.
      * @param moduleTo The module to which to export packages.
      * @param packageNames The names of the packages to export.
-     * @throws Throwable If there is an error performing the export operations.
      */
-    private static void exportPackages(Module moduleFrom, Module moduleTo, String... packageNames) throws Throwable {
+    private static void exportPackages(Module moduleFrom, Module moduleTo, String... packageNames)  {
         Set<String> modulePackages = moduleFrom.getPackages();
         for (String pkgName : packageNames) {
             if (!modulePackages.contains(pkgName)) {
                 throw new IllegalArgumentException(moduleFrom + " does not contain package " + pkgName);
             }
-            exportPackage("exportedPackages", moduleFrom, pkgName, moduleTo);
-            exportPackage("openPackages", moduleFrom, pkgName, moduleTo);
+            try {
+                exportPackage("exportedPackages", moduleFrom, pkgName, moduleTo);
+                exportPackage("openPackages", moduleFrom, pkgName, moduleTo);
+            } catch (ReflectiveOperationException e){
+                throw new IllegalArgumentException("packages " + moduleFrom.getName() + " : " + pkgName + " : " + moduleTo.getName());
+            }
         }
     }
 
@@ -164,10 +168,10 @@ public final class Modules {
      * @param moduleFrom The module from which to export the package.
      * @param pkgName The name of the package to export.
      * @param moduleTo The module to which to export the package.
-     * @throws Throwable If there is an error performing the export operation.
+     * @throws ReflectiveOperationException If there is an error performing the export operation.
      */
     @SuppressWarnings("unchecked")
-    private static void exportPackage(String fieldName, Object moduleFrom, String pkgName, Object moduleTo) throws Throwable {
+    private static void exportPackage(String fieldName, Object moduleFrom, String pkgName, Object moduleTo) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Map<String, Set<?>> packageMap = getOrCreateFieldMap(moduleFrom, fieldName);
         Set<Object> moduleSet = (Set<Object>)
                 packageMap.computeIfAbsent(pkgName, k -> new HashSet<>());
@@ -176,7 +180,11 @@ public final class Modules {
         if (fieldName.startsWith("exported")) {
             MethodType methodType = MethodType.methodType(void.class, Module.class, String.class, Module.class);
             MethodHandle methodHandle = SharedSecrets.findStatic(Module.class, "addExports0", methodType);
-            methodHandle.invoke(moduleFrom, pkgName, moduleTo);
+            try {
+                methodHandle.invoke(moduleFrom, pkgName, moduleTo);
+            } catch (Throwable t){
+                throw new InvocationTargetException(t);
+            }
         }
     }
 
@@ -186,10 +194,10 @@ public final class Modules {
      * @param module The module whose package map is to be retrieved or created.
      * @param fieldName The name of the field holding the package map.
      * @return The map of packages for the module.
-     * @throws Throwable If there is an error accessing or modifying the field.
+     * @throws NoSuchFieldException If there is an error accessing or modifying the field.
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Set<?>> getOrCreateFieldMap(Object module, String fieldName) throws Throwable {
+    private static Map<String, Set<?>> getOrCreateFieldMap(Object module, String fieldName) throws NoSuchFieldException {
         Map<String, Set<?>> packageMap = (Map<String, Set<?>>) getFieldData(module, getField(module.getClass(), fieldName));
         if (packageMap == null) {
             packageMap = new HashMap<>();

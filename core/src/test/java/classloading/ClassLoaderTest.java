@@ -2,16 +2,11 @@ package classloading;
 
 import com.nixiedroid.classloaders.CryptedClassLoader;
 import com.nixiedroid.classloaders.FileClassLoader;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ClassLoaderTest {
-    @Test
-    void testLoadingFromClassPath(){
-//        Object plugin = PluginWrapper.loadPluginFromCP("com.nixiedroid.plugins.Plugin");
-//        Assertions.assertEquals("Plugin 1 Methods", Methods.execute(plugin,"method"));
-//        Assertions.assertEquals("Plugin 1 Static Methods", Methods.execute(plugin,"staticMethod"));
-//        Assertions.assertEquals("Plugin 1 Static Methods", Methods.executeStatic(plugin,"staticMethod"));
-    }
+
     @Test
     void loadPlugin() {
         String name = "com.nixiedroid.plugins.Plugin";
@@ -27,7 +22,7 @@ public class ClassLoaderTest {
     }
 
     @Test
-    void classLoaderLazyDemo() {
+    void classLoaderLazyDemo() throws ClassNotFoundException {
         FileClassLoader cl = new FileClassLoader("resources", "clazz") {
             @Override
             public void loadClassInputLogging(String string) {
@@ -38,15 +33,14 @@ public class ClassLoaderTest {
         try {
             cla = cl.loadClass("resources.Cat");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            Assertions.fail(e);
+            throw e;
         }
-        System.out.println("-----------");
         try {
             cla.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            Assertions.fail(e);
         }
-
     }
 
 

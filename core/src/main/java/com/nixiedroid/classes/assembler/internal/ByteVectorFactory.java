@@ -1,4 +1,4 @@
-package com.nixiedroid.classes.assembler;
+package com.nixiedroid.classes.assembler.internal;
 
 
  public final class ByteVectorFactory {

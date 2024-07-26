@@ -42,7 +42,11 @@ interface DefineHookFunction extends ThrowableBiFunction<Class<?>, byte[], Class
                 try {
                     return (Class<?>) this.defineHook.invokeWithArguments(targetedLookup, bytes);
                 } catch (LinkageError exc) {
-                    return Class.forName(JavaClassParser.create(ByteBuffer.wrap(bytes)).getName());
+                   try {
+                       return Class.forName(JavaClassParser.create(ByteBuffer.wrap(bytes)).getName());
+                   } catch (ClassNotFoundException e){
+                       throw exc;
+                   }
                 }
             } catch (IllegalAccessException e) {
                 throw e;

@@ -1,4 +1,4 @@
-package com.nixiedroid.classes.assembler;
+package com.nixiedroid.classes.assembler.internal;
 
 import com.nixiedroid.bytes.converter.StringArrayUtils;
 

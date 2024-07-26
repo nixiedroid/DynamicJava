@@ -45,8 +45,9 @@ interface TrustedLookupSupplier extends Supplier<MethodHandles.Lookup> {
          */
         Java7() throws Throwable {
             Field modes = MethodHandles.Lookup.class.getDeclaredField("allowedModes");
-            modes.setAccessible(true);
-            modes.setInt(this.lookup, TRUSTED);
+            sun.misc.Unsafe unsafe = Context.get(UnsafeSupplier.class).get();
+            long offset = unsafe.objectFieldOffset(modes);
+            unsafe.putInt(this.lookup,offset,TRUSTED);
         }
     }
 

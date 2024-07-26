@@ -14,13 +14,13 @@ import java.lang.reflect.Method;
  * This interface provides a way to set the accessible flag of reflective objects.
  */
 @SuppressWarnings("unused")
-interface SetAccessibleFunction extends ThrowableBiConsumer<AccessibleObject, Boolean> {
+interface SetAccessibleBiConsumer extends ThrowableBiConsumer<AccessibleObject, Boolean> {
 
     /**
-     * Default implementation of {@link SetAccessibleFunction}.
+     * Default implementation of {@link SetAccessibleBiConsumer}.
      * Provides a base implementation where the actual logic for setting accessibility is defined by subclasses.
      */
-    abstract class Default implements SetAccessibleFunction {
+    abstract class Default implements SetAccessibleBiConsumer {
         protected ThrowableBiConsumer<AccessibleObject, Boolean> consumer;
 
         /**
@@ -37,7 +37,7 @@ interface SetAccessibleFunction extends ThrowableBiConsumer<AccessibleObject, Bo
     }
 
     /**
-     * Java 7 implementation of {@link SetAccessibleFunction}.
+     * Java 7 implementation of {@link SetAccessibleBiConsumer}.
      * Uses reflection and method handles to invoke the private "setAccessible0" method of {@link AccessibleObject}.
      */
     class Java7 extends Default {
@@ -50,13 +50,13 @@ interface SetAccessibleFunction extends ThrowableBiConsumer<AccessibleObject, Bo
     }
 
     /**
-     * Java 9 implementation of {@link SetAccessibleFunction}.
+     * Java 9 implementation of {@link SetAccessibleBiConsumer}.
      * Uses bytecode manipulation and method handles to dynamically create and use a wrapper class for setting accessibility.
      */
     class Java9 extends Default {
         @SuppressWarnings("unchecked")
         Java9() throws Throwable {
-            try (InputStream inputStream = SetAccessibleFunction.class.getResourceAsStream(Const.ACCESSIBLE_BLOB.getPath())) {
+            try (InputStream inputStream = SetAccessibleBiConsumer.class.getResourceAsStream(Const.ACCESSIBLE_BLOB.getPath())) {
                 if (inputStream == null) throw new IllegalArgumentException("Resource not found");
                 Class<?> methodHandleWrapperClass = Context.get(DefineHookFunction.class).apply(AccessibleObject.class, ByteArrays.toByteArray(inputStream));
                 Context.get(SetFieldValueFunction.class).accept(methodHandleWrapperClass, methodHandleWrapperClass.getDeclaredField("methodHandleRetriever"),
