@@ -20,7 +20,7 @@ public class MetaFactoryTests {
         MethodHandle target = lookup.findStatic(MetaFactoryTests.class, "stringSupplier", targetMT);
 
         MethodType invokedFunction = MethodType.methodType(Supplier.class);
-        MethodType invokedFunctionType = MethodType.methodType(String.class);
+        MethodType invokedFunctionType = MethodType.methodType(Object.class);
 
         // Create the call site
         CallSite callSite = LambdaMetafactory.metafactory(
