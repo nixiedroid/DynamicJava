@@ -20,7 +20,7 @@ public class MetaFactoryTests {
         MethodHandle target = lookup.findStatic(MetaFactoryTests.class, "stringSupplier", targetMT);
 
         MethodType invokedFunction = MethodType.methodType(Supplier.class);
-        MethodType invokedFunctionType = MethodType.methodType(Object.class);
+        MethodType invokedFunctionType = MethodType.methodType(String.class);
 
         // Create the call site
         CallSite callSite = LambdaMetafactory.metafactory(
@@ -37,10 +37,13 @@ public class MetaFactoryTests {
 
         // Create the lambda function
         @SuppressWarnings("unchecked")
-        Supplier<String> lambda = (Supplier<String>) factory.invoke();
+        Supplier<String> lambda = (Supplier<String>) factory.invokeExact();
 
         //Execute lambda function
         Assertions.assertEquals("Hello from Lambda", lambda.get());
+
+
+
     }
 
     static String stringSupplier() {

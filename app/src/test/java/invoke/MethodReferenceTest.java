@@ -1,17 +1,17 @@
 package invoke;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class MethodReferenceTest {
-    @Test
-    void testMethodReference() {
-
-
+    public static Object consumer(Supplier<Object> sup) {
+       return sup.get();
     }
 
-    String  fun(Function<Integer, String> fun) {
-        return fun.apply(6);
+    @Test
+    void testMethodReference() {
+        Assertions.assertTrue( consumer(() -> new Object()) instanceof Object);
     }
 }
