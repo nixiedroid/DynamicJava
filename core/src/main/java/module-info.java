@@ -12,6 +12,7 @@ module nixiedroid.dynamic.core {
     exports com.nixiedroid.bytes.converter;
     exports com.nixiedroid.bytes.streams;
     exports com.nixiedroid.invoke;
+    exports com.nixiedroid.asm;
     requires java.instrument;
     requires java.management;
     requires jdk.management;
