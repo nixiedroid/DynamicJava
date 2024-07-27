@@ -1,5 +1,6 @@
 package com.nixiedroid.asm;
 
+import com.nixiedroid.exceptions.Thrower;
 import com.nixiedroid.reflection.Classes;
 import com.nixiedroid.reflection.Modules;
 import jdk.internal.org.objectweb.asm.ClassWriter;
@@ -12,18 +13,26 @@ public class Asm {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         classWriter.visit(
                 V9, ACC_PUBLIC | ACC_SUPER,
-                "com.nixiedroid.asm.HelloWorld", null, "java/lang/Object", null
+                "com/nixiedroid/asm/HelloWorld", null, "java/lang/Object", null
         );
         addStandardConstructor(classWriter);
         addMainMethod(classWriter);
         classWriter.visitEnd();
         byte[] bytes =  classWriter.toByteArray();
 
-        Class<?> clazz = Classes.defineClass(this.getClass(),bytes);
+        loadClass(bytes);
+    }
 
-        Object o = clazz.getDeclaredConstructor().newInstance();
+    void loadClass(byte[] bytes)  {
+        try {
+            Class<?> clazz = Classes.defineClass(this.getClass(), bytes);
 
-        clazz.getMethod("main",String[].class).invoke(o, (Object[]) new String[]{});
+            Object o = clazz.getDeclaredConstructor().newInstance();
+
+            clazz.getMethod("main", String[].class).invoke(o, new Object[] {new String[] {}});
+        } catch (ReflectiveOperationException e){
+            Thrower.throwException(e);
+        }
     }
 
     void addMainMethod(ClassWriter cw) {
